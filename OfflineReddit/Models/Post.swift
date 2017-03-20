@@ -10,15 +10,14 @@ import CoreData
 
 class Post: NSManagedObject {
     
-    @NSManaged var author: String?
     @NSManaged var id: String
+    @NSManaged var author: String?
     @NSManaged var selfText: String?
     @NSManaged var subredditName: String?
     @NSManaged var subredditNamePrefixed: String?
     @NSManaged var permalink: String?
     @NSManaged var urlValue: String?
     @NSManaged var title: String?
-    @NSManaged var name: String
     @NSManaged var created: Date?
     @NSManaged var isAvailableOffline: Bool
     @NSManaged var score: Int64
@@ -26,17 +25,13 @@ class Post: NSManagedObject {
     @NSManaged var commentsCount: Int64
     @NSManaged var subreddit: Subreddit?
     @NSManaged var comments: Set<Comment>
+    @NSManaged var more: MoreComments?
 }
 
 extension Post {
     
-    static func id(from json: JSON) -> (String, String, JSON)? {
-        let data = json["data"] as? JSON ?? json
-        if let subredditId = data["subreddit_id"] as? String,
-            let postId = data["name"] as? String {
-            return (subredditId + "/" + postId, postId, data)
-        }
-        return nil
+    static func fetchRequest(predicate: NSPredicate) -> NSFetchRequest<Post> {
+        return NSManagedObject.fetchRequest(predicate: predicate) as NSFetchRequest<Post>
     }
     
     var url: URL? {
@@ -45,6 +40,23 @@ extension Post {
     
     var scoreCommentsText: String {
         return "\(score) score • \(commentsCount) comments"
+    }
+    
+    var authorTimeText: String {
+        let author = self.author.map { "u/" + $0 } ?? SharedText.unknown
+        let time = created
+            .flatMap { intervalFormatter.string(from: -$0.timeIntervalSinceNow) }
+            .map { String.localizedStringWithFormat(SharedText.agoFormat, $0) }
+            ?? SharedText.unknown
+        return "\(author) • \(time)"
+    }
+    
+    var displayComments: [Either<Comment, MoreComments>] {
+        var displayComments = comments.sorted().flatMap { $0.displayComments }
+        if let more = more {
+            displayComments.append(.other(more))
+        }
+        return displayComments
     }
     
     func update(json: JSON) {
@@ -62,8 +74,6 @@ extension Post {
 }
 
 extension Post: Identifiable { }
-
-extension Post: AuthorTime { }
 
 extension Post: Comparable { }
 

@@ -200,6 +200,11 @@
                                         <constraint firstItem="Emg-qM-Bud" firstAttribute="leading" secondItem="BC4-Zu-6R5" secondAttribute="leadingMargin" id="qiH-IL-AYK"/>
                                     </constraints>
                                 </view>
+                                <view key="tableFooterView" contentMode="scaleToFill" id="VG1-gg-wSf">
+                                    <rect key="frame" x="0.0" y="267.5" width="320" height="0.0"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="15" shouldIndentWhileEditing="NO" reuseIdentifier="Comment" rowHeight="90" id="ctS-QE-aSH" customClass="CommentCell" customModule="OfflineReddit" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="142" width="320" height="90"/>
@@ -208,7 +213,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="89"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="752" text="u/[user] • [x time] ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dTp-LM-RG0">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="752" text="u/[user] • [x] points • [x time] ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dTp-LM-RG0">
                                                     <rect key="frame" x="8" y="8" width="304" height="14.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <color key="textColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -252,6 +257,54 @@
                                             <outlet property="bodyLabelBottom" destination="JhL-Jn-6wW" id="qZo-cj-Fle"/>
                                             <outlet property="bodyLabelLeading" destination="cHa-bp-S73" id="2Y2-z8-QQi"/>
                                             <outlet property="topLabel" destination="dTp-LM-RG0" id="U6L-fQ-BSd"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="15" shouldIndentWhileEditing="NO" reuseIdentifier="More" rowHeight="36" id="eb5-5P-QfW" customClass="MoreCell" customModule="OfflineReddit" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="232" width="320" height="36"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" layoutMarginsFollowReadableWidth="YES" tableViewCell="eb5-5P-QfW" id="tHP-Vs-HPb">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="35"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7lr-AC-TO5">
+                                                    <rect key="frame" x="4" y="4" width="312" height="27.5"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="752" text="LOADING" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Lf-hN-w9Q">
+                                                            <rect key="frame" x="8" y="0.0" width="296" height="27.5"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
+                                                            <color key="textColor" white="0.40000000000000002" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" white="0.90000000000000002" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="trailingMargin" secondItem="1Lf-hN-w9Q" secondAttribute="trailing" id="6Fx-8Y-feu"/>
+                                                        <constraint firstAttribute="bottom" secondItem="1Lf-hN-w9Q" secondAttribute="bottom" id="aOv-NB-uSP"/>
+                                                        <constraint firstItem="1Lf-hN-w9Q" firstAttribute="top" secondItem="7lr-AC-TO5" secondAttribute="top" id="uua-ov-F5x"/>
+                                                        <constraint firstItem="1Lf-hN-w9Q" firstAttribute="leading" secondItem="7lr-AC-TO5" secondAttribute="leadingMargin" id="x6O-pi-FEQ"/>
+                                                    </constraints>
+                                                </view>
+                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="RgA-a7-eub">
+                                                    <rect key="frame" x="108" y="7.5" width="20" height="20"/>
+                                                </activityIndicatorView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="RgA-a7-eub" firstAttribute="centerY" secondItem="7lr-AC-TO5" secondAttribute="centerY" id="OdN-Va-jq4"/>
+                                                <constraint firstItem="RgA-a7-eub" firstAttribute="centerX" secondItem="7lr-AC-TO5" secondAttribute="centerX" constant="-42" id="QNx-a4-AE6"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="7lr-AC-TO5" secondAttribute="trailing" id="ZDV-5X-gUn"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="7lr-AC-TO5" secondAttribute="bottom" id="rt4-Vi-jlS"/>
+                                                <constraint firstItem="7lr-AC-TO5" firstAttribute="top" secondItem="tHP-Vs-HPb" secondAttribute="topMargin" id="uZa-ei-VtS"/>
+                                                <constraint firstItem="7lr-AC-TO5" firstAttribute="leading" secondItem="tHP-Vs-HPb" secondAttribute="leadingMargin" id="xwa-af-yth"/>
+                                            </constraints>
+                                            <edgeInsets key="layoutMargins" top="4" left="4" bottom="4" right="4"/>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" white="0.94913736979999996" alpha="1" colorSpace="calibratedWhite"/>
+                                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
+                                        <connections>
+                                            <outlet property="activityIndicator" destination="RgA-a7-eub" id="jj9-cG-RrO"/>
+                                            <outlet property="container" destination="7lr-AC-TO5" id="A1P-q7-737"/>
+                                            <outlet property="containerLeading" destination="xwa-af-yth" id="9Wr-5G-aNM"/>
+                                            <outlet property="titleLabel" destination="1Lf-hN-w9Q" id="dLf-Un-Lhl"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

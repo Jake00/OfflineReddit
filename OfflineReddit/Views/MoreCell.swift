@@ -10,26 +10,30 @@ import UIKit
 
 class MoreCell: UITableViewCell {
     
-    let titleLabel = UILabel()
-    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var containerLeading: NSLayoutConstraint?
+    @IBOutlet weak var container: UIView?
+    
+    override var indentationLevel: Int {
+        didSet {
+            let indentation = CommentCell.indentationWidth * CGFloat(indentationLevel)
+            containerLeading?.constant = indentation
+            layoutMargins.left = indentation + contentView.layoutMargins.left
+            separatorInset.left = layoutMargins.left
+        }
+    }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setup()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
-    }
-    
-    private func setup() {
         backgroundColor = UIColor(white: 0.95, alpha: 1)
+        titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.font = .systemFont(ofSize: 15)
         titleLabel.textAlignment = .center
         titleLabel.textColor = UIColor(white: 0.1, alpha: 1)
         titleLabel.numberOfLines = 0
+        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
         
@@ -44,5 +48,27 @@ class MoreCell: UITableViewCell {
             contentView.centerXAnchor.constraint(equalTo: activityIndicator.centerXAnchor),
             contentView.centerYAnchor.constraint(equalTo: activityIndicator.centerYAnchor)
             ])
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    private func setup() {
+        let selectedBackgroundView = UIView()
+        selectedBackgroundView.backgroundColor = .selectedGray
+        self.selectedBackgroundView = selectedBackgroundView
+    }
+    
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        container?.backgroundColor = .selectedGray
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        container?.backgroundColor = .selectedGray
     }
 }

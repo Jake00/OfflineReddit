@@ -164,7 +164,24 @@ extension PostsViewController: UITableViewDelegate {
 }
 
 class PostCell: UITableViewCell {
+    
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var bottomLabel: UILabel!
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    private func setup() {
+        let selectedBackgroundView = UIView()
+        selectedBackgroundView.backgroundColor = .selectedGray
+        self.selectedBackgroundView = selectedBackgroundView
+    }
 }
