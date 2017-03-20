@@ -25,5 +25,7 @@ struct SharedText {
 }
 
 extension UIColor {
-    static let selectedGray = UIColor(white: 0.92, alpha: 1)
+    static let offWhite = UIColor(white: 0.95, alpha: 1)
+    static let selectedGray = UIColor(white: 0.93, alpha: 1)
+    static let offBlack = UIColor(white: 0.15, alpha: 1)
 }

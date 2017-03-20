@@ -14,6 +14,9 @@ class PostsViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var progressView: UIProgressView!
     
+    var downloadBarButtonItem: UIBarButtonItem?
+    var states: [IndexPath: PostCell.State] = [:]
+    var isSavingOffline = false
     var posts: [Post] = []
     
     var isLoading = false {
@@ -63,8 +66,15 @@ class PostsViewController: UIViewController {
             tableView.deleteRows(at: [IndexPath(row: posts.count, section: 0)], with: .fade)
         }
         tableView.endUpdates()
-        navigationItem.setLeftBarButton(editing ? UIBarButtonItem(image: #imageLiteral(resourceName: "cross"), style: .plain, target: self, action: #selector(cancelEditingButtonPressed(_:))) : nil, animated: animated)
-        navigationItem.setRightBarButton(UIBarButtonItem(image: editing ? #imageLiteral(resourceName: "tick") : #imageLiteral(resourceName: "download"), style: .plain, target: self, action: #selector(downloadButtonPressed(_:))), animated: animated)
+        var items: [UIBarButtonItem] = [
+            UIBarButtonItem(image: editing ? #imageLiteral(resourceName: "tick") : #imageLiteral(resourceName: "download"), style: .plain, target: self, action: #selector(downloadButtonPressed(_:)))
+        ]
+        downloadBarButtonItem = items.first
+        if editing {
+            downloadBarButtonItem?.isEnabled = false
+            items.insert(UIBarButtonItem(image: #imageLiteral(resourceName: "cross"), style: .plain, target: self, action: #selector(cancelEditingButtonPressed(_:))), at: 0)
+        }
+        navigationItem.setRightBarButtonItems(items, animated: animated)
     }
     
     func updateMoreCell(_ cell: MoreCell) {
@@ -88,31 +98,63 @@ class PostsViewController: UIViewController {
     }
     
     @IBAction func downloadButtonPressed(_ sender: UIBarButtonItem) {
-        if isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {
-            if let bar = navigationController?.navigationBar {
-                bar.addSubview(progressView)
-                progressView.frame = CGRect(x: 0, y: bar.frame.height - progressView.frame.height, width: bar.frame.width, height: progressView.frame.height)
-                progressView.setProgress(0, animated: false)
-                progressView.layoutIfNeeded()
-            }
-            let posts = indexPaths.map { self.posts[$0.row] }
-            var remaining = posts
-            func downloadNext() -> Task<Void> {
-                progressView.setProgress(Float(posts.count - remaining.count) / Float(posts.count), animated: true)
-                guard !remaining.isEmpty else { return Task(()) }
-                return APIClient.shared.getComments(for: remaining.removeFirst())
-                    .continueOnSuccessWithTask(.mainThread) { _ in downloadNext() }
-            }
-            downloadNext()
-                .continueOnSuccessWithTask { Task<Void>.withDelay(1) }
-                .continueOnSuccessWith(.mainThread) {
-                    self.progressView.removeFromSuperview()
-            }
-            
+        guard isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty else {
+            setEditing(!isEditing, animated: true); return
         }
+        
+        for cell in tableView.visibleCells {
+            (cell as? PostCell)?.state = .indented
+        }
+        for indexPath in indexPaths {
+            states[indexPath] = .loading
+            (tableView.cellForRow(at: indexPath) as? PostCell)?.state = .loading
+        }
+        
         setEditing(!isEditing, animated: true)
+        downloadBarButtonItem?.isEnabled = false
+        self.isSavingOffline = true
+        
+        if let bar = navigationController?.navigationBar {
+            bar.addSubview(progressView)
+            progressView.frame = CGRect(x: 0, y: bar.frame.height - progressView.frame.height, width: bar.frame.width, height: progressView.frame.height)
+            progressView.setProgress(0, animated: false)
+            progressView.layoutIfNeeded()
+        }
+        let posts = indexPaths.map { ($0, self.posts[$0.row]) }
+        var remaining = posts
+        
+        func downloadNext() -> Task<Void> {
+            progressView.setProgress(Float(posts.count - remaining.count) / Float(posts.count), animated: true)
+            guard !remaining.isEmpty else { return Task(()) }
+            let (indexPath, post) = remaining.removeFirst()
+            return APIClient.shared.getComments(for: post).continueOnSuccessWithTask(.mainThread) { _ -> Task<Void> in
+                post.isAvailableOffline = true
+                self.states[indexPath] = .checked
+                (self.tableView.cellForRow(at: indexPath) as? PostCell)?.state = .checked
+                return downloadNext()
+            }
+        }
+        downloadNext()
+            .continueOnSuccessWithTask { Task<Void>.withDelay(1) }
+            .continueOnSuccessWith(.mainThread) {
+                for indexPath in indexPaths {
+                    (self.tableView.cellForRow(at: indexPath) as? PostCell)?.offlineImageView.isHidden = false
+                }
+            }.continueWith(.mainThread) { task -> Void in
+                task.error.map(self.presentErrorAlert)
+                self.isSavingOffline = false
+                self.progressView.removeFromSuperview()
+                self.downloadBarButtonItem?.isEnabled = true
+                self.states.removeAll()
+                for cell in self.tableView.visibleCells {
+                    (cell as? PostCell)?.state = .normal
+                }
+                self.tableView.beginUpdates()
+                self.tableView.endUpdates()
+                _ = try? CoreDataController.shared.viewContext.save()
+        }
     }
-    
+
     func cancelEditingButtonPressed(_ sender: UIBarButtonItem) {
         setEditing(false, animated: true)
     }
@@ -138,6 +180,8 @@ extension PostsViewController: UITableViewDataSource {
         cell.topLabel.text = post.authorTimeText
         cell.titleLabel.text = post.title
         cell.bottomLabel.text = post.scoreCommentsText
+        cell.state = states[indexPath] ?? (isSavingOffline ? .indented : .normal)
+        cell.offlineImageView.isHidden = !post.isAvailableOffline
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
         return cell
@@ -147,11 +191,14 @@ extension PostsViewController: UITableViewDataSource {
 extension PostsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.row != posts.count || !isLoading
+        return !isSavingOffline && (indexPath.row != posts.count || !isLoading)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard !isEditing else { return }
+        guard !isEditing else {
+            downloadBarButtonItem?.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
+            return
+        }
         if indexPath.row == posts.count {
             if !isLoading {
                 fetchPosts()
@@ -161,6 +208,12 @@ extension PostsViewController: UITableViewDelegate {
             performSegue(withIdentifier: Segues.comments, sender: posts[indexPath.row])
         }
     }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if isEditing {
+            downloadBarButtonItem?.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
+        }
+    }
 }
 
 class PostCell: UITableViewCell {
@@ -168,6 +221,26 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var bottomLabel: UILabel!
+    @IBOutlet weak var checkedImageView: UIImageView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var container: UIView!
+    @IBOutlet weak var containerLeading: NSLayoutConstraint!
+    @IBOutlet weak var offlineImageView: UIImageView!
+    
+    enum State {
+        case normal
+        case indented
+        case loading
+        case checked
+    }
+    
+    var state: State = .normal {
+        didSet {
+            containerLeading.constant = state == .normal ? 0 : 38
+            (state == .loading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
+            checkedImageView.isHidden = state != .checked
+        }
+    }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -184,4 +257,5 @@ class PostCell: UITableViewCell {
         selectedBackgroundView.backgroundColor = .selectedGray
         self.selectedBackgroundView = selectedBackgroundView
     }
+    
 }

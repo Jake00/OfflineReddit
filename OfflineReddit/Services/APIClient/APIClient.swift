@@ -12,7 +12,7 @@ final class APIClient: NSObject {
     
     static let shared = APIClient()
     
-    static var loggingLevel: LoggingLevel = isDebugBuild ? .verbose : .off
+    static var loggingLevel: LoggingLevel = isDebugBuild ? .simple : .off
     
     var base: Base = .production
     

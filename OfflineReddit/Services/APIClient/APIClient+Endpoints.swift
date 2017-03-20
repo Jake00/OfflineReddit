@@ -13,7 +13,11 @@ extension APIClient {
     
     func getPosts(for subreddits: [String], after: Post? = nil) -> Task<[Post]> {
         let path: String = "r/" + subreddits.joined(separator: "+") + ".json"
-        let parameters: Parameters? = after.map {["after": $0.id, "limit": "25"]}
+        var parameters: Parameters = ["raw_json": "1"]
+        if let after = after {
+            parameters["after"] = after.id
+            parameters["limit"] = "25"
+        }
         let request = Request(.get, path, parameters: parameters)
         return sendJSONRequest(request)
             .continueOnSuccessWith(.immediate, continuation: mapper.mapPosts)
@@ -22,7 +26,7 @@ extension APIClient {
     
     func getComments(for post: Post) -> Task<[Comment]> {
         guard let url = post.urlValue else { return Task(error: Errors.missingFields) }
-        let request = Request(.get, url + ".json")
+        let request = Request(.get, url + ".json", parameters: ["raw_json": "1"])
         return sendJSONRequest(request)
             .continueOnSuccessWith(.immediate, continuation: mapper.mapComments)
             .continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
@@ -33,7 +37,8 @@ extension APIClient {
         let request = Request(.get, "api/morechildren.json", parameters: [
             "api_type": "json",
             "children": more.children.joined(separator: ","),
-            "link_id": post.id
+            "link_id": post.id,
+            "raw_json": "1"
             ])
         return sendJSONRequest(request).continueOnSuccessWith(.immediate) {
             try self.mapper.mapMoreComments(json: $0, more: more)

@@ -26,12 +26,12 @@ class MoreCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = UIColor(white: 0.95, alpha: 1)
+        backgroundColor = .offWhite
         titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.font = .systemFont(ofSize: 15)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = UIColor(white: 0.1, alpha: 1)
+        titleLabel.textColor = .offBlack
         titleLabel.numberOfLines = 0
         activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false

@@ -51,18 +51,17 @@ final class CoreDataController {
     }
     
     private dynamic func contextDidSave(_ notification: Notification) {
-        viewContext.mergeChanges(fromContextDidSave: notification)
-//        let context = viewContext
-//        context.performAndWait {
-//            context.mergeChanges(fromContextDidSave: notification)
-//            if context.hasChanges {
-//                do {
-//                    try context.save()
-//                } catch {
-//                    print("Error saving context: \(context): \(error)")
-//                }
-//            }
-//        }
+        let context = viewContext
+        context.performAndWait {
+            context.mergeChanges(fromContextDidSave: notification)
+            if context.hasChanges {
+                do {
+                    try context.save()
+                } catch {
+                    print("Error saving context: \(context): \(error)")
+                }
+            }
+        }
     }
     
     static func deleteCoreDataStore() {

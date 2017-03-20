@@ -83,7 +83,7 @@ class CommentsViewController: UIViewController {
             let start = min(indexPath.row + 1, self.comments.endIndex - 1)
             let next = self.comments[start]
             self.updateComments()
-            guard let end = self.comments.index(where: { $0 == next }) else {
+            guard let end = self.comments.index(where: { $0 == next }), end - start >= 0 else {
                 self.tableView.reloadData()
                 return
             }
@@ -92,7 +92,7 @@ class CommentsViewController: UIViewController {
             if end - start > 0 {
                 self.tableView.insertRows(at: (start..<end).map { IndexPath(row: $0, section: 0) }, with: .fade)
             }
-            self.tableView.endUpdates()
+            self.tableView.endUpdatesSafe()
             }.continueOnErrorWith(.mainThread) {
                 self.presentErrorAlert(error: $0)
                 self.loading.remove(more)

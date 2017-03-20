@@ -20,7 +20,7 @@
 		235E07E11E7FA03100D83D16 /* CommentsCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07E01E7FA03100D83D16 /* CommentsCells.swift */; };
 		235E07ED1E7FA20F00D83D16 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 235E07E91E7FA20F00D83D16 /* Localizable.strings */; };
 		235E07EE1E7FA20F00D83D16 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 235E07EB1E7FA20F00D83D16 /* Localizable.stringsdict */; };
-		235E07F01E7FF64200D83D16 /* TableViewReloading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07EF1E7FF64200D83D16 /* TableViewReloading.swift */; };
+		235E07F41E80142300D83D16 /* UITableView+Reloading.m in Sources */ = {isa = PBXBuildFile; fileRef = 235E07F31E80142300D83D16 /* UITableView+Reloading.m */; };
 		23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395C81E7DDE8600030DEF /* AppDelegate.swift */; };
 		23A395F01E7DDF9800030DEF /* OfflineReddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 23A395DE1E7DDF9800030DEF /* OfflineReddit.xcdatamodeld */; };
 		23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395E21E7DDF9800030DEF /* APIClient+Endpoints.swift */; };
@@ -55,7 +55,9 @@
 		235E07E01E7FA03100D83D16 /* CommentsCells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsCells.swift; sourceTree = "<group>"; };
 		235E07EA1E7FA20F00D83D16 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		235E07EC1E7FA20F00D83D16 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		235E07EF1E7FF64200D83D16 /* TableViewReloading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewReloading.swift; sourceTree = "<group>"; };
+		235E07F21E80142300D83D16 /* UITableView+Reloading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+Reloading.h"; sourceTree = "<group>"; };
+		235E07F31E80142300D83D16 /* UITableView+Reloading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+Reloading.m"; sourceTree = "<group>"; };
+		235E07F51E80143A00D83D16 /* OfflineReddit-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OfflineReddit-Bridging-Header.h"; sourceTree = "<group>"; };
 		23A395C51E7DDE8600030DEF /* OfflineReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23A395C81E7DDE8600030DEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23A395DF1E7DDF9800030DEF /* OfflineReddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OfflineReddit.xcdatamodel; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 		23A395E91E7DDF9800030DEF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				235E07F51E80143A00D83D16 /* OfflineReddit-Bridging-Header.h */,
 				235E07E91E7FA20F00D83D16 /* Localizable.strings */,
 				235E07EB1E7FA20F00D83D16 /* Localizable.stringsdict */,
 				23A395EA1E7DDF9800030DEF /* Assets.xcassets */,
@@ -189,7 +192,8 @@
 			isa = PBXGroup;
 			children = (
 				235E07CE1E7EB2BD00D83D16 /* MoreCell.swift */,
-				235E07EF1E7FF64200D83D16 /* TableViewReloading.swift */,
+				235E07F21E80142300D83D16 /* UITableView+Reloading.h */,
+				235E07F31E80142300D83D16 /* UITableView+Reloading.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -236,6 +240,7 @@
 					23A395C41E7DDE8600030DEF = {
 						CreatedOnToolsVersion = 8.3;
 						DevelopmentTeam = CQSYPH2WC6;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -302,6 +307,7 @@
 				23A395F31E7DDF9800030DEF /* APIClient+Response.swift in Sources */,
 				23A396091E7E19DC00030DEF /* AsyncOperation.swift in Sources */,
 				23A396051E7E021500030DEF /* Identifiable.swift in Sources */,
+				235E07F41E80142300D83D16 /* UITableView+Reloading.m in Sources */,
 				235E07C91E7E9A7600D83D16 /* CommentsViewController.swift in Sources */,
 				235E07D71E7F525100D83D16 /* NSManagedObject+Create.swift in Sources */,
 				235E07D51E7F492600D83D16 /* MoreComments.swift in Sources */,
@@ -309,7 +315,6 @@
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,
 				23A395F61E7DDF9800030DEF /* CoreDataController.swift in Sources */,
-				235E07F01E7FF64200D83D16 /* TableViewReloading.swift in Sources */,
 				235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */,
 				235E07C71E7E92E600D83D16 /* Constants.swift in Sources */,
 				23A395F41E7DDF9800030DEF /* APIClient+URLSessionDelegate.swift in Sources */,
@@ -446,6 +451,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = CQSYPH2WC6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -456,6 +462,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jrb.OfflineReddit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "OfflineReddit/Supporting Files/OfflineReddit-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -464,6 +472,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = CQSYPH2WC6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -474,6 +483,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jrb.OfflineReddit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "OfflineReddit/Supporting Files/OfflineReddit-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
