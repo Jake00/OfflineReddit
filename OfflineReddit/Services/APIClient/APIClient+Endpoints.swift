@@ -32,16 +32,16 @@ extension APIClient {
             .continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
     }
     
-    func getMoreComments(using more: MoreComments) -> Task<[Comment]> {
-        guard let post = more.owningPost else { return Task(error: Errors.missingFields) }
-        let request = Request(.get, "api/morechildren.json", parameters: [
+    func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]> {
+        guard !mores.isEmpty else { return Task(error: Errors.missingFields) }
+        let request = Request(.post, "api/morechildren.json", parameters: [
             "api_type": "json",
-            "children": more.children.joined(separator: ","),
+            "children": mores.flatMap { $0.children }.joined(separator: ","),
             "link_id": post.id,
             "raw_json": "1"
             ])
         return sendJSONRequest(request).continueOnSuccessWith(.immediate) {
-            try self.mapper.mapMoreComments(json: $0, more: more)
+            try self.mapper.mapMoreComments(json: $0, mores: mores, post: post)
             }.continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
     }
 }

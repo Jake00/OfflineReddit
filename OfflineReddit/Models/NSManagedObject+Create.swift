@@ -27,10 +27,11 @@ extension NSManagedObject {
 
 extension Collection where Iterator.Element: NSManagedObject {
     
-    func inContext(_ context: NSManagedObjectContext) -> [Iterator.Element] {
-        return context.performAndWait { context in
+    func inContext(_ context: NSManagedObjectContext, inContextsQueue: Bool = true) -> [Iterator.Element] {
+        let map = { (context: NSManagedObjectContext) in
             self.map { context.object(with: $0.objectID) } as! [Iterator.Element]
         }
+        return inContextsQueue ? context.performAndWait(map) : map(context)
     }
 }
 

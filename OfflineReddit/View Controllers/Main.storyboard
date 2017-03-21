@@ -6,13 +6,14 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12084"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
         <scene sceneID="Ejq-Om-Usv">
             <objects>
-                <navigationController id="pAh-Il-mf2" sceneMemberID="viewController">
+                <navigationController id="pAh-Il-mf2" customClass="NavigationController" customModule="OfflineReddit" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="G5p-AD-Vwp">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -197,7 +198,6 @@
                         <outlet property="hintImage" destination="Mtt-hZ-11e" id="kn1-Bj-dqR"/>
                         <outlet property="hintLabel" destination="q3Q-5J-274" id="X1H-RW-y7y"/>
                         <outlet property="loadMoreButton" destination="eCc-lh-6KX" id="TNE-4g-YkF"/>
-                        <outlet property="progressView" destination="wa4-lG-BYN" id="ccB-Q4-ULv"/>
                         <outlet property="startDownloadsButton" destination="FYy-mS-MZN" id="pCj-Rw-6X6"/>
                         <outlet property="subredditsButton" destination="3AA-Mz-kgq" id="QuN-H1-X1N"/>
                         <outlet property="tableView" destination="eFD-51-deS" id="Qsh-2S-uRv"/>
@@ -205,12 +205,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QV1-Uv-mey" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progressViewStyle="bar" id="wa4-lG-BYN">
-                    <rect key="frame" x="0.0" y="0.0" width="150" height="2.5"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="progressTintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <color key="trackTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                </progressView>
                 <barButtonItem systemItem="save" id="FYy-mS-MZN">
                     <connections>
                         <action selector="startDownloadsButtonPressed:" destination="WSL-w6-AFc" id="PuQ-CM-lKM"/>
@@ -368,13 +362,21 @@
                                             </constraints>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="r/[subreddit]" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Emg-qM-Bud">
-                                            <rect key="frame" x="8" y="8" width="304" height="14.5"/>
+                                            <rect key="frame" x="8" y="8" width="218" height="14.5"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
                                             <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="u/[user] • [x time] ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1wz-CR-VvS">
-                                            <rect key="frame" x="8" y="22" width="304" height="14.5"/>
+                                            <rect key="frame" x="8" y="22" width="218" height="14.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="751" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZVK-gi-9Kc">
+                                            <rect key="frame" x="234" y="8" width="78" height="29"/>
+                                            <string key="text">[x] comments
+[x]/[x] saved</string>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
                                             <nil key="highlightedColor"/>
@@ -394,22 +396,24 @@
                                     </subviews>
                                     <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
                                     <constraints>
+                                        <constraint firstItem="ZVK-gi-9Kc" firstAttribute="leading" secondItem="1wz-CR-VvS" secondAttribute="trailing" constant="8" id="1rh-KB-tbV"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="wNF-jY-NgG" secondAttribute="trailing" id="2O3-w8-pqV"/>
+                                        <constraint firstItem="ZVK-gi-9Kc" firstAttribute="leading" secondItem="Emg-qM-Bud" secondAttribute="trailing" constant="8" id="5S8-JH-Gse"/>
                                         <constraint firstItem="Emg-qM-Bud" firstAttribute="top" secondItem="BC4-Zu-6R5" secondAttribute="topMargin" id="5vG-bu-23c"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="eaR-ga-BHf" secondAttribute="bottom" id="8PO-mh-lkW"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="Emg-qM-Bud" secondAttribute="trailing" id="ILe-9h-EJD"/>
                                         <constraint firstItem="1wz-CR-VvS" firstAttribute="top" secondItem="Emg-qM-Bud" secondAttribute="bottom" id="JHi-Ps-QSU"/>
                                         <constraint firstItem="wNF-jY-NgG" firstAttribute="top" secondItem="1wz-CR-VvS" secondAttribute="bottom" constant="8" id="MVM-Vl-k3e"/>
                                         <constraint firstAttribute="bottom" secondItem="kB4-ep-Ago" secondAttribute="bottom" id="Uyv-Ns-Gzm"/>
+                                        <constraint firstItem="ZVK-gi-9Kc" firstAttribute="trailing" secondItem="BC4-Zu-6R5" secondAttribute="trailingMargin" id="Yme-2u-uz6"/>
                                         <constraint firstItem="wNF-jY-NgG" firstAttribute="leading" secondItem="BC4-Zu-6R5" secondAttribute="leadingMargin" id="asJ-qV-lgN"/>
                                         <constraint firstItem="eaR-ga-BHf" firstAttribute="top" secondItem="wNF-jY-NgG" secondAttribute="bottom" constant="4" id="cYO-N9-3ir"/>
                                         <constraint firstItem="eaR-ga-BHf" firstAttribute="leading" secondItem="BC4-Zu-6R5" secondAttribute="leadingMargin" id="fcM-jI-agx"/>
                                         <constraint firstAttribute="trailing" secondItem="kB4-ep-Ago" secondAttribute="trailing" id="fgg-r7-OLt"/>
-                                        <constraint firstItem="1wz-CR-VvS" firstAttribute="trailing" secondItem="BC4-Zu-6R5" secondAttribute="trailingMargin" id="jUv-GA-5kj"/>
                                         <constraint firstItem="eaR-ga-BHf" firstAttribute="trailing" secondItem="BC4-Zu-6R5" secondAttribute="trailingMargin" id="kFH-na-gsi"/>
                                         <constraint firstItem="1wz-CR-VvS" firstAttribute="leading" secondItem="BC4-Zu-6R5" secondAttribute="leadingMargin" id="kvL-Dc-rZD"/>
                                         <constraint firstItem="kB4-ep-Ago" firstAttribute="leading" secondItem="BC4-Zu-6R5" secondAttribute="leading" id="m2R-6F-fXI"/>
                                         <constraint firstItem="Emg-qM-Bud" firstAttribute="leading" secondItem="BC4-Zu-6R5" secondAttribute="leadingMargin" id="qiH-IL-AYK"/>
+                                        <constraint firstItem="ZVK-gi-9Kc" firstAttribute="top" secondItem="BC4-Zu-6R5" secondAttribute="topMargin" id="sae-jK-D5c"/>
                                     </constraints>
                                 </view>
                                 <view key="tableFooterView" contentMode="scaleToFill" id="VG1-gg-wSf">
@@ -534,9 +538,37 @@
                             <constraint firstAttribute="trailing" secondItem="rnd-EK-8qG" secondAttribute="trailing" id="y2L-me-scM"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="C3T-nX-MdC">
+                        <rightBarButtonItems>
+                            <barButtonItem title="Save More" id="5fP-PF-ZHN">
+                                <connections>
+                                    <action selector="expandCommentsButtonPressed:" destination="7Ix-Na-cZr" id="j9t-tj-0yt"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem enabled="NO" style="plain" id="KUh-Y6-s5C">
+                                <view key="customView" contentMode="scaleToFill" id="Hk0-bq-Zds">
+                                    <rect key="frame" x="190" y="5" width="33" height="33"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="IZp-R3-9wK">
+                                            <rect key="frame" x="6.5" y="6.5" width="20" height="20"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    <constraints>
+                                        <constraint firstItem="IZp-R3-9wK" firstAttribute="centerX" secondItem="Hk0-bq-Zds" secondAttribute="centerX" id="D8L-rp-sFF"/>
+                                        <constraint firstItem="IZp-R3-9wK" firstAttribute="centerY" secondItem="Hk0-bq-Zds" secondAttribute="centerY" id="pzA-ri-5ee"/>
+                                    </constraints>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
                     <connections>
                         <outlet property="authorTimeLabel" destination="1wz-CR-VvS" id="mLk-VR-b7q"/>
+                        <outlet property="commentsLabel" destination="ZVK-gi-9Kc" id="IyZ-tR-tZt"/>
+                        <outlet property="expandCommentsButton" destination="5fP-PF-ZHN" id="4QF-Kz-Tfx"/>
                         <outlet property="headerView" destination="BC4-Zu-6R5" id="peo-9v-JE2"/>
+                        <outlet property="loadingButton" destination="KUh-Y6-s5C" id="7EF-8a-Mqd"/>
                         <outlet property="selfLabel" destination="eaR-ga-BHf" id="wfh-6e-uct"/>
                         <outlet property="subredditLabel" destination="Emg-qM-Bud" id="vQi-o1-8fd"/>
                         <outlet property="tableView" destination="rnd-EK-8qG" id="JMh-XH-Uxe"/>

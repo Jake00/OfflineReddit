@@ -19,14 +19,13 @@ class PostsViewController: UIViewController {
     @IBOutlet weak var activityIndicatorCenterX: NSLayoutConstraint!
     @IBOutlet weak var hintLabel: UILabel!
     @IBOutlet weak var hintImage: UIImageView!
-    @IBOutlet var progressView: UIProgressView!
     @IBOutlet var subredditsButton: UIBarButtonItem!
     @IBOutlet var chooseDownloadsButton: UIBarButtonItem!
     @IBOutlet var startDownloadsButton: UIBarButtonItem!
     @IBOutlet var cancelDownloadsButton: UIBarButtonItem!
     
     let context = CoreDataController.shared.viewContext
-    var states: [IndexPath: PostCell.State] = [:]
+    var states: [Post: PostCell.State] = [:]
     var isSavingOffline = false
     var posts: [Post] = []
     var subreddits: [Subreddit] = [] {
@@ -73,6 +72,7 @@ class PostsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
+            (tableView.cellForRow(at: selectedIndexPath) as? PostCell)?.offlineImageView.isHidden = !posts[selectedIndexPath.row].isAvailableOffline
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
         if subreddits.isEmpty {
@@ -139,12 +139,12 @@ class PostsViewController: UIViewController {
         guard isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty else {
             setEditing(!isEditing, animated: true); return
         }
-        
+        let posts = indexPaths.map { ($0, self.posts[$0.row]) }
         for cell in tableView.visibleCells {
             (cell as? PostCell)?.state = .indented
         }
-        for indexPath in indexPaths {
-            states[indexPath] = .loading
+        for (indexPath, post) in posts {
+            states[post] = .loading
             let cell = tableView.cellForRow(at: indexPath) as? PostCell
             cell?.state = .loading
             cell?.prepareForLoadingTransition()
@@ -153,23 +153,18 @@ class PostsViewController: UIViewController {
         setEditing(!isEditing, animated: true)
         chooseDownloadsButton.isEnabled = false
         isSavingOffline = true
+        navigationBarProgressView?.isHidden = false
+        navigationBarProgressView?.setProgress(0, animated: false)
         
-        if let bar = navigationController?.navigationBar {
-            bar.addSubview(progressView)
-            progressView.frame = CGRect(x: 0, y: bar.frame.height - progressView.frame.height, width: bar.frame.width, height: progressView.frame.height)
-            progressView.setProgress(0, animated: false)
-            progressView.layoutIfNeeded()
-        }
-        let posts = indexPaths.map { ($0, self.posts[$0.row]) }
         var remaining = posts
         
         func downloadNext() -> Task<Void> {
-            progressView.setProgress(Float(posts.count - remaining.count) / Float(posts.count), animated: true)
+            navigationBarProgressView?.setProgress(Float(posts.count - remaining.count) / Float(posts.count), animated: true)
             guard !remaining.isEmpty else { return Task(()) }
             let (indexPath, post) = remaining.removeFirst()
             return APIClient.shared.getComments(for: post).continueOnSuccessWithTask(.mainThread) { _ -> Task<Void> in
                 post.isAvailableOffline = true
-                self.states[indexPath] = .checked
+                self.states[post] = .checked
                 (self.tableView.cellForRow(at: indexPath) as? PostCell)?.state = .checked
                 return downloadNext()
             }
@@ -184,7 +179,7 @@ class PostsViewController: UIViewController {
                 task.error.map(self.presentErrorAlert)
                 self.chooseDownloadsButton.isEnabled = true
                 self.isSavingOffline = false
-                self.progressView.removeFromSuperview()
+                self.navigationBarProgressView?.isHidden = true
                 self.states.removeAll()
                 for cell in self.tableView.visibleCells {
                     (cell as? PostCell)?.state = .normal
@@ -213,7 +208,7 @@ extension PostsViewController: UITableViewDataSource {
         cell.topLabel.text = post.subredditAuthorTimeText
         cell.titleLabel.text = post.title
         cell.bottomLabel.text = post.scoreCommentsText
-        cell.state = states[indexPath] ?? (isSavingOffline ? .indented : .normal)
+        cell.state = states[post] ?? (isSavingOffline ? .indented : .normal)
         cell.offlineImageView.isHidden = !post.isAvailableOffline
         cell.setNeedsLayout()
         cell.layoutIfNeeded()

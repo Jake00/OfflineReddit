@@ -11,11 +11,12 @@ import CoreData
 class Comment: NSManagedObject {
     
     @NSManaged var id: String
+    @NSManaged var shortId: String?
     @NSManaged var author: String?
     @NSManaged var body: String?
     @NSManaged var created: Date?
     @NSManaged var gildedCount: Int64
-    @NSManaged var parentName: String?
+    @NSManaged var parentId: String?
     @NSManaged var postId: String?
     @NSManaged var score: Int64
     @NSManaged var isScoreHidden: Bool
@@ -38,13 +39,14 @@ extension Comment {
     func update(json: JSON) {
         author = json["author"] as? String
         body = json["body"] as? String
-        parentName = json["parent_name"] as? String
+        parentId = json["parent_id"] as? String
         created = (json["created_utc"] as? TimeInterval).map(Date.init(timeIntervalSince1970:))
         gildedCount = (json["gilded"] as? Int).map(Int64.init) ?? 0
         score = (json["score"] as? Int).map(Int64.init) ?? 0
         isScoreHidden = json["score_hidden"] as? Bool ?? false
         depth = (json["depth"] as? Int).map(Int64.init) ?? 0
         postId = json["link_id"] as? String
+        shortId = json["id"] as? String
     }
     
     var owningPost: Post? {

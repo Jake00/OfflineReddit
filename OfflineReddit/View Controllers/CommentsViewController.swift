@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BoltsSwift
 
 class CommentsViewController: UIViewController {
     
@@ -14,13 +15,22 @@ class CommentsViewController: UIViewController {
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var subredditLabel: UILabel!
     @IBOutlet weak var authorTimeLabel: UILabel!
+    @IBOutlet weak var commentsLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var selfLabel: UILabel!
+    @IBOutlet var loadingButton: UIBarButtonItem!
+    @IBOutlet var expandCommentsButton: UIBarButtonItem!
     
+    let context = CoreDataController.shared.viewContext
     var post: Post!
     var comments: [Either<Comment, MoreComments>] = []
     var allComments: [Either<Comment, MoreComments>] = []
     var loading: Set<MoreComments> = []
+    var isLoading = false {
+        didSet {
+            navigationItem.setRightBarButtonItems([isLoading ? loadingButton : expandCommentsButton], animated: true)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +38,7 @@ class CommentsViewController: UIViewController {
         authorTimeLabel.text = post.authorTimeText
         titleLabel.text = post.title
         selfLabel.text = post.selfText
+        isLoading = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -56,11 +67,22 @@ class CommentsViewController: UIViewController {
     }
     
     func fetchComments() {
-        APIClient.shared.getComments(for: post).continueOnSuccessWith(.mainThread) { _ -> Void in
+        isLoading = true
+        APIClient.shared.getComments(for: post).continueWith(.mainThread) { task -> Void in
+            self.isLoading = false
+            if let error = task.error {
+                self.presentErrorAlert(error: error)
+                return
+            }
+            self.post.isAvailableOffline = true
             let old = self.comments.count
             self.updateComments()
             let new = self.comments.count
-            guard new > 0 else { self.tableView.reloadData(); return }
+            guard new > 0 else {
+                self.tableView.reloadData()
+                _ = try? self.context.save()
+                return
+            }
             if old == 0 {
                 self.tableView.beginUpdates()
                 self.tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
@@ -69,11 +91,14 @@ class CommentsViewController: UIViewController {
             if old == 0 {
                 self.tableView.endUpdates()
             }
-            }.continueOnErrorWith(.mainThread, continuation: presentErrorAlert)
+            _ = try? self.context.save()
+        }
     }
     
     func fetchMoreComments(using more: MoreComments) {
-        APIClient.shared.getMoreComments(using: more).continueOnSuccessWith(.mainThread) { _ -> Void in
+        isLoading = true
+        APIClient.shared.getMoreComments(using: [more], post: post).continueOnSuccessWith(.mainThread) { _ -> Void in
+            self.isLoading = false
             self.loading.remove(more)
             guard let indexPath = self.indexPath(of: more) else {
                 self.updateComments()
@@ -93,6 +118,7 @@ class CommentsViewController: UIViewController {
                 self.tableView.insertRows(at: (start..<end).map { IndexPath(row: $0, section: 0) }, with: .fade)
             }
             self.tableView.endUpdatesSafe()
+            _ = try? self.context.save()
             }.continueOnErrorWith(.mainThread) {
                 self.presentErrorAlert(error: $0)
                 self.loading.remove(more)
@@ -103,9 +129,9 @@ class CommentsViewController: UIViewController {
     }
     
     func updateComments() {
-        self.allComments = post.displayComments
+        allComments = post.displayComments
         var condensedComment: Comment?
-        self.comments = self.allComments.filter {
+        comments = allComments.filter {
             switch $0 {
             case .other: return true
             case .first(let next):
@@ -121,6 +147,16 @@ class CommentsViewController: UIViewController {
                 return true
             }
         }
+        expandCommentsButton.isEnabled = allComments.contains(where: { $0.other != nil })
+        let (savedCount, toExpandCount) = allComments.reduce((0, 0) as (Int64, Int64)) {
+            switch $1 {
+            case .first: return ($0.0 + 1, $0.1)
+            case .other(let b): return ($0.0, $0.1 + b.count)
+            }
+        }
+        commentsLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("comments_saved_format", value: "%ld comments\n%ld / %ld saved", comment: "Format for number of comments and amount saved. eg. '50 comments\n30 / 40 saved'"),
+            post.commentsCount, savedCount, savedCount + toExpandCount)
     }
     
     func updateMoreCell(at indexPath: IndexPath, _ more: MoreComments? = nil, cell: MoreCell? = nil, forceLoad: Bool = false) {
@@ -170,6 +206,57 @@ class CommentsViewController: UIViewController {
         }
         tableView.endUpdates()
         cell?.isExpanding = false
+    }
+    
+    @IBAction func expandCommentsButtonPressed(_ sender: UIBarButtonItem) {
+        let comments = allComments
+            .flatMap { $0.other }
+            .sorted { $0.children.count > $1.children.count }
+        
+        var index = 0
+        var batches: [[MoreComments]] = []
+        var current: [MoreComments] = []
+        var currentChildrenCount: Int {
+            return current.reduce(0) { $0 + $1.children.count }
+        }
+        while batches.count <= 5, index < comments.endIndex {
+            current.append(comments[index])
+            if index + 1 < comments.endIndex {
+                let nextChildrenCount = comments[index + 1].children.count
+                if currentChildrenCount + nextChildrenCount > 100 {
+                    batches.append(current)
+                    current = []
+                }
+            } else {
+                batches.append(current)
+                current = []
+            }
+            index += 1
+        }
+        
+        let total = batches.count
+        navigationBarProgressView?.isHidden = false
+        navigationBarProgressView?.setProgress(0, animated: false)
+        isLoading = true
+        
+        func downloadNext() -> Task<Void> {
+            navigationBarProgressView?.setProgress(Float(total - batches.count) / Float(total), animated: true)
+            guard !batches.isEmpty else { return Task(()) }
+            let batch = batches.removeFirst()
+            return APIClient.shared.getMoreComments(using: batch, post: post)
+                .continueOnSuccessWithTask(.mainThread) { _ in downloadNext() }
+        }
+        
+        downloadNext()
+            .continueOnSuccessWithTask { Task<Void>.withDelay(1) }
+            .continueWith(.mainThread) { task -> Void in
+                task.error.map(self.presentErrorAlert)
+                self.isLoading = false
+                self.navigationBarProgressView?.isHidden = true
+                self.updateComments()
+                self.tableView.reloadData()
+                _ = try? self.context.save()
+        }
     }
 }
 

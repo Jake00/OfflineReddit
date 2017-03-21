@@ -27,7 +27,6 @@ final class APIClient: NSObject {
     lazy var session: URLSession = {
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = [
-            "Content-Type": "application/json; charset=utf-8",
             "accept": "application/json",
             "User-Agent": "ios:jrb.RedditOffline:v0.1 (by u/jefftex)"
         ]
@@ -88,9 +87,14 @@ final class APIClient: NSObject {
         let method: Method
         let path: String
         let parameters: Parameters?
+        let encoding: BodyEncoding
         
-        init(_ method: Method, _ path: String, parameters: Parameters? = nil) {
-            self.method = method; self.path = path; self.parameters = parameters
+        init(_ method: Method, _ path: String, parameters: Parameters? = nil, encoding: BodyEncoding = .formData) {
+            self.method = method; self.path = path; self.parameters = parameters; self.encoding = encoding
+        }
+        
+        enum BodyEncoding {
+            case json, formData
         }
     }
     
@@ -106,7 +110,7 @@ final class APIClient: NSObject {
         
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method.rawValue
-        encode(&urlRequest, with: request.parameters, url, request.method)
+        encode(&urlRequest, with: request, url)
         
         let operation = NetworkOperation()
         let task = session.dataTask(with: urlRequest) { data, response, error in
@@ -120,19 +124,37 @@ final class APIClient: NSObject {
         return task
     }
     
-    func encode(_ request: inout URLRequest, with parameters: Parameters?, _ url: URL, _ method: Method) {
-        if method.encodesParametersInURL {
-            if var components = URLComponents(url: url, resolvingAgainstBaseURL: true), parameters?.isEmpty == false {
-                guard let parameters = parameters as? [String: String] else {
+    func encode(_ urlRequest: inout URLRequest, with request: Request, _ url: URL) {
+        if request.method.encodesParametersInURL {
+            if var components = URLComponents(url: url, resolvingAgainstBaseURL: true), request.parameters?.isEmpty == false {
+                guard let parameters = request.parameters as? [String: String] else {
                     fatalError("Only string types are supported in query parameters. No arrays, dictionaries or other types.")
                 }
                 components.queryItems = parameters.map(URLQueryItem.init)
-                request.url = components.url
+                urlRequest.url = components.url
             }
-        } else {
-            if let parameters = parameters ?? method.nilParameters {
-                request.httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: [])
+            return
+        }
+        switch request.encoding {
+        case .json:
+            if let parameters = request.parameters ?? request.method.nilParameters {
+                urlRequest.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+                urlRequest.httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: [])
             }
+        case .formData:
+            guard request.parameters?.isEmpty == false else { return }
+            let boundary = "----" + UUID().uuidString
+            guard let boundaryData = "--\(boundary)\r\n".data(using: .utf8) else { return }
+            urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            
+            var body = Data()
+            for (key, value) in request.parameters ?? [:] {
+                if let data = "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n\(value)\r\n".data(using: .utf8) {
+                    body.append(boundaryData)
+                    body.append(data)
+                }
+            }
+            urlRequest.httpBody = body
         }
     }
 }

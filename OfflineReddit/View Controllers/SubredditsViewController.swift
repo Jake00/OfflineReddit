@@ -37,9 +37,6 @@ class SubredditsViewController: UIViewController {
             if subreddits.isEmpty {
                 subreddits = Subreddit.insertDefaults(into: context)
             }
-            for (row, subreddit) in subreddits.enumerated() where subreddit.isSelected {
-                tableView.selectRow(at: IndexPath(row: row, section: 0), animated: false, scrollPosition: .none)
-            }
         }
     }
     

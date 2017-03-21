@@ -12,6 +12,10 @@ import BoltsSwift
 
 extension UIViewController {
     
+    var navigationBarProgressView: UIProgressView? {
+        return (navigationController as? NavigationController)?.progressView
+    }
+    
     func presentErrorAlert(error: Error) {
         let presentableError = error as? PresentableError
         let title = presentableError?.alertTitle ?? NSLocalizedString("error_alert.title", value: "Sorry, something went wrong", comment: "The title of an error alert.")

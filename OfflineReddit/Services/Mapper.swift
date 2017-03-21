@@ -114,28 +114,44 @@ final class Mapper {
         return moreComments
     }
     
-    func mapMoreComments(json: Any, more: MoreComments) throws -> [Comment] {
+    func mapMoreComments(json: Any, mores: [MoreComments], post: Post) throws -> [Comment] {
+        guard let json = ((json as? JSON)?["json"] as? JSON)?["data"] as? JSON,
+            let commentsJSON = json["things"] as? [JSON]
+            else { throw APIClient.Errors.invalidResponse }
+        
         return try context.performAndWait { context -> [Comment] in
-            let more = more.managedObjectContext == context ? more : context.object(with: more.objectID) as! MoreComments
-            guard let post = more.owningPost else { throw APIClient.Errors.missingFields }
-            guard let json = ((json as? JSON)?["json"] as? JSON)?["data"] as? JSON,
-                let commentsJSON = json["things"] as? [JSON]
-                else { throw APIClient.Errors.invalidResponse }
+            let mores = mores.inContext(context, inContextsQueue: false)
+            let post = context.object(with: post.objectID) as! Post
             
             let commentsRequest = Comment.fetchRequest(predicate: NSPredicate(format: "postId == %@", post.id))
             
             let existingComments = try context.fetch(commentsRequest)
-            var order = Int64(
-                more.parentComment?.children.count
-                ?? more.parentPost?.comments.count
-                ?? 0)
+            var orders: [MoreComments: Int64] = [:]
+            mores.forEach { orders[$0] = Int64($0.parentComment?.children.count ?? $0.parentPost?.comments.count ?? 0) }
+            var unset: [Comment] = []
+            
             let comments = commentsJSON.flatMap { json -> [Comment] in
-                guard let (parent, replies) = self.mapComment(json: json, parent: more.parentComment, topLevelPost: more.parentPost, existing: existingComments) else { return [] }
-                parent.order = order
-                order += 1
+                let more: MoreComments? = Comment.id(from: json)
+                    .flatMap { $1["id"] as? String }
+                    .flatMap { id in mores.first { $0.children.contains(id) }}
+                guard let (parent, replies) = self.mapComment(json: json, parent: more?.parentComment, topLevelPost: more?.parentPost, existing: existingComments) else { return [] }
+                if let more = more, let order = orders[more] {
+                    parent.order = order
+                    orders[more] = order + 1
+                } else {
+                    unset.append(parent)
+                }
                 return [parent] + replies
             }
-            context.delete(more)
+            for comment in unset {
+                guard let parentId = comment.parentId else { continue }
+                if parentId == post.id {
+                    comment.post = post
+                } else if let parent = comments.first(where: { $0.id == parentId }) {
+                    comment.parent = parent
+                }
+            }
+            _ = mores.map(context.delete)
             try context.save()
             return comments
         }
