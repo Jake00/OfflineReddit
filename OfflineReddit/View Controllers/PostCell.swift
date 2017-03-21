@@ -15,6 +15,7 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var bottomLabel: UILabel!
     @IBOutlet weak var checkedImageView: UIImageView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var activityIndicatorLeading: NSLayoutConstraint!
     @IBOutlet weak var container: UIView!
     @IBOutlet weak var containerLeading: NSLayoutConstraint!
     @IBOutlet weak var offlineImageView: UIImageView!
@@ -32,6 +33,15 @@ class PostCell: UITableViewCell {
             (state == .loading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
             checkedImageView.isHidden = state != .checked
         }
+    }
+    
+    func prepareForLoadingTransition() {
+        activityIndicatorLeading.constant = 43
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        activityIndicatorLeading.constant = 5
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

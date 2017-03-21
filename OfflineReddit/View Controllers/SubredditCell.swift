@@ -10,8 +10,25 @@ import UIKit
 
 class SubredditCell: UITableViewCell {
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        accessoryType = selected ? .checkmark : .none
+    var isChecked = false {
+        didSet {
+            accessoryType = isChecked ? .checkmark : .none
+        }
+    }
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    private func setup() {
+        let selectedBackgroundView = UIView()
+        selectedBackgroundView.backgroundColor = .selectedGray
+        self.selectedBackgroundView = selectedBackgroundView
     }
 }

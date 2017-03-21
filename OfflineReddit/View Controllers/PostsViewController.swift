@@ -100,6 +100,8 @@ class PostsViewController: UIViewController {
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         tableView.setEditing(isEditing, animated: true)
+        tableView.beginUpdates()
+        tableView.endUpdates()
         updateStartDownloadsButtonEnabled()
         navigationItem.setRightBarButtonItems(editing ? [cancelDownloadsButton, startDownloadsButton] : [subredditsButton], animated: animated)
         navigationItem.setLeftBarButtonItems(editing ? nil : [chooseDownloadsButton], animated: animated)
@@ -143,7 +145,9 @@ class PostsViewController: UIViewController {
         }
         for indexPath in indexPaths {
             states[indexPath] = .loading
-            (tableView.cellForRow(at: indexPath) as? PostCell)?.state = .loading
+            let cell = tableView.cellForRow(at: indexPath) as? PostCell
+            cell?.state = .loading
+            cell?.prepareForLoadingTransition()
         }
         
         setEditing(!isEditing, animated: true)

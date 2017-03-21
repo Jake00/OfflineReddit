@@ -88,25 +88,26 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yf9-N7-mAO">
-                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="69.5"/>
+                                                    <rect key="frame" x="38" y="0.0" width="282" height="69.5"/>
                                                     <subviews>
                                                         <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="253" verticalHuggingPriority="251" horizontalCompressionResistancePriority="752" image="checked_small" translatesAutoresizingMaskIntoConstraints="NO" id="lwg-1v-ahw">
-                                                            <rect key="frame" x="302" y="10.5" width="10" height="10"/>
+                                                            <rect key="frame" x="264" y="11.5" width="10" height="8"/>
+                                                            <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="u/[user] • [x time] ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cJk-sB-Vt3">
-                                                            <rect key="frame" x="8" y="8" width="288" height="14.5"/>
+                                                            <rect key="frame" x="8" y="8" width="250" height="14.5"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                             <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="[Title]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WHl-tZ-tua">
-                                                            <rect key="frame" x="8" y="24.5" width="304" height="20.5"/>
+                                                            <rect key="frame" x="8" y="24.5" width="266" height="20.5"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                             <color key="textColor" white="0.14999999999999999" alpha="1" colorSpace="deviceWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="[x] score • [x] comments " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FAW-E4-BiW">
-                                                            <rect key="frame" x="8" y="47" width="304" height="14.5"/>
+                                                            <rect key="frame" x="8" y="47" width="266" height="14.5"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                             <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
                                                             <nil key="highlightedColor"/>
@@ -132,12 +133,12 @@
                                                     <rect key="frame" x="13" y="25" width="20" height="20"/>
                                                 </activityIndicatorView>
                                                 <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="checked" translatesAutoresizingMaskIntoConstraints="NO" id="b7a-Zb-KEz">
-                                                    <rect key="frame" x="16" y="28" width="14" height="14"/>
+                                                    <rect key="frame" x="16.5" y="29.5" width="13" height="11"/>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="yf9-N7-mAO" firstAttribute="top" secondItem="3Xh-b6-Owq" secondAttribute="top" id="BzM-Oh-PET"/>
-                                                <constraint firstItem="yf9-N7-mAO" firstAttribute="leading" secondItem="3Xh-b6-Owq" secondAttribute="leading" id="I6X-2a-Aa6"/>
+                                                <constraint firstItem="yf9-N7-mAO" firstAttribute="leading" secondItem="3Xh-b6-Owq" secondAttribute="leading" constant="38" id="I6X-2a-Aa6"/>
                                                 <constraint firstAttribute="bottom" secondItem="yf9-N7-mAO" secondAttribute="bottom" id="NFP-hq-11s"/>
                                                 <constraint firstItem="5fK-yb-BN6" firstAttribute="centerY" secondItem="3Xh-b6-Owq" secondAttribute="centerY" id="VYk-WP-JZz"/>
                                                 <constraint firstAttribute="trailing" secondItem="yf9-N7-mAO" secondAttribute="trailing" id="cir-Za-c4R"/>
@@ -150,6 +151,7 @@
                                         <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                                         <connections>
                                             <outlet property="activityIndicator" destination="5fK-yb-BN6" id="9Ha-Y6-5aW"/>
+                                            <outlet property="activityIndicatorLeading" destination="ow5-0p-0GO" id="mkl-8E-VNG"/>
                                             <outlet property="bottomLabel" destination="FAW-E4-BiW" id="Z1V-5C-Zmb"/>
                                             <outlet property="checkedImageView" destination="b7a-Zb-KEz" id="UgI-AM-MfU"/>
                                             <outlet property="container" destination="yf9-N7-mAO" id="YVL-Fk-TEc"/>
@@ -234,7 +236,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="40" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Nbh-bj-eFw">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="40" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Nbh-bj-eFw">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
                                 <view key="tableFooterView" contentMode="scaleToFill" id="iCn-3j-tWe">
@@ -548,8 +550,8 @@
     </scenes>
     <resources>
         <image name="arrow" width="39" height="15"/>
-        <image name="checked" width="14" height="14"/>
-        <image name="checked_small" width="10" height="10"/>
+        <image name="checked" width="13" height="11"/>
+        <image name="checked_small" width="10" height="8"/>
         <image name="download" width="30" height="30"/>
     </resources>
 </document>

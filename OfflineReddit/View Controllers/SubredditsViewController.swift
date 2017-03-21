@@ -16,20 +16,8 @@ class SubredditsViewController: UIViewController {
     @IBOutlet var inputToolbar: UIToolbar!
     
     let context = CoreDataController.shared.viewContext
-    
     var didSelectSubreddits: (([Subreddit]) -> Void)?
-    
     var subreddits: [Subreddit] = []
-    
-    var selectedSubreddits: [Subreddit] {
-        guard let indexPaths = tableView.indexPathsForSelectedRows,
-            !indexPaths.isEmpty
-            else { return [] }
-        let rows = indexPaths.map { $0.row }
-        return subreddits.enumerated().filter {
-            rows.contains($0.0)
-            }.map { $1 }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,7 +45,7 @@ class SubredditsViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        didSelectSubreddits?(selectedSubreddits)
+        didSelectSubreddits?(subreddits.filter { $0.isSelected })
         if context.hasChanges {
             _ = try? context.save()
         }
@@ -93,7 +81,9 @@ extension SubredditsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Subreddit", for: indexPath) as! SubredditCell
-        cell.textLabel?.text = subreddits[indexPath.row].name
+        let subreddit = subreddits[indexPath.row]
+        cell.textLabel?.text = subreddit.name
+        cell.isChecked = subreddit.isSelected
         return cell
     }
     
@@ -107,11 +97,10 @@ extension SubredditsViewController: UITableViewDataSource {
 extension SubredditsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        subreddits[indexPath.row].isSelected = true
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        subreddits[indexPath.row].isSelected = false
+        tableView.deselectRow(at: indexPath, animated: true)
+        let subreddit = subreddits[indexPath.row]
+        subreddit.isSelected = !subreddit.isSelected
+        (tableView.cellForRow(at: indexPath) as? SubredditCell)?.isChecked = subreddit.isSelected
     }
 }
 

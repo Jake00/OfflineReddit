@@ -99,8 +99,9 @@ final class APIClient: NSObject {
     
     @discardableResult
     func sendRequest(_ request: Request, completionHandler: @escaping CompletionHandler) -> URLSessionDataTask {
-        guard let url = URL(string: request.path, relativeTo: base.url) else {
-            fatalError("Invalid URL provided to \(self): \(request.path)")
+        guard let url = URL(string: request.path, relativeTo: base.url)
+            ?? request.path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed).flatMap({ URL(string: $0, relativeTo: base.url) }) else {
+                fatalError("Invalid URL provided to \(self): \(request.path)")
         }
         
         var urlRequest = URLRequest(url: url)
