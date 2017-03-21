@@ -52,6 +52,9 @@
                                             <inset key="titleEdgeInsets" minX="31" minY="0.0" maxX="0.0" maxY="0.0"/>
                                             <state key="normal" title="Load more"/>
                                             <state key="disabled" title="Loading..."/>
+                                            <connections>
+                                                <action selector="loadMoreButtonPressed:" destination="WSL-w6-AFc" eventType="touchUpInside" id="Fq3-r7-WBh"/>
+                                            </connections>
                                         </button>
                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="qbt-e2-glK">
                                             <rect key="frame" x="119" y="10" width="20" height="20"/>

@@ -147,13 +147,13 @@ class CommentsViewController: UIViewController {
                 return true
             }
         }
-        expandCommentsButton.isEnabled = allComments.contains(where: { $0.other != nil })
         let (savedCount, toExpandCount) = allComments.reduce((0, 0) as (Int64, Int64)) {
             switch $1 {
             case .first: return ($0.0 + 1, $0.1)
             case .other(let b): return ($0.0, $0.1 + b.count)
             }
         }
+        expandCommentsButton.isEnabled = toExpandCount > 0 && Reachability.shared.isOnline
         commentsLabel.text = String.localizedStringWithFormat(
             NSLocalizedString("comments_saved_format", value: "%ld comments\n%ld / %ld saved", comment: "Format for number of comments and amount saved. eg. '50 comments\n30 / 40 saved'"),
             post.commentsCount, savedCount, savedCount + toExpandCount)
@@ -163,7 +163,7 @@ class CommentsViewController: UIViewController {
         guard let cell = cell ?? tableView.cellForRow(at: indexPath) as? MoreCell else { return }
         let isLoading = (more.map(loading.contains) ?? false) || forceLoad
         cell.titleLabel.text = isLoading
-            ? SharedText.loading
+            ? SharedText.loadingCaps
             : String.localizedStringWithFormat(SharedText.repliesFormat, more?.count ?? 0)
         (isLoading ? cell.activityIndicator.startAnimating : cell.activityIndicator.stopAnimating)()
     }
@@ -206,34 +206,11 @@ class CommentsViewController: UIViewController {
         }
         tableView.endUpdates()
         cell?.isExpanding = false
+        tableView.scrollToRow(at: indexPath, at: .none, animated: true)
     }
     
     @IBAction func expandCommentsButtonPressed(_ sender: UIBarButtonItem) {
-        let comments = allComments
-            .flatMap { $0.other }
-            .sorted { $0.children.count > $1.children.count }
-        
-        var index = 0
-        var batches: [[MoreComments]] = []
-        var current: [MoreComments] = []
-        var currentChildrenCount: Int {
-            return current.reduce(0) { $0 + $1.children.count }
-        }
-        while batches.count <= 5, index < comments.endIndex {
-            current.append(comments[index])
-            if index + 1 < comments.endIndex {
-                let nextChildrenCount = comments[index + 1].children.count
-                if currentChildrenCount + nextChildrenCount > 100 {
-                    batches.append(current)
-                    current = []
-                }
-            } else {
-                batches.append(current)
-                current = []
-            }
-            index += 1
-        }
-        
+        var batches = post.batchedMoreComments(for: allComments)
         let total = batches.count
         navigationBarProgressView?.isHidden = false
         navigationBarProgressView?.setProgress(0, animated: false)
@@ -242,8 +219,7 @@ class CommentsViewController: UIViewController {
         func downloadNext() -> Task<Void> {
             navigationBarProgressView?.setProgress(Float(total - batches.count) / Float(total), animated: true)
             guard !batches.isEmpty else { return Task(()) }
-            let batch = batches.removeFirst()
-            return APIClient.shared.getMoreComments(using: batch, post: post)
+            return APIClient.shared.getMoreComments(using: batches.removeFirst(), post: post)
                 .continueOnSuccessWithTask(.mainThread) { _ in downloadNext() }
         }
         

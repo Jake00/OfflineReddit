@@ -39,23 +39,31 @@ class PostsViewController: UIViewController {
     
     var isLoading = false {
         didSet {
+            guard Reachability.shared.isOnline else { return }
             loadMoreButton.isEnabled = !isLoading
             loadMoreButton.titleEdgeInsets.left = isLoading ? -activityIndicatorCenterX.constant : 0
             (isLoading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
         }
     }
     
-    func updateIsHintHidden() {
-        let show = !subreddits.isEmpty
-        hintLabel.isHidden = show
-        hintImage.isHidden = show
-        loadMoreButton.isHidden = !show
-        (show && isLoading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
+    func updateFooterView() {
+        let hideHints = !subreddits.isEmpty
+        hintLabel.isHidden = hideHints
+        hintImage.isHidden = hideHints
+        loadMoreButton.isHidden = !hideHints
+        let isOnline = Reachability.shared.isOnline
+        loadMoreButton.isEnabled = isOnline
+        loadMoreButton.setTitle(isOnline ? SharedText.loadingLowercase : SharedText.offline, for: .disabled)
+        (hideHints && isLoading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
     }
     
     struct Segues {
         static let comments = "Comments"
         static let subreddits = "Subreddits"
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func viewDidLoad() {
@@ -67,6 +75,8 @@ class PostsViewController: UIViewController {
             let request = Subreddit.fetchRequest(predicate: NSPredicate(format: "isSelected == YES"))
             subreddits = (try? context.fetch(request)) ?? []
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -76,7 +86,7 @@ class PostsViewController: UIViewController {
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
         if subreddits.isEmpty {
-            updateIsHintHidden()
+            updateFooterView()
         } else if posts.isEmpty {
             fetchPosts()
         }
@@ -91,7 +101,7 @@ class PostsViewController: UIViewController {
             let subredditsViewController = segue.destination as! SubredditsViewController
             subredditsViewController.didSelectSubreddits = { [weak self] in
                 self?.subreddits = $0
-                self?.updateIsHintHidden()
+                self?.updateFooterView()
             }
         default: ()
         }
@@ -112,23 +122,51 @@ class PostsViewController: UIViewController {
     }
     
     func updateChooseDownloadsButtonEnabled() {
-        chooseDownloadsButton.isEnabled = !posts.isEmpty
+        chooseDownloadsButton.isEnabled = !posts.isEmpty && !isSavingOffline && Reachability.shared.isOnline
+    }
+    
+    func reachabilityChanged(_ notification: Notification) {
+        print("Reachability changed, isOnline: \(Reachability.shared.isOnline)")
+        let isOffline = Reachability.shared.isOffline
+        updateFooterView()
+        updateChooseDownloadsButtonEnabled()
+        if isEditing && isOffline {
+            setEditing(false, animated: true)
+        }
+        posts = []
+        self.tableView.reloadData()
+        fetchPosts()
     }
     
     func fetchPosts() {
+        guard Reachability.shared.isOnline else {
+            let postsRequest = Post.fetchRequest(predicate: NSPredicate(format: "isAvailableOffline == YES AND subredditName IN %@", subreddits.map { $0.name }))
+            postsRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+            posts = (try? context.fetch(postsRequest)) ?? []
+            tableView.reloadData()
+            return
+        }
         isLoading = true
         APIClient.shared.getPosts(for: subreddits, after: posts.last).continueWith(.mainThread) { task -> Void in
             if let posts = task.result, !posts.isEmpty {
                 let old = self.posts.count
                 self.posts += posts
                 let new = self.posts.count
+                self.tableView.beginUpdates()
                 self.tableView.insertRows(at: (old..<new).map { IndexPath(row: $0, section: 0) }, with: .automatic)
+                self.tableView.endUpdatesSafe()
                 self.updateChooseDownloadsButtonEnabled()
             } else if let error = task.error {
                 self.presentErrorAlert(error: error)
             }
             self.isLoading = false
         }
+    }
+    
+    func cell(for post: Post) -> PostCell? {
+        return posts.index(of: post)
+            .map { IndexPath(row: $0, section: 0) }
+            .flatMap { tableView.cellForRow(at: $0) as? PostCell }
     }
     
     @IBAction func chooseDownloadButtonPressed(_ sender: UIBarButtonItem) {
@@ -139,37 +177,69 @@ class PostsViewController: UIViewController {
         guard isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty else {
             setEditing(!isEditing, animated: true); return
         }
-        let posts = indexPaths.map { ($0, self.posts[$0.row]) }
         for cell in tableView.visibleCells {
             (cell as? PostCell)?.state = .indented
         }
-        for (indexPath, post) in posts {
-            states[post] = .loading
+        for indexPath in indexPaths {
+            states[posts[indexPath.row]] = .loading
             let cell = tableView.cellForRow(at: indexPath) as? PostCell
             cell?.state = .loading
             cell?.prepareForLoadingTransition()
         }
         
         setEditing(!isEditing, animated: true)
-        chooseDownloadsButton.isEnabled = false
         isSavingOffline = true
+        updateChooseDownloadsButtonEnabled()
         navigationBarProgressView?.isHidden = false
         navigationBarProgressView?.setProgress(0, animated: false)
         
-        var remaining = posts
+        var remainingPosts = indexPaths.map { posts[$0.row] }
+        var remainingComments: [(Post, [[MoreComments]])] = []
+        var total = remainingPosts.count
+        var completed = -1
         
-        func downloadNext() -> Task<Void> {
-            navigationBarProgressView?.setProgress(Float(posts.count - remaining.count) / Float(posts.count), animated: true)
-            guard !remaining.isEmpty else { return Task(()) }
-            let (indexPath, post) = remaining.removeFirst()
+        func updateProgress() {
+            completed += 1
+            navigationBarProgressView?.setProgress(Float(completed) / Float(total), animated: true)
+        }
+        
+        func downloadNextPost() -> Task<Void> {
+            guard !remainingPosts.isEmpty else { return Task(()) }
+            let post = remainingPosts.removeFirst()
+            updateProgress()
             return APIClient.shared.getComments(for: post).continueOnSuccessWithTask(.mainThread) { _ -> Task<Void> in
                 post.isAvailableOffline = true
-                self.states[post] = .checked
-                (self.tableView.cellForRow(at: indexPath) as? PostCell)?.state = .checked
-                return downloadNext()
+                let comments = post.batchedMoreComments(maximum: 3)
+                total += comments.count
+                remainingComments.append((post, comments))
+                return downloadNextPost()
             }
         }
-        downloadNext()
+        
+        func downloadNextPostsComments() -> Task<Void> {
+            guard !remainingComments.isEmpty else {
+                completed = total - 1
+                updateProgress()
+                return Task(())
+            }
+            var (post, comments) = remainingComments.removeFirst()
+            
+            func downloadNextCommentBatch() -> Task<Void> {
+                guard !comments.isEmpty else { return Task(()) }
+                updateProgress()
+                return APIClient.shared.getMoreComments(using: comments.removeFirst(), post: post)
+                    .continueOnSuccessWithTask(.mainThread) { _ in downloadNextCommentBatch() }
+            }
+            
+            return downloadNextCommentBatch().continueOnSuccessWithTask(.mainThread) { _ -> Task<Void> in
+                self.states[post] = .checked
+                self.cell(for: post)?.state = .checked
+                return downloadNextPostsComments()
+            }
+        }
+        
+        downloadNextPost()
+            .continueOnSuccessWithTask(.mainThread, continuation: downloadNextPostsComments)
             .continueOnSuccessWithTask { Task<Void>.withDelay(1) }
             .continueOnSuccessWith(.mainThread) {
                 for indexPath in indexPaths {
@@ -177,15 +247,19 @@ class PostsViewController: UIViewController {
                 }
             }.continueWith(.mainThread) { task -> Void in
                 task.error.map(self.presentErrorAlert)
-                self.chooseDownloadsButton.isEnabled = true
                 self.isSavingOffline = false
+                self.updateChooseDownloadsButtonEnabled()
                 self.navigationBarProgressView?.isHidden = true
                 self.states.removeAll()
                 for cell in self.tableView.visibleCells {
                     (cell as? PostCell)?.state = .normal
                 }
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
+                UIView.animate(withDuration: 0.4) {
+                    self.tableView.layoutIfNeeded()
+                    self.tableView.beginUpdates()
+                    self.tableView.endUpdates()
+                }
+                
                 _ = try? CoreDataController.shared.viewContext.save()
         }
 
@@ -193,6 +267,12 @@ class PostsViewController: UIViewController {
 
     @IBAction func cancelDownloadsButtonPressed(_ sender: UIBarButtonItem) {
         setEditing(false, animated: true)
+    }
+    
+    @IBAction func loadMoreButtonPressed(_ sender: UIButton) {
+        if !isLoading {
+            fetchPosts()
+        }
     }
 }
 
@@ -223,15 +303,8 @@ extension PostsViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard !isEditing else {
+        if isEditing {
             updateStartDownloadsButtonEnabled()
-            return
-        }
-        if indexPath.row == posts.count {
-            if !isLoading {
-                fetchPosts()
-            }
-            tableView.deselectRow(at: indexPath, animated: true)
         } else {
             performSegue(withIdentifier: Segues.comments, sender: posts[indexPath.row])
         }

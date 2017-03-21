@@ -27,6 +27,8 @@
 		235E07FF1E8094F900D83D16 /* SubredditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07FE1E8094F900D83D16 /* SubredditCell.swift */; };
 		235E08011E80D25100D83D16 /* SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E08001E80D25100D83D16 /* SeparatorView.swift */; };
 		235E08031E80E4BF00D83D16 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E08021E80E4BF00D83D16 /* NavigationController.swift */; };
+		235E08061E81430C00D83D16 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 235E08051E81430C00D83D16 /* Reachability.m */; };
+		235E08081E81431D00D83D16 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 235E08071E81431D00D83D16 /* SystemConfiguration.framework */; };
 		23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395C81E7DDE8600030DEF /* AppDelegate.swift */; };
 		23A395F01E7DDF9800030DEF /* OfflineReddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 23A395DE1E7DDF9800030DEF /* OfflineReddit.xcdatamodeld */; };
 		23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395E21E7DDF9800030DEF /* APIClient+Endpoints.swift */; };
@@ -70,6 +72,9 @@
 		235E07FE1E8094F900D83D16 /* SubredditCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditCell.swift; sourceTree = "<group>"; };
 		235E08001E80D25100D83D16 /* SeparatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeparatorView.swift; sourceTree = "<group>"; };
 		235E08021E80E4BF00D83D16 /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		235E08041E81430C00D83D16 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		235E08051E81430C00D83D16 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		235E08071E81431D00D83D16 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		23A395C51E7DDE8600030DEF /* OfflineReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23A395C81E7DDE8600030DEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23A395DF1E7DDF9800030DEF /* OfflineReddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OfflineReddit.xcdatamodel; sourceTree = "<group>"; };
@@ -97,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				235E08081E81431D00D83D16 /* SystemConfiguration.framework in Frameworks */,
 				23A395FE1E7DE0A000030DEF /* BoltsSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -157,6 +163,8 @@
 				23A395E71E7DDF9800030DEF /* CoreDataController.swift */,
 				23A396081E7E19DC00030DEF /* AsyncOperation.swift */,
 				23A395E81E7DDF9800030DEF /* Mapper.swift */,
+				235E08041E81430C00D83D16 /* Reachability.h */,
+				235E08051E81430C00D83D16 /* Reachability.m */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -219,6 +227,7 @@
 		23A395FC1E7DE08A00030DEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				235E08071E81431D00D83D16 /* SystemConfiguration.framework */,
 				23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */,
 			);
 			name = Frameworks;
@@ -332,6 +341,7 @@
 				235E07F91E8090BF00D83D16 /* SubredditsViewController.swift in Sources */,
 				235E07FF1E8094F900D83D16 /* SubredditCell.swift in Sources */,
 				235E07D51E7F492600D83D16 /* MoreComments.swift in Sources */,
+				235E08061E81430C00D83D16 /* Reachability.m in Sources */,
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,

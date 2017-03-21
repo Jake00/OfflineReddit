@@ -21,8 +21,9 @@ struct SharedText {
     static let unknown = NSLocalizedString("unknown", value: "Unknown", comment: "Used as a placeholder for null values")
     static let showMore = NSLocalizedString("show_more", value: "Show more", comment: "Show more")
     static let repliesFormat = NSLocalizedString("x_more_replies_format", comment: "Format for how many replies are not shown. eg. '3 MORE REPLIES'")
-    static let loading = NSLocalizedString("loading_caps", value: "LOADING", comment: "Loading text")
-    
+    static let loadingCaps = NSLocalizedString("loading_caps", value: "LOADING", comment: "Loading text")
+    static let loadingLowercase = NSLocalizedString("loading_lowercase", value: "Loading", comment: "Loading text")
+    static let offline = NSLocalizedString("offline", value: "Offline", comment: "Offline")
 }
 
 extension UIColor {
