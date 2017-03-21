@@ -69,10 +69,19 @@ final class APIClient: NSObject {
         }
     }
     
-    enum Errors: Error {
+    enum Errors: Error, PresentableError {
         case emptyResponse
         case invalidResponse
         case missingFields
+        
+        var alertTitle: String? { return nil }
+        var alertMessage: String? {
+            switch self {
+            case .emptyResponse: return NSLocalizedString("api_error.empty_response", value: "There was no data returned.", comment: "Unexpected empty response error message.")
+            case .invalidResponse: return NSLocalizedString("api_error.invalid_response", value: "Received an invalid response.", comment: "Invalid response error message.")
+            case .missingFields: return NSLocalizedString("api_error.missing_fields", value: "We are missing data for making this request.", comment: "Unexpected empty response error message.")
+            }
+        }
     }
     
     struct Request {

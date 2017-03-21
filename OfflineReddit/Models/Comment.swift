@@ -97,7 +97,7 @@ extension Comment {
             .flatMap { intervalFormatter.string(from: -$0.timeIntervalSinceNow) }
             .map { String.localizedStringWithFormat(SharedText.agoFormat, $0) }
             ?? SharedText.unknown
-        return "\(author) • \(score) score • \(time)"
+        return "\(author) • \(score) points • \(time)"
     }
 }
 

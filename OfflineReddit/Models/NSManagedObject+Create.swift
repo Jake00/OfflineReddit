@@ -18,7 +18,7 @@ extension NSManagedObject {
             }()
     }
     
-    static func fetchRequest<T: NSManagedObject>(predicate: NSPredicate) -> NSFetchRequest<T> {
+    @nonobjc static func fetchRequest<T: NSManagedObject>(predicate: NSPredicate? = nil) -> NSFetchRequest<T> {
         let fetchRequest: NSFetchRequest<T> = NSFetchRequest(entityName: String(describing: T.self))
         fetchRequest.predicate = predicate
         return fetchRequest

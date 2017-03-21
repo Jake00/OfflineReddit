@@ -7,33 +7,67 @@
 //
 
 import UIKit
+import CoreData
 import BoltsSwift
 
 class PostsViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var footerView: UIView!
+    @IBOutlet weak var loadMoreButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var activityIndicatorCenterX: NSLayoutConstraint!
+    @IBOutlet weak var hintLabel: UILabel!
+    @IBOutlet weak var hintImage: UIImageView!
     @IBOutlet var progressView: UIProgressView!
+    @IBOutlet var subredditsButton: UIBarButtonItem!
+    @IBOutlet var chooseDownloadsButton: UIBarButtonItem!
+    @IBOutlet var startDownloadsButton: UIBarButtonItem!
+    @IBOutlet var cancelDownloadsButton: UIBarButtonItem!
     
-    var downloadBarButtonItem: UIBarButtonItem?
+    let context = CoreDataController.shared.viewContext
     var states: [IndexPath: PostCell.State] = [:]
     var isSavingOffline = false
     var posts: [Post] = []
+    var subreddits: [Subreddit] = [] {
+        didSet {
+            if oldValue != subreddits {
+                posts = []
+                tableView.reloadData()
+            }
+        }
+    }
     
     var isLoading = false {
         didSet {
-            (tableView.cellForRow(at: IndexPath(row: posts.count, section: 0)) as? MoreCell).map(updateMoreCell)
+            loadMoreButton.isEnabled = !isLoading
+            loadMoreButton.titleEdgeInsets.left = isLoading ? -activityIndicatorCenterX.constant : 0
+            (isLoading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
         }
+    }
+    
+    func updateIsHintHidden() {
+        let show = !subreddits.isEmpty
+        hintLabel.isHidden = show
+        hintImage.isHidden = show
+        loadMoreButton.isHidden = !show
+        (show && isLoading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
     }
     
     struct Segues {
         static let comments = "Comments"
+        static let subreddits = "Subreddits"
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
-        tableView.register(MoreCell.self, forCellReuseIdentifier: "More")
+        
+        if subreddits.isEmpty {
+            let request = Subreddit.fetchRequest(predicate: NSPredicate(format: "isSelected == YES"))
+            subreddits = (try? context.fetch(request)) ?? []
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -41,7 +75,9 @@ class PostsViewController: UIViewController {
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
-        if posts.isEmpty {
+        if subreddits.isEmpty {
+            updateIsHintHidden()
+        } else if posts.isEmpty {
             fetchPosts()
         }
     }
@@ -51,45 +87,41 @@ class PostsViewController: UIViewController {
         case Segues.comments?:
             let commentsViewController = segue.destination as! CommentsViewController
             commentsViewController.post = sender as! Post
+        case Segues.subreddits?:
+            let subredditsViewController = segue.destination as! SubredditsViewController
+            subredditsViewController.didSelectSubreddits = { [weak self] in
+                self?.subreddits = $0
+                self?.updateIsHintHidden()
+            }
         default: ()
         }
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
-        let wasEditing = isEditing
         super.setEditing(editing, animated: animated)
         tableView.setEditing(isEditing, animated: true)
-        tableView.beginUpdates()
-        if wasEditing && !editing {
-            tableView.insertRows(at: [IndexPath(row: posts.count, section: 0)], with: .fade)
-        } else if !wasEditing && editing {
-            tableView.deleteRows(at: [IndexPath(row: posts.count, section: 0)], with: .fade)
-        }
-        tableView.endUpdates()
-        var items: [UIBarButtonItem] = [
-            UIBarButtonItem(image: editing ? #imageLiteral(resourceName: "tick") : #imageLiteral(resourceName: "download"), style: .plain, target: self, action: #selector(downloadButtonPressed(_:)))
-        ]
-        downloadBarButtonItem = items.first
-        if editing {
-            downloadBarButtonItem?.isEnabled = false
-            items.insert(UIBarButtonItem(image: #imageLiteral(resourceName: "cross"), style: .plain, target: self, action: #selector(cancelEditingButtonPressed(_:))), at: 0)
-        }
-        navigationItem.setRightBarButtonItems(items, animated: animated)
+        updateStartDownloadsButtonEnabled()
+        navigationItem.setRightBarButtonItems(editing ? [cancelDownloadsButton, startDownloadsButton] : [subredditsButton], animated: animated)
+        navigationItem.setLeftBarButtonItems(editing ? nil : [chooseDownloadsButton], animated: animated)
     }
     
-    func updateMoreCell(_ cell: MoreCell) {
-        (isLoading ? cell.activityIndicator.startAnimating : cell.activityIndicator.stopAnimating)()
-        cell.titleLabel.isHidden = isLoading
+    func updateStartDownloadsButtonEnabled() {
+        startDownloadsButton.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
+    }
+    
+    func updateChooseDownloadsButtonEnabled() {
+        chooseDownloadsButton.isEnabled = !posts.isEmpty
     }
     
     func fetchPosts() {
         isLoading = true
-        APIClient.shared.getPosts(for: ["AskReddit"], after: posts.last).continueWith(.mainThread) { task -> Void in
+        APIClient.shared.getPosts(for: subreddits, after: posts.last).continueWith(.mainThread) { task -> Void in
             if let posts = task.result, !posts.isEmpty {
                 let old = self.posts.count
                 self.posts += posts
                 let new = self.posts.count
                 self.tableView.insertRows(at: (old..<new).map { IndexPath(row: $0, section: 0) }, with: .automatic)
+                self.updateChooseDownloadsButtonEnabled()
             } else if let error = task.error {
                 self.presentErrorAlert(error: error)
             }
@@ -97,7 +129,11 @@ class PostsViewController: UIViewController {
         }
     }
     
-    @IBAction func downloadButtonPressed(_ sender: UIBarButtonItem) {
+    @IBAction func chooseDownloadButtonPressed(_ sender: UIBarButtonItem) {
+        setEditing(true, animated: true)
+    }
+    
+    @IBAction func startDownloadsButtonPressed(_ sender: UIBarButtonItem) {
         guard isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty else {
             setEditing(!isEditing, animated: true); return
         }
@@ -111,8 +147,8 @@ class PostsViewController: UIViewController {
         }
         
         setEditing(!isEditing, animated: true)
-        downloadBarButtonItem?.isEnabled = false
-        self.isSavingOffline = true
+        chooseDownloadsButton.isEnabled = false
+        isSavingOffline = true
         
         if let bar = navigationController?.navigationBar {
             bar.addSubview(progressView)
@@ -142,9 +178,9 @@ class PostsViewController: UIViewController {
                 }
             }.continueWith(.mainThread) { task -> Void in
                 task.error.map(self.presentErrorAlert)
+                self.chooseDownloadsButton.isEnabled = true
                 self.isSavingOffline = false
                 self.progressView.removeFromSuperview()
-                self.downloadBarButtonItem?.isEnabled = true
                 self.states.removeAll()
                 for cell in self.tableView.visibleCells {
                     (cell as? PostCell)?.state = .normal
@@ -153,9 +189,10 @@ class PostsViewController: UIViewController {
                 self.tableView.endUpdates()
                 _ = try? CoreDataController.shared.viewContext.save()
         }
+
     }
 
-    func cancelEditingButtonPressed(_ sender: UIBarButtonItem) {
+    @IBAction func cancelDownloadsButtonPressed(_ sender: UIBarButtonItem) {
         setEditing(false, animated: true)
     }
 }
@@ -163,21 +200,13 @@ class PostsViewController: UIViewController {
 extension PostsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count + (isEditing ? 0 : 1)
+        return posts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard indexPath.row < posts.count else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "More", for: indexPath) as! MoreCell
-            cell.titleLabel.text = "\n" + SharedText.showMore + "\n"
-            updateMoreCell(cell)
-            cell.setNeedsLayout()
-            cell.layoutIfNeeded()
-            return cell
-        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "Post", for: indexPath) as! PostCell
         let post = posts[indexPath.row]
-        cell.topLabel.text = post.authorTimeText
+        cell.topLabel.text = post.subredditAuthorTimeText
         cell.titleLabel.text = post.title
         cell.bottomLabel.text = post.scoreCommentsText
         cell.state = states[indexPath] ?? (isSavingOffline ? .indented : .normal)
@@ -196,7 +225,7 @@ extension PostsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard !isEditing else {
-            downloadBarButtonItem?.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
+            updateStartDownloadsButtonEnabled()
             return
         }
         if indexPath.row == posts.count {
@@ -211,51 +240,7 @@ extension PostsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if isEditing {
-            downloadBarButtonItem?.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
+            updateStartDownloadsButtonEnabled()
         }
     }
-}
-
-class PostCell: UITableViewCell {
-    
-    @IBOutlet weak var topLabel: UILabel!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var bottomLabel: UILabel!
-    @IBOutlet weak var checkedImageView: UIImageView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var container: UIView!
-    @IBOutlet weak var containerLeading: NSLayoutConstraint!
-    @IBOutlet weak var offlineImageView: UIImageView!
-    
-    enum State {
-        case normal
-        case indented
-        case loading
-        case checked
-    }
-    
-    var state: State = .normal {
-        didSet {
-            containerLeading.constant = state == .normal ? 0 : 38
-            (state == .loading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
-            checkedImageView.isHidden = state != .checked
-        }
-    }
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setup()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
-    }
-    
-    private func setup() {
-        let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = .selectedGray
-        self.selectedBackgroundView = selectedBackgroundView
-    }
-    
 }

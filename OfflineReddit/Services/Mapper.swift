@@ -12,7 +12,7 @@ typealias JSON = [String: Any]
 
 final class Mapper {
     
-    var context: NSManagedObjectContext = CoreDataController.shared.jsonContext
+    let context = CoreDataController.shared.jsonContext
     
     func mapPosts(json: Any) throws -> [Post] {
         guard let children = ((json as? JSON)?["data"] as? JSON)?["children"] as? [JSON]
@@ -21,15 +21,17 @@ final class Mapper {
         let postsJSON: [(id: String, json: JSON)] = children.flatMap(Post.id)
         let subredditNames = Set(postsJSON.flatMap { $1["subreddit"] as? String })
         let postsRequest = Post.fetchRequest(predicate: NSPredicate(format: "id IN %@", postsJSON.map { $0.id }))
-        let subredditsRequest = Subreddit.fetchRequest(predicate: NSPredicate(format: "name IN %@", Array(subredditNames)))
+        let subredditsRequest: NSFetchRequest<Subreddit> = Subreddit.fetchRequest()
         
         return try context.performAndWait { context -> [Post] in
             let existingPosts = try context.fetch(postsRequest)
             let existingSubreddits = try context.fetch(subredditsRequest)
             
             let subreddits = subredditNames.flatMap { name -> Subreddit in
-                existingSubreddits.first(where: { $0.name == name })
+                let subreddit = existingSubreddits.first(where: { $0.name.caseInsensitiveCompare(name) == .orderedSame })
                     ?? Subreddit.create(in: context, name: name)
+                subreddit.name = name
+                return subreddit
             }
             let posts = postsJSON.flatMap { id, json -> Post? in
                 if let post = existingPosts.first(where: { $0.id == id }) {
@@ -103,6 +105,7 @@ final class Mapper {
     @discardableResult
     private func mapMoreComments(json: JSON, parentComment: Comment?, parentPost: Post?) -> MoreComments? {
         guard let (id, json) = MoreComments.id(from: json) else { return nil }
+        guard (json["count"] as? Int).map({ $0 > 0 }) ?? false else { return nil }
         (parentComment?.more ?? parentPost?.more).map(context.delete)
         let moreComments = MoreComments.create(in: context, id: id)
         moreComments.update(json: json)

@@ -11,8 +11,8 @@ import BoltsSwift
 
 extension APIClient {
     
-    func getPosts(for subreddits: [String], after: Post? = nil) -> Task<[Post]> {
-        let path: String = "r/" + subreddits.joined(separator: "+") + ".json"
+    func getPosts(for subreddits: [Subreddit], after: Post? = nil) -> Task<[Post]> {
+        let path: String = "r/" + subreddits.map { $0.name }.joined(separator: "+") + ".json"
         var parameters: Parameters = ["raw_json": "1"]
         if let after = after {
             parameters["after"] = after.id
@@ -25,8 +25,8 @@ extension APIClient {
     }
     
     func getComments(for post: Post) -> Task<[Comment]> {
-        guard let url = post.urlValue else { return Task(error: Errors.missingFields) }
-        let request = Request(.get, url + ".json", parameters: ["raw_json": "1"])
+        guard let permalink = post.permalink else { return Task(error: Errors.missingFields) }
+        let request = Request(.get, permalink + ".json", parameters: ["raw_json": "1"])
         return sendJSONRequest(request)
             .continueOnSuccessWith(.immediate, continuation: mapper.mapComments)
             .continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }

@@ -48,11 +48,16 @@ final class CoreDataController {
         jsonContext.persistentStoreCoordinator = persistentStoreCoordinator
         
         NotificationCenter.default.addObserver(self, selector: #selector(contextDidSave(_:)), name: .NSManagedObjectContextDidSave, object: jsonContext)
+        NotificationCenter.default.addObserver(self, selector: #selector(contextDidSave(_:)), name: .NSManagedObjectContextDidSave, object: viewContext)
     }
     
+    private var saving: NSManagedObjectContext?
+    
     private dynamic func contextDidSave(_ notification: Notification) {
-        let context = viewContext
+        guard let object = notification.object as? NSManagedObjectContext, saving == nil else { return }
+        let context = object == jsonContext ? viewContext : jsonContext
         context.performAndWait {
+            self.saving = context
             context.mergeChanges(fromContextDidSave: notification)
             if context.hasChanges {
                 do {
@@ -61,6 +66,7 @@ final class CoreDataController {
                     print("Error saving context: \(context): \(error)")
                 }
             }
+            self.saving = nil
         }
     }
     
