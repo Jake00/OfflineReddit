@@ -165,7 +165,7 @@ class CommentsViewController: UIViewController {
         cell.titleLabel.text = isLoading
             ? SharedText.loadingCaps
             : String.localizedStringWithFormat(SharedText.repliesFormat, more?.count ?? 0)
-        (isLoading ? cell.activityIndicator.startAnimating : cell.activityIndicator.stopAnimating)()
+        cell.activityIndicator.setAnimating(isLoading)
     }
     
     func flipCellExpanded(at indexPath: IndexPath, comment: Comment) {

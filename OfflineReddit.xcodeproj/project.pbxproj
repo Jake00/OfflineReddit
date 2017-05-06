@@ -49,6 +49,7 @@
 		23A3960B1E7E22C300030DEF /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A3960A1E7E22C300030DEF /* Comment.swift */; };
 		23BED71D1EBDE71E0072C2CE /* PostsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */; };
 		23BED71F1EBE03ED0072C2CE /* PostCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */; };
+		23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -99,6 +100,7 @@
 		23A3960A1E7E22C300030DEF /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsDataSource.swift; sourceTree = "<group>"; };
 		23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCellModel.swift; sourceTree = "<group>"; };
+		23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorViewAnimating.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -226,6 +228,7 @@
 				235E07FC1E80943D00D83D16 /* MarginTextField.swift */,
 				235E07F21E80142300D83D16 /* UITableView+Reloading.h */,
 				235E07F31E80142300D83D16 /* UITableView+Reloading.m */,
+				23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				23A396091E7E19DC00030DEF /* AsyncOperation.swift in Sources */,
 				23A396051E7E021500030DEF /* Identifiable.swift in Sources */,
 				235E07F41E80142300D83D16 /* UITableView+Reloading.m in Sources */,
+				23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */,
 				235E07C91E7E9A7600D83D16 /* CommentsViewController.swift in Sources */,
 				235E07D71E7F525100D83D16 /* NSManagedObject+Create.swift in Sources */,
 				235E08031E80E4BF00D83D16 /* NavigationController.swift in Sources */,

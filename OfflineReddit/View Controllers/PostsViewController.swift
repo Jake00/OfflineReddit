@@ -110,7 +110,7 @@ class PostsViewController: UIViewController {
             guard Reachability.shared.isOnline else { return }
             loadMoreButton.isEnabled = !isLoading
             loadMoreButton.titleEdgeInsets.left = isLoading ? -activityIndicatorCenterX.constant : 0
-            (isLoading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
+            activityIndicator.setAnimating(isLoading)
         }
     }
     
@@ -122,7 +122,7 @@ class PostsViewController: UIViewController {
         let isOnline = Reachability.shared.isOnline
         loadMoreButton.isEnabled = isOnline
         loadMoreButton.setTitle(isOnline ? SharedText.loadingLowercase : SharedText.offline, for: .disabled)
-        (hideHints && isLoading ? activityIndicator.startAnimating : activityIndicator.stopAnimating)()
+        activityIndicator.setAnimating(hideHints && isLoading)
     }
     
     func updateStartDownloadsButtonEnabled() {

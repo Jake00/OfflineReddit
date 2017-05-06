@@ -32,7 +32,7 @@ class PostsDataSource: NSObject {
     
     func update(cell: PostCell?, state: PostCellModel.State) {
         cell?.containerLeading.constant = state == .normal ? 0 : PostCellModel.indentedWidth
-        (state == .loading ? cell?.activityIndicator.startAnimating : cell?.activityIndicator.stopAnimating)?()
+        cell?.activityIndicator.setAnimating(state == .loading)
         cell?.checkedImageView.isHidden = state != .checked
     }
     
