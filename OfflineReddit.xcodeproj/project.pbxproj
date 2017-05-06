@@ -47,6 +47,8 @@
 		23A396051E7E021500030DEF /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A396041E7E021500030DEF /* Identifiable.swift */; };
 		23A396091E7E19DC00030DEF /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A396081E7E19DC00030DEF /* AsyncOperation.swift */; };
 		23A3960B1E7E22C300030DEF /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A3960A1E7E22C300030DEF /* Comment.swift */; };
+		23BED71D1EBDE71E0072C2CE /* PostsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */; };
+		23BED71F1EBE03ED0072C2CE /* PostCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,6 +97,8 @@
 		23A396041E7E021500030DEF /* Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifiable.swift; sourceTree = "<group>"; };
 		23A396081E7E19DC00030DEF /* AsyncOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		23A3960A1E7E22C300030DEF /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsDataSource.swift; sourceTree = "<group>"; };
+		23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCellModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,7 +207,9 @@
 				235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */,
 				235E08021E80E4BF00D83D16 /* NavigationController.swift */,
 				235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */,
+				23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */,
 				235E07F61E808CBE00D83D16 /* PostCell.swift */,
+				23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */,
 				235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */,
 				235E07E01E7FA03100D83D16 /* CommentsCells.swift */,
 				235E07F81E8090BF00D83D16 /* SubredditsViewController.swift */,
@@ -350,6 +356,7 @@
 				235E07C71E7E92E600D83D16 /* Constants.swift in Sources */,
 				23A395F41E7DDF9800030DEF /* APIClient+URLSessionDelegate.swift in Sources */,
 				235E08011E80D25100D83D16 /* SeparatorView.swift in Sources */,
+				23BED71D1EBDE71E0072C2CE /* PostsDataSource.swift in Sources */,
 				23A395F71E7DDF9800030DEF /* Mapper.swift in Sources */,
 				235E07DD1E7F637000D83D16 /* Either.swift in Sources */,
 				235E07C51E7E8E1E00D83D16 /* PostsViewController.swift in Sources */,
@@ -360,6 +367,7 @@
 				23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */,
 				23A396011E7E00F400030DEF /* Subreddit.swift in Sources */,
 				23A395F01E7DDF9800030DEF /* OfflineReddit.xcdatamodeld in Sources */,
+				23BED71F1EBE03ED0072C2CE /* PostCellModel.swift in Sources */,
 				235E07E11E7FA03100D83D16 /* CommentsCells.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
