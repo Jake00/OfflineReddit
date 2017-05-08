@@ -26,7 +26,6 @@ class PostsViewController: UIViewController {
     
     let context = CoreDataController.shared.viewContext
     let dataSource = PostsDataSource()
-    var isSavingOffline = false
     
     var subreddits: [Subreddit] = [] {
         didSet {
@@ -35,6 +34,12 @@ class PostsViewController: UIViewController {
                 tableView.reloadData()
             }
         }
+    }
+    
+    private var downloader: PostsDownloader?
+    
+    var isSavingOffline: Bool {
+        return downloader != nil
     }
     
     struct Segues {
@@ -178,79 +183,40 @@ class PostsViewController: UIViewController {
         guard isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty else {
             setEditing(!isEditing, animated: true); return
         }
-        dataSource.setAllStates(to: .indented, in: tableView)
-        dataSource.setState(.loading, at: indexPaths, in: tableView)
-        setEditing(!isEditing, animated: true)
-        isSavingOffline = true
-        updateChooseDownloadsButtonEnabled()
-        navigationBarProgressView?.isHidden = false
-        navigationBarProgressView?.setProgress(0, animated: false)
         
-        var remainingPosts = indexPaths.map(dataSource.post(at:))
-        var remainingComments: [(Post, [[MoreComments]])] = []
-        var total = remainingPosts.count
-        var completed = -1
-        
-        func updateProgress() {
-            completed += 1
-            navigationBarProgressView?.setProgress(Float(completed) / Float(total), animated: true)
+        let downloader = PostsDownloader(posts: indexPaths.map(dataSource.post(at:)))
+        downloader.completionForPost = { post in
+            self.dataSource.setState(.checked, for: post, in: self.tableView)
         }
-        
-        func downloadNextPost() -> Task<Void> {
-            guard !remainingPosts.isEmpty else { return Task(()) }
-            let post = remainingPosts.removeFirst()
-            updateProgress()
-            return APIClient.shared.getComments(for: post).continueOnSuccessWithTask(.mainThread) { _ -> Task<Void> in
-                post.isAvailableOffline = true
-                let comments = post.batchedMoreComments(maximum: 3)
-                total += comments.count
-                remainingComments.append((post, comments))
-                return downloadNextPost()
-            }
-        }
-        
-        func downloadNextPostsComments() -> Task<Void> {
-            guard !remainingComments.isEmpty else {
-                completed = total - 1
-                updateProgress()
-                return Task(())
-            }
-            var (post, comments) = remainingComments.removeFirst()
-            
-            func downloadNextCommentBatch() -> Task<Void> {
-                guard !comments.isEmpty else { return Task(()) }
-                updateProgress()
-                return APIClient.shared.getMoreComments(using: comments.removeFirst(), post: post)
-                    .continueOnSuccessWithTask(.mainThread) { _ in downloadNextCommentBatch() }
-            }
-            
-            return downloadNextCommentBatch().continueOnSuccessWithTask(.mainThread) { _ -> Task<Void> in
-                self.dataSource.setState(.checked, for: post, in: self.tableView)
-                return downloadNextPostsComments()
-            }
-        }
-        
-        downloadNextPost()
-            .continueOnSuccessWithTask(.mainThread, continuation: downloadNextPostsComments)
-            .continueOnSuccessWithTask { Task<Void>.withDelay(1) }
-            .continueOnSuccessWith(.mainThread) {
-                for indexPath in indexPaths {
-                    (self.tableView.cellForRow(at: indexPath) as? PostCell)?.offlineImageView.isHidden = false
-                }
-            }.continueWith(.mainThread) { task -> Void in
-                task.error.map(self.presentErrorAlert)
-                self.isSavingOffline = false
+        downloader.completionBlock = {
+            DispatchQueue.main.async {
+                self.downloader = nil
+                downloader.error.map(self.presentErrorAlert)
+                self.navigationBarProgressView?.observedProgress = nil
+                self.navigationBarProgressView?.setProgress(1, animated: true)
+                self.dataSource.updateIsAvailableOffline(at: indexPaths, in: self.tableView)
+                self.dataSource.setAllStates(to: .normal, in: self.tableView)
                 self.updateChooseDownloadsButtonEnabled()
                 self.navigationBarProgressView?.isHidden = true
-                self.dataSource.setAllStates(to: .normal, in: self.tableView)
                 UIView.animate(withDuration: 0.4) {
                     self.tableView.layoutIfNeeded()
                     self.tableView.beginUpdates()
                     self.tableView.endUpdates()
                 }
                 _ = try? CoreDataController.shared.viewContext.save()
+            }
         }
-
+        self.downloader = downloader
+        
+        dataSource.setAllStates(to: .indented, in: tableView)
+        dataSource.setState(.loading, at: indexPaths, in: tableView)
+        setEditing(!isEditing, animated: true)
+        updateChooseDownloadsButtonEnabled()
+        navigationBarProgressView?.isHidden = false
+        navigationBarProgressView?.setProgress(0, animated: false)
+        navigationBarProgressView?.observedProgress = downloader.progress
+        
+        downloader.start()
     }
 
     @IBAction func cancelDownloadsButtonPressed(_ sender: UIBarButtonItem) {

@@ -16,7 +16,7 @@ class PostsDataSource: NSObject {
         return rows[indexPath.row].post
     }
     
-    // MARK: - Cells
+    // MARK: - Updating cells
     
     func updateAll(cell: PostCell?, row: PostCellModel) {
         update(cell: cell, post: row.post)
@@ -40,7 +40,21 @@ class PostsDataSource: NSObject {
         cell?.offlineImageView.isHidden = !isAvailableOffline
     }
     
+    func updateIsAvailableOffline(at indexPaths: [IndexPath], in tableView: UITableView) {
+        for indexPath in indexPaths {
+            update(
+                cell: tableView.cellForRow(at: indexPath) as? PostCell,
+                isAvailableOffline: post(at: indexPath).isAvailableOffline)
+        }
+    }
+    
     // MARK: - Set models
+    
+    func setState(_ state: PostCellModel.State, at indexPath: IndexPath, in tableView: UITableView) {
+        let cell = tableView.cellForRow(at: indexPath) as? PostCell
+        rows[indexPath.row].state = state
+        update(cell: cell, state: state)
+    }
     
     func setState(_ state: PostCellModel.State, at indexPaths: [IndexPath], in tableView: UITableView) {
         for indexPath in indexPaths {
@@ -54,15 +68,15 @@ class PostsDataSource: NSObject {
         }
     }
     
-    func setState(_ state: PostCellModel.State, at indexPath: IndexPath, in tableView: UITableView) {
-        let cell = tableView.cellForRow(at: indexPath) as? PostCell
-        rows[indexPath.row].state = state
-        update(cell: cell, state: state)
-    }
-    
     func setAllStates(to state: PostCellModel.State, in tableView: UITableView) {
         let indexPaths = (0..<rows.count).map { IndexPath(row: $0, section: 0) }
         setState(state, at: indexPaths, in: tableView)
+    }
+    
+    func setIsAvailableOffline(_ isAvailableOffline: Bool, at indexPath: IndexPath, in tableView: UITableView) {
+        post(at: indexPath).isAvailableOffline = isAvailableOffline
+        let cell = tableView.cellForRow(at: indexPath) as? PostCell
+        update(cell: cell, isAvailableOffline: isAvailableOffline)
     }
 }
 
