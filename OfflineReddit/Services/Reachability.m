@@ -234,6 +234,10 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 - (NetworkStatus)status
 {
+    if (self.isEmulatingOnline) {
+        return ReachableViaWiFi;
+    }
+    
     NSAssert(_reachabilityRef != NULL, @"currentNetworkStatus called with NULL SCNetworkReachabilityRef");
     SCNetworkReachabilityFlags flags;
     if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {

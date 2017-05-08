@@ -6,12 +6,11 @@
 //  Copyright © 2016 Jake Bellamy. All rights reserved.
 //
 
-import UIKit
 import BoltsSwift
 
-extension APIClient {
+extension APIClient: DataProvider {
     
-    func getPosts(for subreddits: [Subreddit], after: Post? = nil) -> Task<[Post]> {
+    func getPosts(for subreddits: [Subreddit], after: Post?) -> Task<[Post]> {
         let path: String = "r/" + subreddits.map { $0.name }.joined(separator: "+") + ".json"
         var parameters: Parameters = ["raw_json": "1"]
         if let after = after {

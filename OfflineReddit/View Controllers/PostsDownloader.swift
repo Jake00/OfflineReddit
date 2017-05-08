@@ -65,7 +65,7 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
     private func downloadNextPost() -> Task<Void> {
         guard !posts.isEmpty else { return Task(()) }
         let post = posts.removeFirst()
-        return APIClient.shared.getComments(for: post)
+        return dataProvider.getComments(for: post)
             .continueOnSuccessWithTask { _ -> Task<Void> in
                 self.progress.completedUnitCount += 1
                 post.isAvailableOffline = true
@@ -86,7 +86,7 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
         func downloadNextCommentBatch() -> Task<Void> {
             guard !next.more.isEmpty else { return Task(()) }
             let comments = next.more.removeFirst()
-            return APIClient.shared.getMoreComments(using: comments, post: next.post)
+            return dataProvider.getMoreComments(using: comments, post: next.post)
                 .continueOnSuccessWithTask { _ in
                     next.progress.completedUnitCount += 1
                     return downloadNextCommentBatch()

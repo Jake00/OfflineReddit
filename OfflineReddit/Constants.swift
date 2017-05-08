@@ -16,6 +16,22 @@ let intervalFormatter: DateComponentsFormatter = {
     return intervalFormatter
 }()
 
+var isDebugBuild: Bool {
+    #if DEBUG
+        return true
+    #else
+        return false
+    #endif
+}
+
+var isOnline: Bool {
+    return Reachability.shared.isOnline
+}
+
+var isOffline: Bool {
+    return Reachability.shared.isOffline
+}
+
 struct SharedText {
     static let agoFormat = NSLocalizedString("ago_format", value: "%@ ago", comment: "Used to say how much time has passed. e.g. '2 hrs ago'")
     static let unknown = NSLocalizedString("unknown", value: "Unknown", comment: "Used as a placeholder for null values")

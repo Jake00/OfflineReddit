@@ -14,16 +14,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        Reachability.shared.startNotifier()
+        
+        if isDebugBuild, ProcessInfo.processInfo.arguments.contains("EMULATE_ONLINE") {
+            /* For developing while the device is offline (unable to actually be online...) and needs to appear online for 'downloading' posts.
+             * By switching this on `Reachability` will always report its status as being reachable via WiFi.
+             */
+            print("Enabling offline development. Application will report being online with no reachability change callbacks.")
+            Reachability.shared.isEmulatingOnline = true
+            dataProvider = OfflineDevelopmentDataProvider()
+        } else {
+            Reachability.shared.startNotifier()
+        }
+        
         return true
     }
 }
-
-var isDebugBuild: Bool {
-    #if DEBUG
-        return true
-    #else
-        return false
-    #endif
-}
-

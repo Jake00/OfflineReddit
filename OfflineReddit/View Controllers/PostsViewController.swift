@@ -112,7 +112,7 @@ class PostsViewController: UIViewController {
     
     var isLoading = false {
         didSet {
-            guard Reachability.shared.isOnline else { return }
+            guard isOnline else { return }
             loadMoreButton.isEnabled = !isLoading
             loadMoreButton.titleEdgeInsets.left = isLoading ? -activityIndicatorCenterX.constant : 0
             activityIndicator.setAnimating(isLoading)
@@ -124,7 +124,6 @@ class PostsViewController: UIViewController {
         hintLabel.isHidden = hideHints
         hintImage.isHidden = hideHints
         loadMoreButton.isHidden = !hideHints
-        let isOnline = Reachability.shared.isOnline
         loadMoreButton.isEnabled = isOnline
         loadMoreButton.setTitle(isOnline ? SharedText.loadingLowercase : SharedText.offline, for: .disabled)
         activityIndicator.setAnimating(hideHints && isLoading)
@@ -135,11 +134,10 @@ class PostsViewController: UIViewController {
     }
     
     func updateChooseDownloadsButtonEnabled() {
-        chooseDownloadsButton.isEnabled = !dataSource.rows.isEmpty && !isSavingOffline && Reachability.shared.isOnline
+        chooseDownloadsButton.isEnabled = !dataSource.rows.isEmpty && !isSavingOffline && isOnline
     }
     
     func reachabilityChanged(_ notification: Notification) {
-        let isOffline = Reachability.shared.isOffline
         updateFooterView()
         updateChooseDownloadsButtonEnabled()
         if isEditing && isOffline {
@@ -151,7 +149,7 @@ class PostsViewController: UIViewController {
     }
     
     func fetchPosts() {
-        guard Reachability.shared.isOnline else {
+        guard isOnline else {
             let postsRequest = Post.fetchRequest(predicate: NSPredicate(format: "isAvailableOffline == YES AND subredditName IN %@", subreddits.map { $0.name }))
             postsRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
             let posts = (try? context.fetch(postsRequest)) ?? []
@@ -160,7 +158,7 @@ class PostsViewController: UIViewController {
             return
         }
         isLoading = true
-        APIClient.shared.getPosts(for: subreddits, after: dataSource.rows.last?.post)
+        dataProvider.getPosts(for: subreddits, after: dataSource.rows.last?.post)
             .continueOnSuccessWith(.mainThread) { posts -> Void in
                 guard !posts.isEmpty else { return }
                 let old = self.dataSource.rows.count

@@ -68,7 +68,7 @@ class CommentsViewController: UIViewController {
     
     func fetchComments() {
         isLoading = true
-        APIClient.shared.getComments(for: post).continueWith(.mainThread) { task -> Void in
+        dataProvider.getComments(for: post).continueWith(.mainThread) { task -> Void in
             self.isLoading = false
             if let error = task.error {
                 self.presentErrorAlert(error: error)
@@ -97,7 +97,7 @@ class CommentsViewController: UIViewController {
     
     func fetchMoreComments(using more: MoreComments) {
         isLoading = true
-        APIClient.shared.getMoreComments(using: [more], post: post).continueOnSuccessWith(.mainThread) { _ -> Void in
+        dataProvider.getMoreComments(using: [more], post: post).continueOnSuccessWith(.mainThread) { _ -> Void in
             self.isLoading = false
             self.loading.remove(more)
             guard let indexPath = self.indexPath(of: more) else {
@@ -153,7 +153,7 @@ class CommentsViewController: UIViewController {
             case .other(let b): return ($0.0, $0.1 + b.count)
             }
         }
-        expandCommentsButton.isEnabled = toExpandCount > 0 && Reachability.shared.isOnline
+        expandCommentsButton.isEnabled = toExpandCount > 0 && isOnline
         commentsLabel.text = String.localizedStringWithFormat(
             NSLocalizedString("comments_saved_format", value: "%ld comments\n%ld / %ld saved", comment: "Format for number of comments and amount saved. eg. '50 comments\n30 / 40 saved'"),
             post.commentsCount, savedCount, savedCount + toExpandCount)
@@ -219,7 +219,7 @@ class CommentsViewController: UIViewController {
         func downloadNext() -> Task<Void> {
             navigationBarProgressView?.setProgress(Float(total - batches.count) / Float(total), animated: true)
             guard !batches.isEmpty else { return Task(()) }
-            return APIClient.shared.getMoreComments(using: batches.removeFirst(), post: post)
+            return dataProvider.getMoreComments(using: batches.removeFirst(), post: post)
                 .continueOnSuccessWithTask(.mainThread) { _ in downloadNext() }
         }
         

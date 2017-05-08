@@ -59,6 +59,9 @@ extern NSNotificationName const ReachabilityChangedNotification;
 @property (nonatomic, assign, readonly) BOOL isOnline;
 @property (nonatomic, assign, readonly) BOOL isOffline;
 
+/// Used for development purposes only when debugging without a connection.
+@property (nonatomic, assign, getter=isEmulatingOnline) BOOL emulatingOnline;
+
 /*!
  * WWAN may be available, but not active until a connection has been established. WiFi may require a connection for VPN on Demand.
  */

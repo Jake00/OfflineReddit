@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		233756291EC0DDD10051ED2C /* Offline Development in Resources */ = {isa = PBXBuildFile; fileRef = 233756281EC0DDD10051ED2C /* Offline Development */; };
 		235E07C51E7E8E1E00D83D16 /* PostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07C91E7E9A7600D83D16 /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */; };
@@ -51,9 +52,12 @@
 		23BED71F1EBE03ED0072C2CE /* PostCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */; };
 		23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */; };
 		23D4F30E1EBE2839000CDA18 /* PostsDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D4F30D1EBE2839000CDA18 /* PostsDownloader.swift */; };
+		23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3441EC0592A005A0606 /* DataProvider.swift */; };
+		23F9F3471EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3461EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		233756281EC0DDD10051ED2C /* Offline Development */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Offline Development"; sourceTree = "<group>"; };
 		235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsViewController.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +107,8 @@
 		23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCellModel.swift; sourceTree = "<group>"; };
 		23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorViewAnimating.swift; sourceTree = "<group>"; };
 		23D4F30D1EBE2839000CDA18 /* PostsDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsDownloader.swift; sourceTree = "<group>"; };
+		23F9F3441EC0592A005A0606 /* DataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataProvider.swift; sourceTree = "<group>"; };
+		23F9F3461EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OfflineDevelopmentDataProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +179,8 @@
 				23A395E81E7DDF9800030DEF /* Mapper.swift */,
 				235E08041E81430C00D83D16 /* Reachability.h */,
 				235E08051E81430C00D83D16 /* Reachability.m */,
+				23F9F3441EC0592A005A0606 /* DataProvider.swift */,
+				23F9F3461EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -192,6 +200,7 @@
 		23A395E91E7DDF9800030DEF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				233756281EC0DDD10051ED2C /* Offline Development */,
 				235E07F51E80143A00D83D16 /* OfflineReddit-Bridging-Header.h */,
 				235E07E91E7FA20F00D83D16 /* Localizable.strings */,
 				235E07EB1E7FA20F00D83D16 /* Localizable.stringsdict */,
@@ -308,6 +317,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				235E07DF1E7F863600D83D16 /* morecomments.json in Resources */,
+				233756291EC0DDD10051ED2C /* Offline Development in Resources */,
 				23A395FA1E7DDF9800030DEF /* LaunchScreen.storyboard in Resources */,
 				235E07D31E7F47CF00D83D16 /* example.json in Resources */,
 				235E07ED1E7FA20F00D83D16 /* Localizable.strings in Resources */,
@@ -348,6 +358,7 @@
 				23A396051E7E021500030DEF /* Identifiable.swift in Sources */,
 				235E07F41E80142300D83D16 /* UITableView+Reloading.m in Sources */,
 				23D4F30E1EBE2839000CDA18 /* PostsDownloader.swift in Sources */,
+				23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */,
 				23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */,
 				235E07C91E7E9A7600D83D16 /* CommentsViewController.swift in Sources */,
 				235E07D71E7F525100D83D16 /* NSManagedObject+Create.swift in Sources */,
@@ -358,6 +369,7 @@
 				235E08061E81430C00D83D16 /* Reachability.m in Sources */,
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
+				23F9F3471EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift in Sources */,
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,
 				23A395F61E7DDF9800030DEF /* CoreDataController.swift in Sources */,
 				235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */,
