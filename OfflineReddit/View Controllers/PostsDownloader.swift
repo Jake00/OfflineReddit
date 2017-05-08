@@ -21,9 +21,9 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
     private class Comments {
         let post: Post
         var more: [[MoreComments]]
-        let progress: Progress
+        let progress: Progress?
         
-        init(post: Post, more: [[MoreComments]], progress: Progress) {
+        init(post: Post, more: [[MoreComments]], progress: Progress?) {
             self.post = post
             self.more = more
             self.progress = progress
@@ -63,7 +63,13 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
                 self.progress.completedUnitCount += 1
                 post.isAvailableOffline = true
                 let more = post.batchedMoreComments(maximum: self.numberOfCommentBatches)
-                let commentsProgress = Progress(totalUnitCount: Int64(more.count), parent: self.progress, pendingUnitCount: Int64(self.numberOfCommentBatches))
+                let commentsProgress: Progress?
+                if more.isEmpty {
+                    commentsProgress = nil
+                    self.progress.totalUnitCount -= Int64(self.numberOfCommentBatches)
+                } else {
+                    commentsProgress = Progress(totalUnitCount: Int64(more.count), parent: self.progress, pendingUnitCount: Int64(self.numberOfCommentBatches))
+                }
                 let comments = Comments(post: post, more: more, progress: commentsProgress)
                 self.comments.append(comments)
                 return self.downloadNextPost()
@@ -81,14 +87,16 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
             let comments = next.more.removeFirst()
             return dataProvider.getMoreComments(using: comments, post: next.post)
                 .continueOnSuccessWithTask { _ in
-                    next.progress.completedUnitCount += 1
+                    next.progress?.completedUnitCount += 1
                     return downloadNextCommentBatch()
             }
         }
         
         return downloadNextCommentBatch().continueOnSuccessWithTask { _ -> Task<Void> in
             self.completionForPost?(next.post)
-            next.progress.completedUnitCount = next.progress.totalUnitCount
+            if let progress = next.progress {
+                progress.completedUnitCount = progress.totalUnitCount
+            }
             return self.downloadNextPostsComments()
         }
     }
