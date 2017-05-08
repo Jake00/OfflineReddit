@@ -12,14 +12,11 @@ import BoltsSwift
 final class PostsDownloader: AsyncOperation, ProgressReporting {
     
     let progress: Progress
+    let numberOfCommentBatches: Int
     var completionForPost: ((Post) -> Void)?
     private(set) var error: Error?
     private var posts: [Post]
     private var comments: [Comments] = []
-    
-    var numberOfCommentBatches = 3 {
-        didSet { updateTotalUnitCount() }
-    }
     
     private class Comments {
         let post: Post
@@ -33,22 +30,18 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
         }
     }
     
-    init(posts: [Post]) {
+    init(posts: [Post], numberOfCommentBatches: Int = 3) {
         self.posts = posts
-        self.progress = Progress()
+        self.numberOfCommentBatches = numberOfCommentBatches
+        self.progress = Progress(totalUnitCount: Int64((1 + numberOfCommentBatches) * posts.count))
         super.init()
-        updateTotalUnitCount()
-    }
-    
-    private func updateTotalUnitCount() {
-        progress.totalUnitCount = Int64((1 + posts.count) * numberOfCommentBatches)
     }
     
     override func main() {
         /* 
          Strategy:
          1. Download all posts first, one by one. By doing this first we tally how many child progress units are needed sooner to get a more accurate total unit count.
-         2. For each post downloaded, fetch comments. Once all comments have been fetched then that post is considered completed.
+         2. For each post downloaded, fetch 'more comments'. Once all comments have been fetched then that post is considered completed.
          */
         downloadNextPost()
             .continueOnSuccessWithTask(continuation: downloadNextPostsComments)
@@ -95,6 +88,7 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
         
         return downloadNextCommentBatch().continueOnSuccessWithTask { _ -> Task<Void> in
             self.completionForPost?(next.post)
+            next.progress.completedUnitCount = next.progress.totalUnitCount
             return self.downloadNextPostsComments()
         }
     }
