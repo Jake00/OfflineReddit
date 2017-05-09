@@ -18,7 +18,7 @@ protocol DataProviding {
 
 final class DataProvider {
     
-    let remote: DataProviding
+    var remote: DataProviding
     let local: NSManagedObjectContext
     
     init(remote: DataProviding = APIClient.shared,
@@ -56,6 +56,15 @@ final class DataProvider {
         }
         return source.task
     }
+    
+    func getComments(for post: Post) -> Task<[Comment]> {
+        return remote.getComments(for: post).continueOnSuccessWith(.immediate) {
+            post.isAvailableOffline = true
+            return $0
+        }
+    }
+    
+    func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]> {
+        return remote.getMoreComments(using: mores, post: post)
+    }
 }
-
-

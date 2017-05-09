@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		233756291EC0DDD10051ED2C /* Offline Development in Resources */ = {isa = PBXBuildFile; fileRef = 233756281EC0DDD10051ED2C /* Offline Development */; };
+		2337562B1EC1E8FE0051ED2C /* EitherMoreComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2337562A1EC1E8FE0051ED2C /* EitherMoreComments.swift */; };
+		2337562D1EC1E9220051ED2C /* CommentsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */; };
 		235E07C51E7E8E1E00D83D16 /* PostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07C91E7E9A7600D83D16 /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */; };
@@ -58,6 +60,8 @@
 
 /* Begin PBXFileReference section */
 		233756281EC0DDD10051ED2C /* Offline Development */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Offline Development"; sourceTree = "<group>"; };
+		2337562A1EC1E8FE0051ED2C /* EitherMoreComments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EitherMoreComments.swift; sourceTree = "<group>"; };
+		2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsDataSource.swift; sourceTree = "<group>"; };
 		235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsViewController.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
@@ -225,6 +229,8 @@
 				23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */,
 				23D4F30D1EBE2839000CDA18 /* PostsDownloader.swift */,
 				235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */,
+				2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */,
+				2337562A1EC1E8FE0051ED2C /* EitherMoreComments.swift */,
 				235E07E01E7FA03100D83D16 /* CommentsCells.swift */,
 				235E07F81E8090BF00D83D16 /* SubredditsViewController.swift */,
 				235E07FE1E8094F900D83D16 /* SubredditCell.swift */,
@@ -358,6 +364,7 @@
 				23A396051E7E021500030DEF /* Identifiable.swift in Sources */,
 				235E07F41E80142300D83D16 /* UITableView+Reloading.m in Sources */,
 				23D4F30E1EBE2839000CDA18 /* PostsDownloader.swift in Sources */,
+				2337562D1EC1E9220051ED2C /* CommentsDataSource.swift in Sources */,
 				23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */,
 				23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */,
 				235E07C91E7E9A7600D83D16 /* CommentsViewController.swift in Sources */,
@@ -375,6 +382,7 @@
 				235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */,
 				235E07C71E7E92E600D83D16 /* Constants.swift in Sources */,
 				23A395F41E7DDF9800030DEF /* APIClient+URLSessionDelegate.swift in Sources */,
+				2337562B1EC1E8FE0051ED2C /* EitherMoreComments.swift in Sources */,
 				235E08011E80D25100D83D16 /* SeparatorView.swift in Sources */,
 				23BED71D1EBDE71E0072C2CE /* PostsDataSource.swift in Sources */,
 				23A395F71E7DDF9800030DEF /* Mapper.swift in Sources */,

@@ -21,7 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
              */
             print("Enabling offline development. Application will report being online with no reachability change callbacks.")
             Reachability.shared.isEmulatingOnline = true
-            dataProvider = OfflineDevelopmentDataProvider()
+            // TODO inject this as part of instantiation.
+            let postsViewController = (window?.rootViewController as? UINavigationController)?.viewControllers.first as? PostsViewController
+            postsViewController?.provider.remote = OfflineRemoteProvider()
         } else {
             Reachability.shared.startNotifier()
         }

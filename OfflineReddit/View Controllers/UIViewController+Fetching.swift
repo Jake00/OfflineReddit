@@ -10,6 +10,10 @@ import Foundation
 import UIKit
 import BoltsSwift
 
+protocol Loadable: class {
+    var isLoading: Bool { get set }
+}
+
 extension UIViewController {
     
     var navigationBarProgressView: UIProgressView? {
@@ -33,6 +37,16 @@ extension UIViewController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: okTitle, style: .default, handler: nil))
         present(alertController, animated: true, completion: nil)
+    }
+    
+    @discardableResult
+    func fetch<T>(_ task: Task<T>) -> Task<T> {
+        (self as? Loadable)?.isLoading = true
+        return task.continueWithTask(.mainThread) { task in
+            (self as? Loadable)?.isLoading = false
+            task.error.map(self.presentErrorAlert)
+            return task
+        }
     }
 }
 

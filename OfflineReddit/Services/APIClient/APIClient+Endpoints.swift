@@ -13,8 +13,8 @@ extension APIClient: DataProviding {
     func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
         let path: String = "r/" + subreddits.map { $0.name }.joined(separator: "+") + ".json"
         var parameters: Parameters = ["raw_json": "1"]
-        if let after = after {
-            parameters["after"] = after.id
+        if let post = post {
+            parameters["after"] = post.id
             parameters["limit"] = "25"
         }
         let request = Request(.get, path, parameters: parameters)

@@ -9,7 +9,7 @@
 import UIKit
 import BoltsSwift
 
-class PostsViewController: UIViewController {
+class PostsViewController: UIViewController, Loadable {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var footerView: UIView!
@@ -76,7 +76,8 @@ class PostsViewController: UIViewController {
         switch segue.identifier {
         case Segues.comments?:
             let commentsViewController = segue.destination as! CommentsViewController
-            commentsViewController.post = sender as! Post
+            commentsViewController.post = sender as? Post
+            commentsViewController.provider.remote = provider.remote
         case Segues.subreddits?:
             let subredditsViewController = segue.destination as! SubredditsViewController
             subredditsViewController.didSelectSubreddits = { [weak self] in
@@ -110,11 +111,8 @@ class PostsViewController: UIViewController {
     }
     
     func fetchPosts() {
-        self.isLoading = true
-        provider.getPosts(for: dataSource.subreddits, after: dataSource.rows.last?.post)
-            .continueOnSuccessWith(.mainThread, continuation: updateWithNewPosts)
-            .continueOnErrorWith(.mainThread, continuation: presentErrorAlert)
-            .continueWith(.mainThread) { _ in self.isLoading = false }
+        fetch(provider.getPosts(for: dataSource.subreddits, after: dataSource.rows.last?.post)
+            .continueOnSuccessWith(.mainThread, continuation: updateWithNewPosts))
     }
     
     private func updateWithNewPosts(_ posts: [Post], context: DataProvider.UpdateContext) {
@@ -155,7 +153,7 @@ class PostsViewController: UIViewController {
     // MARK: - Posts downloading
     
     private func startPostsDownload(for indexPaths: [IndexPath]) {
-        let downloader = PostsDownloader(posts: indexPaths.map(dataSource.post(at:)))
+        let downloader = PostsDownloader(posts: indexPaths.map(dataSource.post(at:)), provider: provider.remote)
         downloader.completionForPost = { post in
             self.dataSource.setState(.checked, for: post, in: self.tableView)
         }

@@ -13,6 +13,7 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
     
     let progress: Progress
     let numberOfCommentBatches: Int
+    let provider: DataProviding
     var completionForPost: ((Post) -> Void)?
     private(set) var error: Error?
     private var posts: [Post]
@@ -30,12 +31,15 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
         }
     }
     
-    init(posts: [Post], numberOfCommentBatches: Int = 3) {
+    init(posts: [Post], provider: DataProviding, numberOfCommentBatches: Int = 3) {
         self.posts = posts
+        self.provider = provider
         self.numberOfCommentBatches = numberOfCommentBatches
         self.progress = Progress(totalUnitCount: Int64((1 + numberOfCommentBatches) * posts.count))
         super.init()
     }
+    
+    // MARK: - Operation
     
     override func main() {
         /* 
@@ -55,25 +59,32 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
         completionForPost = nil
     }
     
+    // MARK: - Downloading
+    
     private func downloadNextPost() -> Task<Void> {
         guard !posts.isEmpty else { return Task(()) }
         let post = posts.removeFirst()
-        return dataProvider.getComments(for: post)
-            .continueOnSuccessWithTask { _ -> Task<Void> in
-                self.progress.completedUnitCount += 1
-                post.isAvailableOffline = true
-                let more = post.batchedMoreComments(maximum: self.numberOfCommentBatches)
-                let commentsProgress: Progress?
-                if more.isEmpty {
-                    commentsProgress = nil
-                    self.progress.totalUnitCount -= Int64(self.numberOfCommentBatches)
-                } else {
-                    commentsProgress = Progress(totalUnitCount: Int64(more.count), parent: self.progress, pendingUnitCount: Int64(self.numberOfCommentBatches))
-                }
-                let comments = Comments(post: post, more: more, progress: commentsProgress)
-                self.comments.append(comments)
-                return self.downloadNextPost()
+        return provider.getComments(for: post)
+            .continueOnSuccessWithTask { _ in self.nextPostDidDownload(post) }
+    }
+    
+    private func nextPostDidDownload(_ post: Post) -> Task<Void> {
+        self.progress.completedUnitCount += 1
+        post.isAvailableOffline = true
+        let more = post.batchedMoreComments(maximum: self.numberOfCommentBatches)
+        let commentsProgress: Progress?
+        if more.isEmpty {
+            commentsProgress = nil
+            self.progress.totalUnitCount -= Int64(self.numberOfCommentBatches)
+        } else {
+            commentsProgress = Progress(
+                totalUnitCount: Int64(more.count),
+                parent: self.progress,
+                pendingUnitCount: Int64(self.numberOfCommentBatches))
         }
+        let comments = Comments(post: post, more: more, progress: commentsProgress)
+        self.comments.append(comments)
+        return self.downloadNextPost()
     }
     
     private func downloadNextPostsComments() -> Task<Void> {
@@ -85,7 +96,7 @@ final class PostsDownloader: AsyncOperation, ProgressReporting {
         func downloadNextCommentBatch() -> Task<Void> {
             guard !next.more.isEmpty else { return Task(()) }
             let comments = next.more.removeFirst()
-            return dataProvider.getMoreComments(using: comments, post: next.post)
+            return provider.getMoreComments(using: comments, post: next.post)
                 .continueOnSuccessWithTask { _ in
                     next.progress?.completedUnitCount += 1
                     return downloadNextCommentBatch()
