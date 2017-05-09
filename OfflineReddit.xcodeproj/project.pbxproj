@@ -53,7 +53,7 @@
 		23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */; };
 		23D4F30E1EBE2839000CDA18 /* PostsDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D4F30D1EBE2839000CDA18 /* PostsDownloader.swift */; };
 		23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3441EC0592A005A0606 /* DataProvider.swift */; };
-		23F9F3471EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3461EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift */; };
+		23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,7 +108,7 @@
 		23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorViewAnimating.swift; sourceTree = "<group>"; };
 		23D4F30D1EBE2839000CDA18 /* PostsDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsDownloader.swift; sourceTree = "<group>"; };
 		23F9F3441EC0592A005A0606 /* DataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataProvider.swift; sourceTree = "<group>"; };
-		23F9F3461EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OfflineDevelopmentDataProvider.swift; sourceTree = "<group>"; };
+		23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OfflineRemoteProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,7 +180,7 @@
 				235E08041E81430C00D83D16 /* Reachability.h */,
 				235E08051E81430C00D83D16 /* Reachability.m */,
 				23F9F3441EC0592A005A0606 /* DataProvider.swift */,
-				23F9F3461EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift */,
+				23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -369,7 +369,7 @@
 				235E08061E81430C00D83D16 /* Reachability.m in Sources */,
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
-				23F9F3471EC0A8E2005A0606 /* OfflineDevelopmentDataProvider.swift in Sources */,
+				23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */,
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,
 				23A395F61E7DDF9800030DEF /* CoreDataController.swift in Sources */,
 				235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */,

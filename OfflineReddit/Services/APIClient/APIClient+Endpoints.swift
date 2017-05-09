@@ -8,9 +8,9 @@
 
 import BoltsSwift
 
-extension APIClient: DataProvider {
+extension APIClient: DataProviding {
     
-    func getPosts(for subreddits: [Subreddit], after: Post?) -> Task<[Post]> {
+    func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
         let path: String = "r/" + subreddits.map { $0.name }.joined(separator: "+") + ".json"
         var parameters: Parameters = ["raw_json": "1"]
         if let after = after {

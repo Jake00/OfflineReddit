@@ -20,4 +20,25 @@
     }
 }
 
+- (void)insertRowsSafeAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
+{
+    [self beginUpdates];
+    [self insertRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+    [self endUpdatesSafe];
+}
+
+- (void)deleteRowsSafeAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
+{
+    [self beginUpdates];
+    [self deleteRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+    [self endUpdatesSafe];
+}
+
+- (void)reloadRowsSafeAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation
+{
+    [self beginUpdates];
+    [self reloadRowsAtIndexPaths:indexPaths withRowAnimation:animation];
+    [self endUpdatesSafe];
+}
+
 @end

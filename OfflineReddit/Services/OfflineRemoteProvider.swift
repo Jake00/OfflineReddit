@@ -1,5 +1,5 @@
 //
-//  OfflineDevelopmentDataProvider.swift
+//  OfflineRemoteProvider.swift
 //  OfflineReddit
 //
 //  Created by Jake Bellamy on 8/05/17.
@@ -9,7 +9,7 @@
 import Foundation
 import BoltsSwift
 
-final class OfflineDevelopmentDataProvider {
+final class OfflineRemoteProvider {
     
     enum Error: Swift.Error, PresentableError {
         case noFileExists
@@ -19,7 +19,7 @@ final class OfflineDevelopmentDataProvider {
         }
     }
     
-    let queue = DispatchQueue(label: "com.jrb.OfflineDevelopmentDataProvider")
+    let queue = DispatchQueue(label: "com.jrb.OfflineRemoteProvider")
     let mapper = Mapper()
     let subdirectory = "Offline Development"
     
@@ -49,11 +49,11 @@ final class OfflineDevelopmentDataProvider {
     }
 }
 
-// MARK: - Data provider
+// MARK: - Data providing
 
-extension OfflineDevelopmentDataProvider: DataProvider {
+extension OfflineRemoteProvider: DataProviding {
 
-    func getPosts(for subreddits: [Subreddit], after: Post?) -> Task<[Post]> {
+    func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
         // File `Posts.json` contains a response from
         // GET https://www.reddit.com/r/AskReddit+relationships.json?raw_json=1
         return delay().continueWithTask { _ in self.readFile(named: "Posts") }

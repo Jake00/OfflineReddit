@@ -11,6 +11,9 @@ import UIKit
 class PostsDataSource: NSObject {
     
     var rows: [PostCellModel] = []
+    var subreddits: [Subreddit] = [] {
+        didSet { rows.removeAll() }
+    }
     
     func post(at indexPath: IndexPath) -> Post {
         return rows[indexPath.row].post
