@@ -18,11 +18,12 @@ protocol DataProviding {
 
 final class DataProvider {
     
+    static let shared = DataProvider(remote: APIClient.shared, local: CoreDataController.shared.viewContext)
+
     var remote: DataProviding
     let local: NSManagedObjectContext
     
-    init(remote: DataProviding = APIClient.shared,
-         local: NSManagedObjectContext = CoreDataController.shared.viewContext) {
+    init(remote: DataProviding, local: NSManagedObjectContext) {
         self.remote = remote
         self.local = local
     }

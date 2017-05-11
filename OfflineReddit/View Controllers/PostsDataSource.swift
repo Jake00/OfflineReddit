@@ -22,12 +22,12 @@ class PostsDataSource: NSObject {
     // MARK: - Updating cells
     
     func updateAll(cell: PostCell?, row: PostCellModel) {
-        update(cell: cell, post: row.post)
+        updateText(cell: cell, post: row.post)
         update(cell: cell, state: row.state)
         update(cell: cell, isAvailableOffline: row.post.isAvailableOffline)
     }
     
-    func update(cell: PostCell?, post: Post) {
+    func updateText(cell: PostCell?, post: Post) {
         cell?.topLabel.text = post.subredditAuthorTimeText
         cell?.titleLabel.text = post.title
         cell?.bottomLabel.text = post.scoreCommentsText

@@ -22,7 +22,7 @@ class CommentsViewController: UIViewController, Loadable {
     @IBOutlet var expandCommentsButton: UIBarButtonItem!
     
     let dataSource = CommentsDataSource()
-    let provider = DataProvider()
+    lazy var provider = DataProvider.shared
     var post: Post?
     
     var isLoading = false {
@@ -37,6 +37,7 @@ class CommentsViewController: UIViewController, Loadable {
         super.viewDidLoad()
         dataSource.delegate = self
         tableView.dataSource = dataSource
+        tableView.delegate = dataSource
         subredditLabel.text = post?.subredditNamePrefixed
         authorTimeLabel.text = post?.authorTimeText
         titleLabel.text = post?.title
@@ -110,13 +111,13 @@ class CommentsViewController: UIViewController, Loadable {
             }
             self.tableView.endUpdatesSafe()
             _ = try? self.provider.local.save()
-            }.continueOnErrorWith(.mainThread) { _ in
-                self.dataSource.loadingCells.remove(more)
-                if let indexPath = self.dataSource.indexPath(of: more) {
-                    let cell = self.tableView.cellForRow(at: indexPath) as? MoreCell
-                    self.dataSource.updateMoreCell(cell, more)
-                }
-        })
+        }).continueOnErrorWith(.mainThread) { _ in
+            self.dataSource.loadingCells.remove(more)
+            if let indexPath = self.dataSource.indexPath(of: more) {
+                let cell = self.tableView.cellForRow(at: indexPath) as? MoreCell
+                self.dataSource.updateMoreCell(cell, more)
+            }
+        }
     }
     
     func updateDataSourceComments() {

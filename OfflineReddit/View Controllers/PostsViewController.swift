@@ -24,7 +24,7 @@ class PostsViewController: UIViewController, Loadable {
     @IBOutlet var cancelDownloadsButton: UIBarButtonItem!
     
     let dataSource = PostsDataSource()
-    let provider = DataProvider()
+    lazy var provider = DataProvider.shared
     private(set) var isSavingOffline = false
     
     struct Segues {
@@ -49,6 +49,8 @@ class PostsViewController: UIViewController, Loadable {
             provider.getSelectedSubreddits().continueOnSuccessWith {
                 self.dataSource.subreddits = $0
                 self.tableView.reloadData()
+                self.updateFooterView()
+                self.fetchPosts()
             }
         }
         
