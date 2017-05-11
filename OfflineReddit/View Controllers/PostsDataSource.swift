@@ -19,6 +19,12 @@ class PostsDataSource: NSObject {
         return rows[indexPath.row].post
     }
     
+    func indexPath(for post: Post) -> IndexPath? {
+        return rows
+            .index { $0.post == post }
+            .map { IndexPath(row: $0, section: 0) }
+    }
+    
     // MARK: - Updating cells
     
     func updateAll(cell: PostCell?, row: PostCellModel) {
@@ -43,11 +49,10 @@ class PostsDataSource: NSObject {
         cell?.offlineImageView.isHidden = !isAvailableOffline
     }
     
-    func updateIsAvailableOffline(at indexPaths: [IndexPath], in tableView: UITableView) {
-        for indexPath in indexPaths {
-            update(
-                cell: tableView.cellForRow(at: indexPath) as? PostCell,
-                isAvailableOffline: post(at: indexPath).isAvailableOffline)
+    func updateIsAvailableOffline(for posts: [Post], in tableView: UITableView) {
+        for post in posts {
+            let cell = indexPath(for: post).flatMap(tableView.cellForRow(at:))
+            update(cell: cell as? PostCell, isAvailableOffline: post.isAvailableOffline)
         }
     }
     

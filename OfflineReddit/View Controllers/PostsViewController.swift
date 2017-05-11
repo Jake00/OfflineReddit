@@ -79,7 +79,6 @@ class PostsViewController: UIViewController, Loadable {
         case Segues.comments?:
             let commentsViewController = segue.destination as! CommentsViewController
             commentsViewController.post = sender as? Post
-            commentsViewController.provider.remote = provider.remote
         case Segues.subreddits?:
             let subredditsViewController = segue.destination as! SubredditsViewController
             subredditsViewController.didSelectSubreddits = { [weak self] in
@@ -159,32 +158,25 @@ class PostsViewController: UIViewController, Loadable {
         downloader.completionForPost = { post in
             self.dataSource.setState(.checked, for: post, in: self.tableView)
         }
-        downloader.completionBlock = {
-            DispatchQueue.main.async {
-                self.postsDownloadDidComplete(downloader, at: indexPaths)
-            }
-        }
-        isSavingOffline = true
         dataSource.setAllStates(to: .indented, in: tableView)
         dataSource.setState(.loading, at: indexPaths, in: tableView)
-        setEditing(!isEditing, animated: true)
+        setEditing(false, animated: true)
         updateChooseDownloadsButtonEnabled()
         navigationBarProgressView?.isHidden = false
         navigationBarProgressView?.setProgress(0, animated: false)
         navigationBarProgressView?.observedProgress = downloader.progress
-        
-        downloader.start()
+        isSavingOffline = true
+        fetch(downloader.start())
+            .continueOnSuccessWith(.mainThread, continuation: completePostsDownload)
     }
     
-    private func postsDownloadDidComplete(_ downloader: PostsDownloader, at indexPaths: [IndexPath]) {
+    private func completePostsDownload(_ posts: [Post]) {
         isSavingOffline = false
-        downloader.error.map(self.presentErrorAlert)
         navigationBarProgressView?.observedProgress = nil
-        navigationBarProgressView?.setProgress(1, animated: true)
-        dataSource.updateIsAvailableOffline(at: indexPaths, in: tableView)
+        navigationBarProgressView?.isHidden = true
+        dataSource.updateIsAvailableOffline(for: posts, in: tableView)
         dataSource.setAllStates(to: .normal, in: tableView)
         updateChooseDownloadsButtonEnabled()
-        navigationBarProgressView?.isHidden = true
         UIView.animate(withDuration: 0.4) {
             self.tableView.layoutIfNeeded()
             self.tableView.beginUpdates()
@@ -225,7 +217,7 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     @IBAction func loadMoreButtonPressed(_ sender: UIButton) {
-        if !isLoading {
+        if !isLoading && !isSavingOffline {
             fetchPosts()
         }
     }
