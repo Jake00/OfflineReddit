@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import BoltsSwift
 
 class PostsDataSource: NSObject {
     
@@ -14,6 +15,8 @@ class PostsDataSource: NSObject {
     var subreddits: [Subreddit] = [] {
         didSet { rows.removeAll() }
     }
+    
+    lazy var provider = DataProvider.shared
     
     func post(at indexPath: IndexPath) -> Post {
         return rows[indexPath.row].post
@@ -86,6 +89,55 @@ class PostsDataSource: NSObject {
         let cell = tableView.cellForRow(at: indexPath) as? PostCell
         update(cell: cell, isAvailableOffline: isAvailableOffline)
     }
+    
+    // MARK: - Fetching
+    
+    func fetchNextPage(updating tableView: UITableView) -> Task<[Post]> {
+        return provider.getPosts(for: subreddits, after: rows.last?.post).continueOnSuccessWith(.mainThread) { posts, context -> [Post] in
+            let new = posts.map(PostCellModel.init)
+            switch context {
+            case .replace:
+                self.rows = new
+                tableView.reloadData()
+            case .append where !new.isEmpty:
+                self.rows += new
+                let indexPaths = (self.rows.count..<self.rows.count + new.count)
+                    .map { IndexPath(row: $0, section: 0) }
+                tableView.insertRowsSafe(at: indexPaths, with: .fade)
+            default: ()
+            }
+            return posts
+        }
+    }
+    
+    func updateSelectedSubreddits() -> Task<Void> {
+        return provider.getSelectedSubreddits()
+            .continueOnSuccessWith { self.subreddits = $0 }
+    }
+    
+    // MARK: Offline saving
+    
+    private(set) var downloader: PostsDownloader?
+    
+    @discardableResult
+    func startDownload(for indexPaths: [IndexPath], updating tableView: UITableView) -> Task<[Post]> {
+        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), provider: provider.remote)
+        downloader.completionForPost = { post in
+            self.setState(.checked, for: post, in: tableView)
+        }
+        self.downloader = downloader
+        return downloader.start()
+            .continueWithTask(.mainThread) { task -> Task<[Post]> in
+                self.downloader = nil
+                if let posts = task.result {
+                    self.updateIsAvailableOffline(for: posts, in: tableView)
+                }
+                self.setAllStates(to: .normal, in: tableView)
+                _ = try? self.provider.local.save()
+                return task
+        }
+    }
+    
 }
 
 // MARK: - Table view data source
