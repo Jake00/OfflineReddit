@@ -28,6 +28,12 @@ final class DataProvider {
         self.local = local
     }
     
+    func save() {
+        local.perform {
+            _ = try? self.local.save()
+        }
+    }
+    
     enum UpdateContext {
         case append, replace
     }

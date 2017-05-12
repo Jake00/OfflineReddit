@@ -16,8 +16,6 @@ class PostsDataSource: NSObject {
         didSet { rows.removeAll() }
     }
     
-    lazy var provider = DataProvider.shared
-    
     func post(at indexPath: IndexPath) -> Post {
         return rows[indexPath.row].post
     }
@@ -92,6 +90,8 @@ class PostsDataSource: NSObject {
     
     // MARK: - Fetching
     
+    lazy var provider = DataProvider.shared
+    
     func fetchNextPage(updating tableView: UITableView) -> Task<[Post]> {
         return provider.getPosts(for: subreddits, after: rows.last?.post).continueOnSuccessWith(.mainThread) { posts, context -> [Post] in
             let new = posts.map(PostCellModel.init)
@@ -121,7 +121,7 @@ class PostsDataSource: NSObject {
     
     @discardableResult
     func startDownload(for indexPaths: [IndexPath], updating tableView: UITableView) -> Task<[Post]> {
-        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), provider: provider.remote)
+        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: provider.remote)
         downloader.completionForPost = { post in
             self.setState(.checked, for: post, in: tableView)
         }
@@ -133,7 +133,7 @@ class PostsDataSource: NSObject {
                     self.updateIsAvailableOffline(for: posts, in: tableView)
                 }
                 self.setAllStates(to: .normal, in: tableView)
-                _ = try? self.provider.local.save()
+                self.provider.save()
                 return task
         }
     }

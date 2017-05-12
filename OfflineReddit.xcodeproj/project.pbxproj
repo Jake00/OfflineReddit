@@ -10,6 +10,8 @@
 		233756291EC0DDD10051ED2C /* Offline Development in Resources */ = {isa = PBXBuildFile; fileRef = 233756281EC0DDD10051ED2C /* Offline Development */; };
 		2337562B1EC1E8FE0051ED2C /* EitherMoreComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2337562A1EC1E8FE0051ED2C /* EitherMoreComments.swift */; };
 		2337562D1EC1E9220051ED2C /* CommentsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */; };
+		233756311EC64F500051ED2C /* CommentsDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756301EC64F500051ED2C /* CommentsDownloader.swift */; };
+		233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756321EC650A40051ED2C /* MoreCommentsBatching.swift */; };
 		235E07C51E7E8E1E00D83D16 /* PostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07C91E7E9A7600D83D16 /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */; };
@@ -62,6 +64,8 @@
 		233756281EC0DDD10051ED2C /* Offline Development */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Offline Development"; sourceTree = "<group>"; };
 		2337562A1EC1E8FE0051ED2C /* EitherMoreComments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EitherMoreComments.swift; sourceTree = "<group>"; };
 		2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsDataSource.swift; sourceTree = "<group>"; };
+		233756301EC64F500051ED2C /* CommentsDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsDownloader.swift; sourceTree = "<group>"; };
+		233756321EC650A40051ED2C /* MoreCommentsBatching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreCommentsBatching.swift; sourceTree = "<group>"; };
 		235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsViewController.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
@@ -185,6 +189,7 @@
 				235E08051E81430C00D83D16 /* Reachability.m */,
 				23F9F3441EC0592A005A0606 /* DataProvider.swift */,
 				23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */,
+				233756321EC650A40051ED2C /* MoreCommentsBatching.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -230,6 +235,7 @@
 				23D4F30D1EBE2839000CDA18 /* PostsDownloader.swift */,
 				235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */,
 				2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */,
+				233756301EC64F500051ED2C /* CommentsDownloader.swift */,
 				2337562A1EC1E8FE0051ED2C /* EitherMoreComments.swift */,
 				235E07E01E7FA03100D83D16 /* CommentsCells.swift */,
 				235E07F81E8090BF00D83D16 /* SubredditsViewController.swift */,
@@ -373,9 +379,11 @@
 				235E07F91E8090BF00D83D16 /* SubredditsViewController.swift in Sources */,
 				235E07FF1E8094F900D83D16 /* SubredditCell.swift in Sources */,
 				235E07D51E7F492600D83D16 /* MoreComments.swift in Sources */,
+				233756311EC64F500051ED2C /* CommentsDownloader.swift in Sources */,
 				235E08061E81430C00D83D16 /* Reachability.m in Sources */,
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
+				233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */,
 				23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */,
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,
 				23A395F61E7DDF9800030DEF /* CoreDataController.swift in Sources */,

@@ -72,7 +72,7 @@ class PostsViewController: UIViewController, Loadable {
         switch segue.identifier {
         case Segues.comments?:
             let commentsViewController = segue.destination as! CommentsViewController
-            commentsViewController.post = sender as? Post
+            commentsViewController.dataSource.post = sender as? Post
         case Segues.subreddits?:
             let subredditsViewController = segue.destination as! SubredditsViewController
             subredditsViewController.didSelectSubreddits = { [weak self] in

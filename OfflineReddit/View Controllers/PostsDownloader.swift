@@ -13,7 +13,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
     
     let progress: Progress
     let numberOfCommentBatches: Int
-    let provider: DataProviding
+    let remote: DataProviding
     let posts: [Post]
     var completionForPost: ((Post) -> Void)?
     private var remainingPosts: [Post]
@@ -31,10 +31,10 @@ final class PostsDownloader: NSObject, ProgressReporting {
         }
     }
     
-    init(posts: [Post], provider: DataProviding, numberOfCommentBatches: Int = 3) {
+    init(posts: [Post], remote: DataProviding, numberOfCommentBatches: Int = 3) {
         self.posts = posts
         self.remainingPosts = posts
-        self.provider = provider
+        self.remote = remote
         self.numberOfCommentBatches = numberOfCommentBatches
         self.progress = Progress(totalUnitCount: Int64((1 + numberOfCommentBatches) * posts.count))
         super.init()
@@ -57,14 +57,14 @@ final class PostsDownloader: NSObject, ProgressReporting {
     private func downloadNextPost() -> Task<Void> {
         guard !remainingPosts.isEmpty else { return Task(()) }
         let post = remainingPosts.removeFirst()
-        return provider.getComments(for: post)
+        return remote.getComments(for: post)
             .continueOnSuccessWithTask { _ in self.nextPostDidDownload(post) }
     }
     
     private func nextPostDidDownload(_ post: Post) -> Task<Void> {
         self.progress.completedUnitCount += 1
         post.isAvailableOffline = true
-        let more = post.batchedMoreComments(maximum: numberOfCommentBatches)
+        let more = batch(comments: post.displayComments, maximum: numberOfCommentBatches)
         let commentsProgress: Progress? = more.isEmpty ? nil : Progress(
             totalUnitCount: Int64(more.count),
             parent: self.progress,
@@ -84,7 +84,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
         func downloadNextCommentBatch() -> Task<Void> {
             guard !next.more.isEmpty else { return Task(()) }
             let comments = next.more.removeFirst()
-            return provider.getMoreComments(using: comments, post: next.post)
+            return remote.getMoreComments(using: comments, post: next.post)
                 .continueOnSuccessWithTask { _ in
                     next.progress?.completedUnitCount += 1
                     return downloadNextCommentBatch()

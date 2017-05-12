@@ -7,18 +7,19 @@
 //
 
 import UIKit
+import BoltsSwift
 
 protocol CommentsDataSourceDelegate: class {
     var viewHorizontalMargins: CGFloat { get }
     var viewFrameWidth: CGFloat { get }
-    func didSelectMoreComments(_ more: MoreComments)
+    func isFetchingMoreComments(with task: Task<[Comment]>)
+    func didUpdateAllComments(saved: Int64, toExpand: Int64)
 }
 
 class CommentsDataSource: NSObject {
     
-    var allComments: [Either<Comment, MoreComments>] = [] {
-        didSet { updateComments() }
-    }
+    var post: Post?
+    var allComments: [Either<Comment, MoreComments>] = []
     private(set) var comments: [Either<Comment, MoreComments>] = []
     var loadingCells: Set<MoreComments> = []
     
@@ -31,6 +32,7 @@ class CommentsDataSource: NSObject {
     }
     
     private func updateComments() {
+        allComments = post?.displayComments ?? []
         var condensedComment: Comment?
         comments = allComments.filter {
             switch $0 {
@@ -47,6 +49,15 @@ class CommentsDataSource: NSObject {
                 }
                 return true
             }
+        }
+        if let delegate = delegate {
+            let (saved, toExpand) = allComments.reduce((0, 0) as (Int64, Int64)) {
+                switch $1 {
+                case .first: return ($0.0 + 1, $0.1)
+                case .other(let b): return ($0.0, $0.1 + b.count)
+                }
+            }
+            delegate.didUpdateAllComments(saved: saved, toExpand: toExpand)
         }
     }
     
@@ -102,6 +113,107 @@ class CommentsDataSource: NSObject {
             }
         }
         tableView.endUpdatesSafe()
+    }
+    
+    // MARK: - Fetching
+    
+    enum Error: Swift.Error {
+        case nilPost
+    }
+    
+    lazy var provider = DataProvider.shared
+    
+    func fetchCommentsIfNeeded(updating tableView: UITableView) -> Task<Void>? {
+        if allComments.isEmpty {
+            updateComments()
+        }
+        if allComments.isEmpty {
+            return fetchComments(updating: tableView)
+        }
+        return nil
+    }
+    
+    func fetchComments(updating tableView: UITableView) -> Task<Void> {
+        guard let post = post else { return Task(error: Error.nilPost) }
+        return provider.getComments(for: post).continueOnSuccessWith(.mainThread) { _ in
+            self.didFetchComments(tableView: tableView)
+        }
+    }
+    
+    private func didFetchComments(tableView: UITableView) {
+        defer { provider.save() }
+        let old = comments.count
+        updateComments()
+        let new = comments.count
+        guard new > 0 else {
+            tableView.reloadData()
+            return
+        }
+        if old == 0 {
+            tableView.beginUpdates()
+            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+        }
+        tableView.insertRows(at: (max(1, old)..<new).map { IndexPath(row: $0, section: 0) }, with: .fade)
+        if old == 0 {
+            tableView.endUpdates()
+        }
+    }
+    
+    @discardableResult
+    func fetchMoreComments(using more: MoreComments, updating tableView: UITableView) -> Task<[Comment]> {
+        guard let post = post else { return Task(error: Error.nilPost) }
+        let task = provider.getMoreComments(using: [more], post: post).continueWithTask(.mainThread) {
+            self.didFetchMoreComments(more, task: $0, tableView: tableView)
+        }
+        delegate?.isFetchingMoreComments(with: task)
+        return task
+    }
+    
+    private func didFetchMoreComments(_ more: MoreComments, task: Task<[Comment]>, tableView: UITableView) -> Task<[Comment]> {
+        loadingCells.remove(more)
+        guard let indexPath = self.indexPath(of: more) else {
+            updateComments()
+            tableView.reloadData()
+            return task
+        }
+        guard task.error == nil else {
+            let cell = tableView.cellForRow(at: indexPath) as? MoreCell
+            updateMoreCell(cell, more)
+            return task
+        }
+        let start = min(indexPath.row + 1, comments.endIndex - 1)
+        let next = comments[start]
+        updateComments()
+        guard let end = comments.index(where: { $0 == next }), end - start >= 0 else {
+            tableView.reloadData()
+            return task
+        }
+        tableView.beginUpdates()
+        tableView.reloadRows(at: [indexPath], with: .fade)
+        if end - start > 0 {
+            tableView.insertRows(at: (start..<end).map { IndexPath(row: $0, section: 0) }, with: .fade)
+        }
+        tableView.endUpdatesSafe()
+        provider.save()
+        return task
+    }
+    
+    // MARK: Offline saving
+    
+    private(set) var downloader: CommentsDownloader?
+    
+    @discardableResult
+    func startDownload(updating tableView: UITableView) -> Task<Void> {
+        guard let post = post else { return Task(error: Error.nilPost) }
+        let downloader = CommentsDownloader(post: post, comments: allComments, remote: provider.remote)
+        self.downloader = downloader
+        
+        return downloader.start().continueWithTask(.mainThread) {
+            self.updateComments()
+            tableView.reloadData()
+            self.provider.save()
+            return $0
+        }
     }
 }
 
@@ -176,7 +288,7 @@ extension CommentsDataSource: UITableViewDelegate {
         case .other(let more):
             loadingCells.insert(more)
             updateMoreCell(tableView.cellForRow(at: indexPath) as? MoreCell, more)
-            delegate?.didSelectMoreComments(more)
+            fetchMoreComments(using: more, updating: tableView)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }

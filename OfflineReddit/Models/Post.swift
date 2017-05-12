@@ -64,33 +64,6 @@ extension Post {
         return displayComments
     }
     
-    func batchedMoreComments(for comments: [Either<Comment, MoreComments>]? = nil, maximum: Int = 5) -> [[MoreComments]] {
-        let comments = (comments ?? displayComments)
-            .flatMap { $0.other }
-            .sorted { $0.children.count > $1.children.count }
-        
-        var batches: [[MoreComments]] = []
-        var current: [MoreComments] = []
-        
-        for (index, comment) in comments.enumerated() {
-            current.append(comment)
-            guard index + 1 < comments.endIndex else {
-                batches.append(current)
-                return batches
-            }
-            let currentChildrenCount = current.reduce(0) { $0 + $1.children.count }
-            let nextChildrenCount = comments[index + 1].children.count
-            if currentChildrenCount + nextChildrenCount > 100 {
-                batches.append(current)
-                if batches.count >= maximum {
-                    return batches
-                }
-                current = []
-            }
-        }
-        return batches
-    }
-    
     func update(json: JSON) {
         author = json["author"] as? String
         selfText = json["selftext"] as? String
