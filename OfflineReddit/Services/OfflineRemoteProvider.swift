@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 import BoltsSwift
 
 final class OfflineRemoteProvider {
@@ -22,9 +23,12 @@ final class OfflineRemoteProvider {
     let queue = DispatchQueue(label: "com.jrb.OfflineRemoteProvider")
     let mapper = Mapper()
     let subdirectory = "Offline Development"
+    lazy var context: NSManagedObjectContext = CoreDataController.shared.viewContext
+    
+    var delays = true
     
     fileprivate func delay() -> Task<Void> {
-        return Task<Void>.withDelay(1)
+        return delays ? Task<Void>.withDelay(1) : Task<Void>(())
     }
     
     fileprivate func readFile(named filename: String) -> Task<Any> {
@@ -58,14 +62,14 @@ extension OfflineRemoteProvider: DataProviding {
         // GET https://www.reddit.com/r/AskReddit+relationships.json?raw_json=1
         return delay().continueWithTask { _ in self.readFile(named: "Posts") }
             .continueOnSuccessWith(.immediate, continuation: mapper.mapPosts)
-            .continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
+            .continueOnSuccessWith(.immediate) { $0.inContext(self.context, inContextsQueue: true) }
     }
     
     func getComments(for post: Post) -> Task<[Comment]> {
         // Comments files are named Post_`id`.json
         return delay().continueWithTask { _ in self.readFile(named: "Post_\(post.id)") }
             .continueOnSuccessWith(.immediate, continuation: mapper.mapComments)
-            .continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
+            .continueOnSuccessWith(.immediate) { $0.inContext(self.context, inContextsQueue: true) }
     }
     
     func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]> {
@@ -81,6 +85,6 @@ extension OfflineRemoteProvider: DataProviding {
         }
         return delay().continueWithTask { _ in self.readFile(named: filename) }
             .continueOnSuccessWith(.immediate) { try self.mapper.mapMoreComments(json: $0, mores: mores, post: post) }
-            .continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
+            .continueOnSuccessWith(.immediate) { $0.inContext(self.context, inContextsQueue: true) }
     }
 }

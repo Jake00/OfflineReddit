@@ -24,6 +24,7 @@ class PostsViewController: UIViewController, Loadable {
     @IBOutlet var cancelDownloadsButton: UIBarButtonItem!
     
     let dataSource = PostsDataSource()
+    lazy var reachability: Reachable = Reachability.shared
     
     struct Segues {
         static let comments = "Comments"
@@ -42,11 +43,6 @@ class PostsViewController: UIViewController, Loadable {
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
         tableView.dataSource = dataSource
-        dataSource.updateSelectedSubreddits().continueOnSuccessWithTask { () -> Task<[Post]> in
-            self.tableView.reloadData()
-            self.updateFooterView()
-            return self.dataSource.fetchNextPage(updating: self.tableView)
-        }
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
     }
@@ -63,6 +59,7 @@ class PostsViewController: UIViewController, Loadable {
         }
         if dataSource.subreddits.isEmpty {
             updateFooterView()
+            fetchInitial()
         } else if dataSource.rows.isEmpty {
             fetchPosts()
         }
@@ -94,29 +91,42 @@ class PostsViewController: UIViewController, Loadable {
         navigationItem.setLeftBarButtonItems(editing ? nil : [chooseDownloadsButton], animated: animated)
     }
     
-    // MARK: - Updating
+    // MARK: - Fetching
     
     var isLoading = false {
         didSet {
-            guard isOnline else { return }
+            guard reachability.isOnline else { return }
             loadMoreButton.isEnabled = !isLoading
             loadMoreButton.titleEdgeInsets.left = isLoading ? -activityIndicatorCenterX.constant : 0
             activityIndicator.setAnimating(isLoading)
         }
     }
     
-    func fetchPosts() {
-        fetch(dataSource.fetchNextPage(updating: tableView))
+    @discardableResult
+    func fetchInitial() -> Task<Void> {
+        return fetch(dataSource.updateSelectedSubreddits())
+            .continueOnSuccessWithTask(.mainThread) {
+                self.tableView.reloadData()
+                self.updateFooterView()
+                return self.fetchPosts()
+            }
+    }
+    
+    @discardableResult
+    func fetchPosts() -> Task<Void> {
+        return fetch(dataSource.fetchNextPage(updating: tableView))
             .continueOnSuccessWith(.mainThread) { _ in self.updateChooseDownloadsButtonEnabled() }
     }
+    
+    // MARK: - UI Updating
     
     func updateFooterView() {
         let hideHints = !dataSource.subreddits.isEmpty
         hintLabel.isHidden = hideHints
         hintImage.isHidden = hideHints
         loadMoreButton.isHidden = !hideHints
-        loadMoreButton.isEnabled = isOnline
-        loadMoreButton.setTitle(isOnline ? SharedText.loadingLowercase : SharedText.offline, for: .disabled)
+        loadMoreButton.isEnabled = reachability.isOnline
+        loadMoreButton.setTitle(reachability.isOnline ? SharedText.loadingLowercase : SharedText.offline, for: .disabled)
         activityIndicator.setAnimating(hideHints && isLoading)
     }
     
@@ -125,7 +135,7 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     func updateChooseDownloadsButtonEnabled() {
-        chooseDownloadsButton.isEnabled = !dataSource.rows.isEmpty && !isSavingOffline && isOnline
+        chooseDownloadsButton.isEnabled = !dataSource.rows.isEmpty && !isSavingOffline && reachability.isOnline
     }
     
     // MARK: - Posts downloading
@@ -134,8 +144,9 @@ class PostsViewController: UIViewController, Loadable {
         return dataSource.downloader != nil
     }
     
-    private func startPostsDownload(for indexPaths: [IndexPath]) {
-        fetch(dataSource.startDownload(for: indexPaths, updating: tableView)).continueWith { _ in
+    @discardableResult
+    func startPostsDownload(for indexPaths: [IndexPath]) -> Task<Void> {
+        let task = fetch(dataSource.startDownload(for: indexPaths, updating: tableView)).continueWith { _ in
             self.navigationBarProgressView?.observedProgress = nil
             self.navigationBarProgressView?.isHidden = true
             self.updateChooseDownloadsButtonEnabled()
@@ -150,6 +161,7 @@ class PostsViewController: UIViewController, Loadable {
         navigationBarProgressView?.isHidden = false
         navigationBarProgressView?.setProgress(0, animated: false)
         navigationBarProgressView?.observedProgress = dataSource.downloader?.progress
+        return task
     }
     
     // MARK: - Reachablity
@@ -157,7 +169,7 @@ class PostsViewController: UIViewController, Loadable {
     func reachabilityChanged(_ notification: Notification) {
         updateFooterView()
         updateChooseDownloadsButtonEnabled()
-        if isEditing && isOffline {
+        if isEditing && reachability.isOffline {
             setEditing(false, animated: true)
         }
         dataSource.rows = []
@@ -211,4 +223,10 @@ extension PostsViewController: UITableViewDelegate {
             updateStartDownloadsButtonEnabled()
         }
     }
+}
+
+// MARK: - Storyboard init
+
+extension PostsViewController: StoryboardInitializable {
+    static let storyboardIdentifier = "Posts"
 }

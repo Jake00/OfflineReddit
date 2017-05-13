@@ -93,7 +93,8 @@ class PostsDataSource: NSObject {
     lazy var provider = DataProvider.shared
     
     func fetchNextPage(updating tableView: UITableView) -> Task<[Post]> {
-        return provider.getPosts(for: subreddits, after: rows.last?.post).continueOnSuccessWith(.mainThread) { posts, context -> [Post] in
+        let get = provider.getPosts(for: subreddits, after: rows.last?.post)
+        return get.continueOnSuccessWith(.mainThread) { posts, context -> [Post] in
             let new = posts.map(PostCellModel.init)
             switch context {
             case .replace:
@@ -101,7 +102,7 @@ class PostsDataSource: NSObject {
                 tableView.reloadData()
             case .append where !new.isEmpty:
                 self.rows += new
-                let indexPaths = (self.rows.count..<self.rows.count + new.count)
+                let indexPaths = (self.rows.count - new.count..<self.rows.count)
                     .map { IndexPath(row: $0, section: 0) }
                 tableView.insertRowsSafe(at: indexPaths, with: .fade)
             default: ()

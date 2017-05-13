@@ -66,6 +66,9 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 {
 	SCNetworkReachabilityRef _reachabilityRef;
 }
+
+@synthesize notifiying = _notifiying;
+
 + (Reachability *)sharedReachability
 {
     static Reachability *reachability;
@@ -144,6 +147,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 		if (SCNetworkReachabilityScheduleWithRunLoop(_reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode))
 		{
 			returnValue = YES;
+            _notifiying = YES;
 		}
 	}
     
@@ -156,6 +160,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 	if (_reachabilityRef != NULL)
 	{
 		SCNetworkReachabilityUnscheduleFromRunLoop(_reachabilityRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+        _notifiying = NO;
 	}
 }
 

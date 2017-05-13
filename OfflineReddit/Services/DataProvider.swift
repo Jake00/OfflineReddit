@@ -19,9 +19,10 @@ protocol DataProviding {
 final class DataProvider {
     
     static let shared = DataProvider(remote: APIClient.shared, local: CoreDataController.shared.viewContext)
-
+    
     var remote: DataProviding
-    let local: NSManagedObjectContext
+    var local: NSManagedObjectContext
+    lazy var reachability: Reachable = Reachability.shared
     
     init(remote: DataProviding, local: NSManagedObjectContext) {
         self.remote = remote
@@ -39,7 +40,7 @@ final class DataProvider {
     }
     
     func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<([Post], UpdateContext)> {
-        if isOnline {
+        if reachability.isOnline {
             return remote.getPosts(for: subreddits, after: post)
                 .continueOnSuccessWith(.immediate) { ($0, .append) }
         }

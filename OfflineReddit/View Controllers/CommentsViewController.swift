@@ -22,6 +22,7 @@ class CommentsViewController: UIViewController, Loadable {
     @IBOutlet var expandCommentsButton: UIBarButtonItem!
     
     let dataSource = CommentsDataSource()
+    lazy var reachability: Reachable = Reachability.shared
     
     var isLoading = false {
         didSet {
@@ -48,7 +49,7 @@ class CommentsViewController: UIViewController, Loadable {
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
-        dataSource.fetchCommentsIfNeeded(updating: tableView).map(fetch)
+        _ = dataSource.fetchCommentsIfNeeded(updating: tableView).map(fetch)
     }
     
     override func viewDidLayoutSubviews() {
@@ -75,6 +76,8 @@ class CommentsViewController: UIViewController, Loadable {
     }
 }
 
+// MARK: - Data source delegate
+
 extension CommentsViewController: CommentsDataSourceDelegate {
     
     var viewHorizontalMargins: CGFloat {
@@ -90,9 +93,15 @@ extension CommentsViewController: CommentsDataSourceDelegate {
     }
     
     func didUpdateAllComments(saved: Int64, toExpand: Int64) {
-        expandCommentsButton.isEnabled = toExpand > 0 && isOnline
+        expandCommentsButton.isEnabled = toExpand > 0 && reachability.isOnline
         commentsLabel.text = String.localizedStringWithFormat(
             NSLocalizedString("comments_saved_format", value: "%ld comments\n%ld / %ld saved", comment: "Format for number of comments and amount saved. eg. '50 comments\n30 / 40 saved'"),
             dataSource.post?.commentsCount ?? 0, saved, saved + toExpand)
     }
+}
+
+// MARK: - Storyboard init
+
+extension CommentsViewController: StoryboardInitializable {
+    static let storyboardIdentifier = "Comments"
 }

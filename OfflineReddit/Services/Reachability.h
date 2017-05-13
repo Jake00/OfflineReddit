@@ -12,6 +12,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol Reachable <NSObject>
+
+@property (nonatomic, assign, readonly) BOOL isOnline;
+@property (nonatomic, assign, readonly) BOOL isOffline;
+
+@end
+
 typedef enum : NSInteger {
 	NotReachable = 0,
 	ReachableViaWiFi,
@@ -25,7 +32,7 @@ typedef enum : NSInteger {
 extern NSNotificationName const ReachabilityChangedNotification;
 
 
-@interface Reachability : NSObject
+@interface Reachability : NSObject <Reachable>
 
 @property (nonatomic, strong, class, readonly) Reachability *sharedReachability;
 
@@ -54,6 +61,7 @@ extern NSNotificationName const ReachabilityChangedNotification;
  */
 - (BOOL)startNotifier;
 - (void)stopNotifier;
+@property (nonatomic, assign, readonly, getter=isNotifiying) BOOL notifiying;
 
 @property (nonatomic, assign, readonly) NetworkStatus status;
 @property (nonatomic, assign, readonly) BOOL isOnline;

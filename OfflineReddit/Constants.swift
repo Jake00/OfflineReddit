@@ -24,12 +24,8 @@ var isDebugBuild: Bool {
     #endif
 }
 
-var isOnline: Bool {
-    return Reachability.shared.isOnline
-}
-
-var isOffline: Bool {
-    return Reachability.shared.isOffline
+var isTesting: Bool {
+    return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
 }
 
 struct SharedText {

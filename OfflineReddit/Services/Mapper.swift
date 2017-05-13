@@ -12,7 +12,7 @@ typealias JSON = [String: Any]
 
 final class Mapper {
     
-    let context = CoreDataController.shared.jsonContext
+    lazy var context = CoreDataController.shared.jsonContext
     
     func mapPosts(json: Any) throws -> [Post] {
         guard let children = ((json as? JSON)?["data"] as? JSON)?["children"] as? [JSON]

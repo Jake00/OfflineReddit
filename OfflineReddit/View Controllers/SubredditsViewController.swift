@@ -70,6 +70,8 @@ class SubredditsViewController: UIViewController {
     }
 }
 
+// MARK: - Table view data source
+
 extension SubredditsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -91,6 +93,8 @@ extension SubredditsViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - Table view delegate
+
 extension SubredditsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -100,6 +104,8 @@ extension SubredditsViewController: UITableViewDelegate {
         (tableView.cellForRow(at: indexPath) as? SubredditCell)?.isChecked = subreddit.isSelected
     }
 }
+
+// MARK: - Text field delegate
 
 extension SubredditsViewController: UITextFieldDelegate {
     
@@ -114,4 +120,10 @@ extension SubredditsViewController: UITextFieldDelegate {
         textField.text = nil
         return textField.resignFirstResponder()
     }
+}
+
+// MARK: - Storyboard init
+
+extension SubredditsViewController: StoryboardInitializable {
+    static let storyboardIdentifier = "Subreddits"
 }

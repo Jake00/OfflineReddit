@@ -12,6 +12,11 @@
 		2337562D1EC1E9220051ED2C /* CommentsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */; };
 		233756311EC64F500051ED2C /* CommentsDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756301EC64F500051ED2C /* CommentsDownloader.swift */; };
 		233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756321EC650A40051ED2C /* MoreCommentsBatching.swift */; };
+		2337563B1EC6794F0051ED2C /* PostsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2337563A1EC6794F0051ED2C /* PostsViewControllerTests.swift */; };
+		233756431EC703BD0051ED2C /* StoryboardInitializing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756421EC703BD0051ED2C /* StoryboardInitializing.swift */; };
+		2358C7A31EC75CE1007F7B82 /* SettableReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2358C7A21EC75CE1007F7B82 /* SettableReachability.swift */; };
+		2358C7A51EC75F2F007F7B82 /* TestableCoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2358C7A41EC75F2F007F7B82 /* TestableCoreDataController.swift */; };
+		2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		235E07C51E7E8E1E00D83D16 /* PostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07C91E7E9A7600D83D16 /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */; };
@@ -60,12 +65,28 @@
 		23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2337563D1EC6794F0051ED2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 23A395BD1E7DDE8600030DEF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 23A395C41E7DDE8600030DEF;
+			remoteInfo = OfflineReddit;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		233756281EC0DDD10051ED2C /* Offline Development */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Offline Development"; sourceTree = "<group>"; };
 		2337562A1EC1E8FE0051ED2C /* EitherMoreComments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EitherMoreComments.swift; sourceTree = "<group>"; };
 		2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsDataSource.swift; sourceTree = "<group>"; };
 		233756301EC64F500051ED2C /* CommentsDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsDownloader.swift; sourceTree = "<group>"; };
 		233756321EC650A40051ED2C /* MoreCommentsBatching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreCommentsBatching.swift; sourceTree = "<group>"; };
+		233756381EC6794F0051ED2C /* RedditOfflineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RedditOfflineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2337563A1EC6794F0051ED2C /* PostsViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsViewControllerTests.swift; sourceTree = "<group>"; };
+		2337563C1EC6794F0051ED2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		233756421EC703BD0051ED2C /* StoryboardInitializing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardInitializing.swift; sourceTree = "<group>"; };
+		2358C7A21EC75CE1007F7B82 /* SettableReachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettableReachability.swift; sourceTree = "<group>"; };
+		2358C7A41EC75F2F007F7B82 /* TestableCoreDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableCoreDataController.swift; sourceTree = "<group>"; };
 		235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsViewController.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
@@ -120,6 +141,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		233756351EC6794F0051ED2C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		23A395C21E7DDE8600030DEF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -132,10 +161,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		233756391EC6794F0051ED2C /* RedditOfflineTests */ = {
+			isa = PBXGroup;
+			children = (
+				2337563A1EC6794F0051ED2C /* PostsViewControllerTests.swift */,
+				2358C7A41EC75F2F007F7B82 /* TestableCoreDataController.swift */,
+				2358C7A21EC75CE1007F7B82 /* SettableReachability.swift */,
+				2337563C1EC6794F0051ED2C /* Info.plist */,
+			);
+			path = RedditOfflineTests;
+			sourceTree = "<group>";
+		};
 		23A395BC1E7DDE8600030DEF = {
 			isa = PBXGroup;
 			children = (
 				23A395C71E7DDE8600030DEF /* OfflineReddit */,
+				233756391EC6794F0051ED2C /* RedditOfflineTests */,
 				23A395C61E7DDE8600030DEF /* Products */,
 				23A395FC1E7DE08A00030DEF /* Frameworks */,
 			);
@@ -145,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				23A395C51E7DDE8600030DEF /* OfflineReddit.app */,
+				233756381EC6794F0051ED2C /* RedditOfflineTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,6 +282,7 @@
 				235E07E01E7FA03100D83D16 /* CommentsCells.swift */,
 				235E07F81E8090BF00D83D16 /* SubredditsViewController.swift */,
 				235E07FE1E8094F900D83D16 /* SubredditCell.swift */,
+				233756421EC703BD0051ED2C /* StoryboardInitializing.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -269,6 +312,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		233756371EC6794F0051ED2C /* RedditOfflineTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2337563F1EC6794F0051ED2C /* Build configuration list for PBXNativeTarget "RedditOfflineTests" */;
+			buildPhases = (
+				233756341EC6794F0051ED2C /* Sources */,
+				233756351EC6794F0051ED2C /* Frameworks */,
+				233756361EC6794F0051ED2C /* Resources */,
+				2358C7A61EC79658007F7B82 /* Carthage Copy Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2337563E1EC6794F0051ED2C /* PBXTargetDependency */,
+			);
+			name = RedditOfflineTests;
+			productName = RedditOfflineTests;
+			productReference = 233756381EC6794F0051ED2C /* RedditOfflineTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		23A395C41E7DDE8600030DEF /* OfflineReddit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 23A395DA1E7DDE8600030DEF /* Build configuration list for PBXNativeTarget "OfflineReddit" */;
@@ -297,6 +359,12 @@
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = "Jake Bellamy";
 				TargetAttributes = {
+					233756371EC6794F0051ED2C = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = CQSYPH2WC6;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 23A395C41E7DDE8600030DEF;
+					};
 					23A395C41E7DDE8600030DEF = {
 						CreatedOnToolsVersion = 8.3;
 						DevelopmentTeam = BDH6VR2X2P;
@@ -319,11 +387,19 @@
 			projectRoot = "";
 			targets = (
 				23A395C41E7DDE8600030DEF /* OfflineReddit */,
+				233756371EC6794F0051ED2C /* RedditOfflineTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		233756361EC6794F0051ED2C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		23A395C31E7DDE8600030DEF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -342,6 +418,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2358C7A61EC79658007F7B82 /* Carthage Copy Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/BoltsSwift.framework",
+			);
+			name = "Carthage Copy Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
 		23A395FF1E7DE0D300030DEF /* Carthage Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -360,6 +451,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		233756341EC6794F0051ED2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2337563B1EC6794F0051ED2C /* PostsViewControllerTests.swift in Sources */,
+				2358C7A51EC75F2F007F7B82 /* TestableCoreDataController.swift in Sources */,
+				2358C7A31EC75CE1007F7B82 /* SettableReachability.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		23A395C11E7DDE8600030DEF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -397,6 +498,7 @@
 				235E07DD1E7F637000D83D16 /* Either.swift in Sources */,
 				235E07C51E7E8E1E00D83D16 /* PostsViewController.swift in Sources */,
 				23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */,
+				233756431EC703BD0051ED2C /* StoryboardInitializing.swift in Sources */,
 				235E07F71E808CBE00D83D16 /* PostCell.swift in Sources */,
 				235E07FD1E80943D00D83D16 /* MarginTextField.swift in Sources */,
 				23A395F21E7DDF9800030DEF /* APIClient+Logging.swift in Sources */,
@@ -409,6 +511,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2337563E1EC6794F0051ED2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 23A395C41E7DDE8600030DEF /* OfflineReddit */;
+			targetProxy = 2337563D1EC6794F0051ED2C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		235E07E91E7FA20F00D83D16 /* Localizable.strings */ = {
@@ -430,6 +540,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		233756401EC6794F0051ED2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = CQSYPH2WC6;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = RedditOfflineTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = jrb.RedditOfflineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OfflineReddit.app/OfflineReddit";
+			};
+			name = Debug;
+		};
+		233756411EC6794F0051ED2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = CQSYPH2WC6;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = RedditOfflineTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = jrb.RedditOfflineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OfflineReddit.app/OfflineReddit";
+			};
+			name = Release;
+		};
 		23A395D81E7DDE8600030DEF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -569,6 +715,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2337563F1EC6794F0051ED2C /* Build configuration list for PBXNativeTarget "RedditOfflineTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				233756401EC6794F0051ED2C /* Debug */,
+				233756411EC6794F0051ED2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		23A395C01E7DDE8600030DEF /* Build configuration list for PBXProject "OfflineReddit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

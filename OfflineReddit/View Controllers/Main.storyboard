@@ -29,7 +29,7 @@
         <!--Posts View Controller-->
         <scene sceneID="gEp-e2-RVi">
             <objects>
-                <viewController id="WSL-w6-AFc" customClass="PostsViewController" customModule="OfflineReddit" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Posts" id="WSL-w6-AFc" customClass="PostsViewController" customModule="OfflineReddit" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="dii-97-6xT"/>
                         <viewControllerLayoutGuide type="bottom" id="TUd-c0-7I9"/>
@@ -224,7 +224,7 @@
         <!--Subreddits-->
         <scene sceneID="Hti-wp-BC9">
             <objects>
-                <viewController title="Subreddits" id="6Hd-xP-3ul" customClass="SubredditsViewController" customModule="OfflineReddit" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Subreddits" title="Subreddits" id="6Hd-xP-3ul" customClass="SubredditsViewController" customModule="OfflineReddit" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="fsB-IH-nA0"/>
                         <viewControllerLayoutGuide type="bottom" id="Mho-Qu-xVf"/>
@@ -340,7 +340,7 @@
         <!--Comments View Controller-->
         <scene sceneID="NcT-Hn-A7u">
             <objects>
-                <viewController id="7Ix-Na-cZr" customClass="CommentsViewController" customModule="OfflineReddit" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Comments" id="7Ix-Na-cZr" customClass="CommentsViewController" customModule="OfflineReddit" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="dpG-sx-dwl"/>
                         <viewControllerLayoutGuide type="bottom" id="N40-wS-oOu"/>
@@ -429,7 +429,7 @@
                                         <rect key="frame" x="0.0" y="142" width="320" height="90"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" layoutMarginsFollowReadableWidth="YES" tableViewCell="ctS-QE-aSH" id="nUr-H0-Jie">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="89.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="89"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="752" text="u/[user] • [x] points • [x time] ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dTp-LM-RG0">
@@ -482,7 +482,7 @@
                                         <rect key="frame" x="0.0" y="232" width="320" height="36"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" layoutMarginsFollowReadableWidth="YES" tableViewCell="eb5-5P-QfW" id="tHP-Vs-HPb">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="35.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="35"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7lr-AC-TO5">
