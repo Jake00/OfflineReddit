@@ -33,16 +33,15 @@ class TestableCoreDataController {
     func importModels() {
         var completed = false
         let provider = OfflineRemoteProvider()
+        provider.logs = false
         provider.delays = false
         provider.context = context
         provider.mapper.context = context
         provider.getPosts(for: [], after: nil)
             .continueOnSuccessWithTask { posts -> Task<[Post]> in
-                print("continuing 1")
                 return Task<[Comment]>.whenAll(posts.map(provider.getComments))
                     .continueOnSuccessWith { posts }
             }.continueOnSuccessWithTask { posts -> Task<Void> in
-                print("continuing 2")
                 let tasks = posts.flatMap { post -> Task<Void> in
                     let mores = batch(comments: post.displayComments, maximum: self.moreCommentsBatchSize)
                     return Task<[Comment]>.whenAll(mores.map {

@@ -30,7 +30,7 @@ final class DataProvider {
     }
     
     func save() {
-        local.perform {
+        local.performGrouped {
             _ = try? self.local.save()
         }
     }
@@ -48,7 +48,7 @@ final class DataProvider {
         let source = TaskCompletionSource<([Post], UpdateContext)>()
         let request = Post.fetchRequest(predicate: NSPredicate(format: "isAvailableOffline == YES AND subredditName IN %@", subreddits.map { $0.name }))
         request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-        local.perform {
+        local.performGrouped {
             let posts = (try? self.local.fetch(request)) ?? []
             source.set(result: (posts, .replace))
         }
@@ -58,7 +58,7 @@ final class DataProvider {
     func getSelectedSubreddits() -> Task<[Subreddit]> {
         let source = TaskCompletionSource<[Subreddit]>()
         let request = Subreddit.fetchRequest(predicate: NSPredicate(format: "isSelected == YES"))
-        local.perform {
+        local.performGrouped {
             let subreddits = (try? self.local.fetch(request)) ?? []
             source.trySet(result: subreddits)
         }

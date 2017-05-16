@@ -10,18 +10,12 @@ import XCTest
 import CoreData
 @testable import OfflineReddit
 
-class PostsViewControllerTests: XCTestCase {
+class PostsViewControllerTests: BaseTestCase {
     
     var postsViewController: PostsViewController!
-    let reachability = SettableReachability()
-    let controller = TestableCoreDataController()
-    let remote = OfflineRemoteProvider()
     
     override func setUp() {
         super.setUp()
-        remote.context = controller.context
-        remote.mapper.context = controller.context
-        reachability.isOnline = true
         postsViewController = PostsViewController.instantiateFromStoryboard()
         postsViewController.dataSource.provider = DataProvider(remote: remote, local: controller.context)
         postsViewController.dataSource.provider.reachability = reachability
@@ -34,7 +28,7 @@ class PostsViewControllerTests: XCTestCase {
         postsViewController = nil
     }
     
-    func setPostsOnDataSource() {
+    func fillDataSource() {
         let posts = try? controller.context.fetch(Post.fetchRequest() as NSFetchRequest<Post>)
         postsViewController.dataSource.rows = posts?.map(PostCellModel.init) ?? []
     }
@@ -50,7 +44,7 @@ class PostsViewControllerTests: XCTestCase {
         XCTAssertFalse(isEnabled(), "Cannot choose posts to download with no rows available.")
         
         // Enabled with rows to select
-        setPostsOnDataSource()
+        fillDataSource()
         postsViewController.updateChooseDownloadsButtonEnabled()
         XCTAssertTrue(isEnabled(), "Should allow downloading posts with rows available.")
         
@@ -72,18 +66,15 @@ class PostsViewControllerTests: XCTestCase {
             XCTAssertTrue(isEnabled(), "Should allow downloading posts when previous download has completed.")
         }
         // Disabled once downloading an offline post
-        postsViewController.updateChooseDownloadsButtonEnabled()
         XCTAssertFalse(isEnabled(), "Cannot download posts while already downloading")
         
         waitForExpectations(timeout: 5, handler: nil)
     }
     
     func testThatItUpdatesStartDownloadsButtonIsEnabled() {
-        // startDownloadsButton.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
-        
         let isEnabled = { self.postsViewController.startDownloadsButton.isEnabled }
         
-        setPostsOnDataSource()
+        fillDataSource()
         
         // Disabled while not editing (cannot select rows)
         postsViewController.setEditing(false, animated: false)
@@ -107,6 +98,36 @@ class PostsViewControllerTests: XCTestCase {
         }
         // Disabled after download starts
         XCTAssertFalse(isEnabled(), "Cannot start downloads whilst another download is in progress")
+        
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    func testThatItDownloadsPosts() {
+        fillDataSource()
+        let postsViewController = self.postsViewController!
+        
+        guard let (indexPath, post) = postsViewController.dataSource.rows.enumerated()
+            .first(where: { !$1.post.comments.isEmpty })
+            .map({ (IndexPath(row: $0, section: 0), $1.post) })
+            else {
+                XCTFail("Unable to find a downloadable post for testing")
+                return
+        }
+        
+        // Post starts not being available offline
+        XCTAssertFalse(post.isAvailableOffline, "Post starts not available offline")
+        
+        let finishedPostsDownload = expectation(description: "Finished posts download")
+        postsViewController.startPostsDownload(for: [indexPath]).continueWith { _ in
+            finishedPostsDownload.fulfill()
+            // `isSavingOffline` == false
+            XCTAssertFalse(postsViewController.isSavingOffline, "Stops downloading on completion")
+            
+            // Downloaded posts reports being available offline
+            XCTAssertTrue(post.isAvailableOffline, "Post should be available offline after downloading")
+        }
+        // `isSavingOffline` == true
+        XCTAssertTrue(postsViewController.isSavingOffline, "Shows that it is downloading offline")
         
         waitForExpectations(timeout: 5, handler: nil)
     }

@@ -146,15 +146,16 @@ class PostsViewController: UIViewController, Loadable {
     
     @discardableResult
     func startPostsDownload(for indexPaths: [IndexPath]) -> Task<Void> {
-        let task = fetch(dataSource.startDownload(for: indexPaths, updating: tableView)).continueWith { _ in
-            self.navigationBarProgressView?.observedProgress = nil
-            self.navigationBarProgressView?.isHidden = true
-            self.updateChooseDownloadsButtonEnabled()
-            UIView.animate(withDuration: 0.4) {
-                self.tableView.layoutIfNeeded()
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
-            }
+        let task = fetch(dataSource.startDownload(for: indexPaths, updating: tableView))
+            .continueWith(.mainThread) { _ in
+                self.navigationBarProgressView?.observedProgress = nil
+                self.navigationBarProgressView?.isHidden = true
+                self.updateChooseDownloadsButtonEnabled()
+                UIView.animate(withDuration: 0.4) {
+                    self.tableView.layoutIfNeeded()
+                    self.tableView.beginUpdates()
+                    self.tableView.endUpdates()
+                }
         }
         setEditing(false, animated: true)
         updateChooseDownloadsButtonEnabled()

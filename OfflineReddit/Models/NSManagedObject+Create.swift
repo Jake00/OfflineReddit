@@ -35,7 +35,23 @@ extension Collection where Iterator.Element: NSManagedObject {
     }
 }
 
+private var dispatchGroupKey = 222
+
 extension NSManagedObjectContext {
+    
+    var dispatchGroup: DispatchGroup? {
+        get { return objc_getAssociatedObject(self, &dispatchGroupKey) as? DispatchGroup }
+        set { objc_setAssociatedObject(self, &dispatchGroupKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    
+    open func performGrouped(_ block: @escaping () -> Void) {
+        guard let group = dispatchGroup else { perform(block); return }
+        group.enter()
+        perform {
+            block()
+            group.leave()
+        }
+    }
     
     func performAndWait<T>(_ block: @escaping (NSManagedObjectContext) throws -> T) throws -> T {
         var value: Either<T, Error>?

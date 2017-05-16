@@ -8,6 +8,7 @@
 
 import UIKit
 import BoltsSwift
+import CoreData
 
 final class PostsDownloader: NSObject, ProgressReporting {
     
@@ -47,9 +48,9 @@ final class PostsDownloader: NSObject, ProgressReporting {
          2. For each post downloaded, fetch 'more comments'. Once all comments have been fetched then that post is considered completed.
          */
         return downloadNextPost()
-            .continueOnSuccessWithTask(continuation: downloadNextPostsComments)
-            .continueOnSuccessWithTask { Task<Void>.withDelay(1) }
-            .continueWith { _ in self.posts }
+            .continueOnSuccessWithTask(.immediate, continuation: downloadNextPostsComments)
+            .continueOnSuccessWithTask(.immediate) { Task<Void>.withDelay(1) }
+            .continueWith(.immediate) { _ in self.posts }
     }
     
     // MARK: - Downloading
@@ -58,7 +59,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
         guard !remainingPosts.isEmpty else { return Task(()) }
         let post = remainingPosts.removeFirst()
         return remote.getComments(for: post)
-            .continueOnSuccessWithTask { _ in self.nextPostDidDownload(post) }
+            .continueOnSuccessWithTask(.immediate) { _ in self.nextPostDidDownload(post) }
     }
     
     private func nextPostDidDownload(_ post: Post) -> Task<Void> {
@@ -85,14 +86,16 @@ final class PostsDownloader: NSObject, ProgressReporting {
             guard !next.more.isEmpty else { return Task(()) }
             let comments = next.more.removeFirst()
             return remote.getMoreComments(using: comments, post: next.post)
-                .continueOnSuccessWithTask { _ in
+                .continueOnSuccessWithTask(.immediate) { _ in
                     next.progress?.completedUnitCount += 1
                     return downloadNextCommentBatch()
             }
         }
         
-        return downloadNextCommentBatch().continueOnSuccessWithTask { _ -> Task<Void> in
-            self.completionForPost?(next.post)
+        return downloadNextCommentBatch().continueOnSuccessWithTask(.immediate) { _ -> Task<Void> in
+            if let completionForPost = self.completionForPost {
+                DispatchQueue.main.async { completionForPost(next.post) }
+            }
             if let progress = next.progress {
                 progress.completedUnitCount = progress.totalUnitCount
             }

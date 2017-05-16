@@ -57,6 +57,7 @@
 		23A396051E7E021500030DEF /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A396041E7E021500030DEF /* Identifiable.swift */; };
 		23A396091E7E19DC00030DEF /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A396081E7E19DC00030DEF /* AsyncOperation.swift */; };
 		23A3960B1E7E22C300030DEF /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A3960A1E7E22C300030DEF /* Comment.swift */; };
+		23B332221ECB4C6E00480122 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B332211ECB4C6E00480122 /* BaseTestCase.swift */; };
 		23BED71D1EBDE71E0072C2CE /* PostsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */; };
 		23BED71F1EBE03ED0072C2CE /* PostCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */; };
 		23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */; };
@@ -132,6 +133,7 @@
 		23A396041E7E021500030DEF /* Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifiable.swift; sourceTree = "<group>"; };
 		23A396081E7E19DC00030DEF /* AsyncOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		23A3960A1E7E22C300030DEF /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		23B332211ECB4C6E00480122 /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsDataSource.swift; sourceTree = "<group>"; };
 		23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCellModel.swift; sourceTree = "<group>"; };
 		23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorViewAnimating.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 				2358C7A41EC75F2F007F7B82 /* TestableCoreDataController.swift */,
 				2358C7A21EC75CE1007F7B82 /* SettableReachability.swift */,
 				2337563C1EC6794F0051ED2C /* Info.plist */,
+				23B332211ECB4C6E00480122 /* BaseTestCase.swift */,
 			);
 			path = RedditOfflineTests;
 			sourceTree = "<group>";
@@ -455,6 +458,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23B332221ECB4C6E00480122 /* BaseTestCase.swift in Sources */,
 				2337563B1EC6794F0051ED2C /* PostsViewControllerTests.swift in Sources */,
 				2358C7A51EC75F2F007F7B82 /* TestableCoreDataController.swift in Sources */,
 				2358C7A31EC75CE1007F7B82 /* SettableReachability.swift in Sources */,
