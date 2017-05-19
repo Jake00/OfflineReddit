@@ -8,15 +8,23 @@
 
 import XCTest
 import CoreData
+import BoltsSwift
 @testable import OfflineReddit
 
 class TestingPostsViewController: PostsViewController {
     
     var didCallReachabilityChanged = false
+    var didCallFetchPosts = false
+    var allowFetchingPosts = true
     
     override func reachabilityChanged(_ notification: Notification) {
         didCallReachabilityChanged = true
         super.reachabilityChanged(notification)
+    }
+    
+    override func fetchPosts() -> Task<Void> {
+        didCallFetchPosts = true
+        return allowFetchingPosts ? super.fetchPosts() : Task<Void>(())
     }
 }
 
@@ -117,6 +125,30 @@ class PostsViewControllerTests: BaseTestCase {
         XCTAssertFalse(postsViewController.didCallReachabilityChanged, "No notifications have been sent yet")
         NotificationCenter.default.post(name: .ReachabilityChanged, object: nil)
         XCTAssertTrue(postsViewController.didCallReachabilityChanged, "Controller should have received the notification")
+    }
+    
+    func testThatItReactsToReachabilityChanges() {
+        postsViewController.allowFetchingPosts = false
+        postsViewController.didCallFetchPosts = false
+        
+        fillDataSource()
+        reachability.isOnline = true
+        NotificationCenter.default.post(name: .ReachabilityChanged, object: nil)
+        
+        XCTAssertTrue(postsViewController.loadMoreButton.isEnabled, "Can load more when online")
+        XCTAssertTrue(postsViewController.dataSource.rows.isEmpty, "Rows were emptied when going online")
+        XCTAssertTrue(postsViewController.didCallFetchPosts, "New posts are automatically fetched when going online")
+        
+        postsViewController.didCallFetchPosts = false
+        postsViewController.setEditing(true, animated: false)
+        fillDataSource()
+        reachability.isOnline = false
+        NotificationCenter.default.post(name: .ReachabilityChanged, object: nil)
+        
+        XCTAssertFalse(postsViewController.isEditing, "Editing disabled when going offline")
+        XCTAssertFalse(postsViewController.loadMoreButton.isEnabled, "Cannot load more when offline")
+        XCTAssertTrue(postsViewController.dataSource.rows.isEmpty, "Rows were emptied when going offline")
+        XCTAssertTrue(postsViewController.didCallFetchPosts, "Offline posts are automatically fetched when going online")
     }
     
     func testThatItDownloadsPosts() {
