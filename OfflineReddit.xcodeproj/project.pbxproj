@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		233756291EC0DDD10051ED2C /* Offline Development in Resources */ = {isa = PBXBuildFile; fileRef = 233756281EC0DDD10051ED2C /* Offline Development */; };
 		233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756321EC650A40051ED2C /* MoreCommentsBatching.swift */; };
-		233756431EC703BD0051ED2C /* StoryboardInitializing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756421EC703BD0051ED2C /* StoryboardInitializing.swift */; };
 		2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */; };
@@ -90,7 +89,6 @@
 		233756321EC650A40051ED2C /* MoreCommentsBatching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreCommentsBatching.swift; sourceTree = "<group>"; };
 		233756381EC6794F0051ED2C /* RedditOfflineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RedditOfflineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2337563C1EC6794F0051ED2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		233756421EC703BD0051ED2C /* StoryboardInitializing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardInitializing.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Fetching.swift"; sourceTree = "<group>"; };
 		235E07CE1E7EB2BD00D83D16 /* MoreCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreCell.swift; sourceTree = "<group>"; };
@@ -333,7 +331,6 @@
 				23A395EE1E7DDF9800030DEF /* Main.storyboard */,
 				235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */,
 				235E08021E80E4BF00D83D16 /* NavigationController.swift */,
-				233756421EC703BD0051ED2C /* StoryboardInitializing.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -580,7 +577,6 @@
 				235E07DD1E7F637000D83D16 /* Either.swift in Sources */,
 				2379B08D1ECF7E0A00925F9A /* MoreCommentsCell.swift in Sources */,
 				23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */,
-				233756431EC703BD0051ED2C /* StoryboardInitializing.swift in Sources */,
 				2379B0761ECF787900925F9A /* CommentsCell.swift in Sources */,
 				235E07FD1E80943D00D83D16 /* MarginTextField.swift in Sources */,
 				23A395F21E7DDF9800030DEF /* APIClient+Logging.swift in Sources */,

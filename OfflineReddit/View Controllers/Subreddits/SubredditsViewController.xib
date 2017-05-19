@@ -64,6 +64,9 @@
                     <color key="textColor" white="0.10000000000000001" alpha="1" colorSpace="deviceWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="go"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="baZ-Dv-wC3"/>
+                    </connections>
                 </textField>
             </subviews>
             <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
@@ -88,7 +91,11 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
             <items>
                 <barButtonItem style="plain" systemItem="flexibleSpace" id="ETA-aj-gG3"/>
-                <barButtonItem systemItem="done" id="6ye-a3-SSd"/>
+                <barButtonItem systemItem="done" id="6ye-a3-SSd">
+                    <connections>
+                        <action selector="doneButtonPressed:" destination="-1" id="oeG-qC-QAJ"/>
+                    </connections>
+                </barButtonItem>
             </items>
         </toolbar>
     </objects>

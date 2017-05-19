@@ -45,8 +45,8 @@ class SubredditsViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        didSelectSubreddits?(subreddits.filter { $0.isSelected })
         if context.hasChanges {
+            didSelectSubreddits?(subreddits.filter { $0.isSelected })
             _ = try? context.save()
         }
     }
@@ -117,16 +117,10 @@ extension SubredditsViewController: UITextFieldDelegate {
         
         let indexPath = IndexPath(row: subreddits.endIndex, section: 0)
         let subreddit = Subreddit.create(in: context, name: name)
+        subreddit.isSelected = true
         subreddits.append(subreddit)
         tableView.insertRows(at: [indexPath], with: .automatic)
-        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .bottom)
         textField.text = nil
         return textField.resignFirstResponder()
     }
-}
-
-// MARK: - Storyboard init
-
-extension SubredditsViewController: StoryboardInitializable {
-    static let storyboardIdentifier = "Subreddits"
 }

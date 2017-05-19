@@ -103,9 +103,3 @@ extension CommentsViewController: CommentsDataSourceDelegate {
             dataSource.post?.commentsCount ?? 0, saved, saved + toExpand)
     }
 }
-
-// MARK: - Storyboard init
-
-extension CommentsViewController: StoryboardInitializable {
-    static let storyboardIdentifier = "Comments"
-}
