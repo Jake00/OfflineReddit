@@ -66,7 +66,7 @@ class PostsViewControllerTests: BaseTestCase {
             XCTAssertTrue(isEnabled(), "Should allow downloading posts when previous download has completed.")
         }
         // Disabled once downloading an offline post
-        XCTAssertFalse(isEnabled(), "Cannot download posts while already downloading")
+        XCTAssertFalse(isEnabled(), "Cannot allow downloading posts while already downloading")
         
         waitForExpectations(timeout: 5, handler: nil)
     }

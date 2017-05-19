@@ -22,11 +22,13 @@ final class OfflineRemoteProvider {
     
     let queue = DispatchQueue(label: "com.jrb.OfflineRemoteProvider")
     let mapper = Mapper()
-    let subdirectory = "Offline Development"
+    static let subdirectory = "Offline Development"
     lazy var context: NSManagedObjectContext = CoreDataController.shared.viewContext
     
     var delays = true
     var logs = true
+    
+    static var cache: [String: Any] = [:]
     
     fileprivate func delay() -> Task<Void> {
         return Task<Void>.withDelay(delays ? 1 : 0)
@@ -43,7 +45,11 @@ final class OfflineRemoteProvider {
     
     func readFile(named filename: String) -> Task<Any> {
         log("loading file \(filename).json: ", newline: false)
-        guard let url = Bundle.main.url(forResource: filename, withExtension: "json", subdirectory: subdirectory) else {
+        if let cached = OfflineRemoteProvider.cache[filename] {
+            log("success from cache")
+            return Task<Any>(cached)
+        }
+        guard let url = Bundle.main.url(forResource: filename, withExtension: "json", subdirectory: OfflineRemoteProvider.subdirectory) else {
             log("no file exists")
             return Task(error: Error.noFileExists)
         }
@@ -53,6 +59,7 @@ final class OfflineRemoteProvider {
                 let data = try Data(contentsOf: url)
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
                 self.log("success")
+                OfflineRemoteProvider.cache[filename] = json
                 source.set(result: json)
             } catch {
                 self.log("\(error)")
@@ -62,18 +69,18 @@ final class OfflineRemoteProvider {
         return source.task
     }
     
-    func postsFilename() -> String {
+    static func postsFilename() -> String {
         // File `Posts.json` contains a response from
         // GET https://www.reddit.com/r/AskReddit+relationships.json?raw_json=1
         return "Posts"
     }
     
-    func commentsFilename(post: Post) -> String {
+    static func commentsFilename(post: Post) -> String {
         // Comments files are named Post_`id`.json
         return "Post_\(post.id)"
     }
     
-    func moreCommentsFilename(post: Post, mores: [MoreComments]) -> String? {
+    static func moreCommentsFilename(post: Post, mores: [MoreComments]) -> String? {
         // More comments files are named Children_`postId`_`firstChildId`.json
         let filenameFor: (String) -> String = { "Children_\(post.id)_\($0)" }
         let stored = Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: subdirectory)?.map { $0.lastPathComponent } ?? []
@@ -88,19 +95,21 @@ final class OfflineRemoteProvider {
 extension OfflineRemoteProvider: DataProviding {
 
     func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
-        return delay().continueWithTask { _ in self.readFile(named: self.postsFilename()) }
+        let filename = OfflineRemoteProvider.postsFilename()
+        return delay().continueWithTask { _ in self.readFile(named: filename) }
             .continueOnSuccessWith(.immediate, continuation: mapper.mapPosts)
             .continueOnSuccessWith(.immediate) { $0.inContext(self.context, inContextsQueue: true) }
     }
     
     func getComments(for post: Post) -> Task<[Comment]> {
-        return delay().continueWithTask { _ in self.readFile(named: self.commentsFilename(post: post)) }
+        let filename = OfflineRemoteProvider.commentsFilename(post: post)
+        return delay().continueWithTask { _ in self.readFile(named: filename) }
             .continueOnSuccessWith(.immediate, continuation: mapper.mapComments)
             .continueOnSuccessWith(.immediate) { $0.inContext(self.context, inContextsQueue: true) }
     }
     
     func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]> {
-        guard let filename = moreCommentsFilename(post: post, mores: mores) else {
+        guard let filename = OfflineRemoteProvider.moreCommentsFilename(post: post, mores: mores) else {
             return Task(error: Error.noFileExists)
         }
         return delay().continueWithTask { _ in self.readFile(named: filename) }

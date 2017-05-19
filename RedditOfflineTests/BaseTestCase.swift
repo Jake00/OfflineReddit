@@ -13,23 +13,22 @@ class BaseTestCase: XCTestCase {
     
     let group = DispatchGroup()
     let reachability = SettableReachability()
-    private(set) var controller: TestableCoreDataController!
+    let controller = TestableCoreDataController()
     private(set) var remote: OfflineRemoteProvider!
     
     override func setUp() {
         super.setUp()
         reachability.isOnline = true
-        controller = TestableCoreDataController()
+        controller.reset()
         controller.context.dispatchGroup = group
         remote = OfflineRemoteProvider()
         remote.delays = false
-        remote.context = self.controller.context
-        remote.mapper.context = self.controller.context
+        remote.context = controller.context
+        remote.mapper.context = controller.context
     }
     
     override func tearDown() {
         waitForGroup(timeout: 0.5)
-        controller = nil
         remote = nil
         super.tearDown()
     }

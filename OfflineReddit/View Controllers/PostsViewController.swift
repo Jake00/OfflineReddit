@@ -57,12 +57,12 @@ class PostsViewController: UIViewController, Loadable {
             )
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
-        if dataSource.subreddits.isEmpty {
-            updateFooterView()
-            fetchInitial()
-        } else if dataSource.rows.isEmpty {
-            fetchPosts()
-        }
+//        if dataSource.subreddits.isEmpty {
+//            updateFooterView()
+//            fetchInitial()
+//        } else if dataSource.rows.isEmpty {
+//            fetchPosts()
+//        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

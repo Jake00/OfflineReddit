@@ -23,6 +23,16 @@ extension NSManagedObject {
         fetchRequest.predicate = predicate
         return fetchRequest
     }
+    
+    func inContext(_ context: NSManagedObjectContext, inContextsQueue: Bool = true) -> Self {
+        func selfInContext<T>() -> T {
+            let map = { (context: NSManagedObjectContext) in
+                context.object(with: self.objectID) as! T
+            }
+            return inContextsQueue ? context.performAndWait(map) : map(context)
+        }
+        return managedObjectContext == context ? self : selfInContext()
+    }
 }
 
 extension Collection where Iterator.Element: NSManagedObject {

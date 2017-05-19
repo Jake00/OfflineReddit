@@ -14,17 +14,28 @@ final class Mapper {
     
     lazy var context = CoreDataController.shared.jsonContext
     
+    var fetchExistingPosts: ([String], NSManagedObjectContext) throws -> [Post] = { ids, context in
+        return try context.fetch(Post.fetchRequest(predicate: NSPredicate(format: "id IN %@", ids)))
+    }
+    
+    var fetchPost: (String, NSManagedObjectContext) throws -> Post? = { id, context in
+        return try context.fetch(Post.fetchRequest(predicate: NSPredicate(format: "id == %@", id))).first
+    }
+    
+    var fetchExistingComments: (String, NSManagedObjectContext) throws -> [Comment] = { postId, context in
+        return try context.fetch(Comment.fetchRequest(predicate: NSPredicate(format: "postId == %@", postId)))
+    }
+    
     func mapPosts(json: Any) throws -> [Post] {
         guard let children = ((json as? JSON)?["data"] as? JSON)?["children"] as? [JSON]
             else { throw APIClient.Errors.invalidResponse }
         
         let postsJSON: [(id: String, json: JSON)] = children.flatMap(Post.id)
         let subredditNames = Set(postsJSON.flatMap { $1["subreddit"] as? String })
-        let postsRequest = Post.fetchRequest(predicate: NSPredicate(format: "id IN %@", postsJSON.map { $0.id }))
         let subredditsRequest: NSFetchRequest<Subreddit> = Subreddit.fetchRequest()
         
         return try context.performAndWait { context -> [Post] in
-            let existingPosts = try context.fetch(postsRequest)
+            let existingPosts = try self.fetchExistingPosts(postsJSON.map { $0.id }, context)
             let existingSubreddits = try context.fetch(subredditsRequest)
             
             let subreddits = subredditNames.flatMap { name -> Subreddit in
@@ -53,10 +64,8 @@ final class Mapper {
             let (postId, postJSON) = posts.first.flatMap(Post.id)
             else { throw APIClient.Errors.invalidResponse }
         
-        let postsRequest = Post.fetchRequest(predicate: NSPredicate(format: "id == %@", postId))
-        
         return try context.performAndWait { context -> [Comment] in
-            let post = try context.fetch(postsRequest).first ?? Post.create(in: context, id: postId)
+            let post = try self.fetchPost(postId, context) ?? Post.create(in: context, id: postId)
             post.update(json: postJSON)
             
             guard json.count > 1,
@@ -64,7 +73,7 @@ final class Mapper {
                 else { return [] }
             
             let existingComments: [Comment] = try (postJSON["name"] as? String).map {
-                try context.fetch(Comment.fetchRequest(predicate: NSPredicate(format: "postId == %@", $0)))
+                try self.fetchExistingComments($0, context)
                 } ?? []
             
             var order: Int64 = 0
@@ -121,11 +130,9 @@ final class Mapper {
         
         return try context.performAndWait { context -> [Comment] in
             let mores = mores.inContext(context, inContextsQueue: false)
-            let post = context.object(with: post.objectID) as! Post
+            let post = post.inContext(context)
             
-            let commentsRequest = Comment.fetchRequest(predicate: NSPredicate(format: "postId == %@", post.id))
-            
-            let existingComments = try context.fetch(commentsRequest)
+            let existingComments = try self.fetchExistingComments(post.id, context)
             var orders: [MoreComments: Int64] = [:]
             mores.forEach { orders[$0] = Int64($0.parentComment?.children.count ?? $0.parentPost?.comments.count ?? 0) }
             var unset: [Comment] = []
