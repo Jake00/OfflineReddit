@@ -10,6 +10,15 @@ import XCTest
 import CoreData
 @testable import OfflineReddit
 
+class TestingPostsViewController: PostsViewController {
+    
+    var didCallReachabilityChanged = false
+    
+    override func reachabilityChanged(_ notification: Notification) {
+        super.reachabilityChanged(notification)
+    }
+}
+
 class PostsViewControllerTests: BaseTestCase {
     
     var postsViewController: PostsViewController!
@@ -100,6 +109,11 @@ class PostsViewControllerTests: BaseTestCase {
         XCTAssertFalse(isEnabled(), "Cannot start downloads whilst another download is in progress")
         
         waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    func testThatItReceivesReachabilityNotifications() {
+        NotificationCenter.default.post(name: .ReachabilityChanged, object: nil)
+        
     }
     
     func testThatItDownloadsPosts() {

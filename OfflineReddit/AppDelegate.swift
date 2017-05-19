@@ -15,6 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
+        startReachability()
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = {
+            let navigationController = NavigationController(rootViewController: PostsViewController())
+            return navigationController
+        }()
+        window?.makeKeyAndVisible()
+        
+        return true
+    }
+    
+    func startReachability() {
         /*
          For developing while the device is offline (unable to actually be online...) and needs to appear online for 'downloading' posts.
          By switching on emulating online `Reachability` will always report its status as being reachable via WiFi.
@@ -29,7 +42,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             Reachability.shared.startNotifier()
         }
-        
-        return true
     }
 }

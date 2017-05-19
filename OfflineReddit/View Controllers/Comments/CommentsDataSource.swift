@@ -61,7 +61,7 @@ class CommentsDataSource: NSObject {
         }
     }
     
-    func updateMoreCell(_ cell: MoreCell?, _ more: MoreComments? = nil, forceLoad: Bool = false) {
+    func updateMoreCell(_ cell: MoreCommentsCell?, _ more: MoreComments? = nil, forceLoad: Bool = false) {
         let isLoading = forceLoad || (more.map(loadingCells.contains) ?? false)
         cell?.titleLabel.text = isLoading
             ? SharedText.loadingCaps
@@ -71,7 +71,7 @@ class CommentsDataSource: NSObject {
     
     func flipCommentExpanded(for comment: Comment, at indexPath: IndexPath, in tableView: UITableView) {
         comment.isExpanded = !comment.isExpanded
-        let cell = tableView.cellForRow(at: indexPath) as? CommentCell
+        let cell = tableView.cellForRow(at: indexPath) as? CommentsCell
         cell?.isExpanded = comment.isExpanded
         cell?.isExpanding = comment.isExpanded
         updateExpanded(for: comment, at: indexPath, in: tableView)
@@ -177,7 +177,7 @@ class CommentsDataSource: NSObject {
             return task
         }
         guard task.error == nil else {
-            let cell = tableView.cellForRow(at: indexPath) as? MoreCell
+            let cell = tableView.cellForRow(at: indexPath) as? MoreCommentsCell
             updateMoreCell(cell, more)
             return task
         }
@@ -227,14 +227,14 @@ extension CommentsDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard !comments.isEmpty else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "More", for: indexPath) as! MoreCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MoreCommentsCell", for: indexPath) as! MoreCommentsCell
             updateMoreCell(cell, forceLoad: true)
             cell.indentationLevel = 0
             return cell
         }
         switch comments[indexPath.row] {
         case .first(let comment):
-            let cell = tableView.dequeueReusableCell(withIdentifier: "Comment", for: indexPath) as! CommentCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "CommentsCell", for: indexPath) as! CommentsCell
             cell.topLabel.text = comment.authorScoreTimeText
             cell.bodyLabel.text = comment.body
             cell.indentationLevel = Int(comment.depth)
@@ -243,7 +243,7 @@ extension CommentsDataSource: UITableViewDataSource {
             cell.layoutIfNeeded()
             return cell
         case .other(let more):
-            let cell = tableView.dequeueReusableCell(withIdentifier: "More", for: indexPath) as! MoreCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MoreCommentsCell", for: indexPath) as! MoreCommentsCell
             updateMoreCell(cell, more)
             cell.indentationLevel = Int(more.depth)
             return cell
@@ -266,15 +266,15 @@ extension CommentsDataSource: UITableViewDelegate {
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         guard indexPath.row < comments.endIndex else { return 40 }
         guard let comment = comments[indexPath.row].first else { /* 'More comments' */ return 36 }
-        guard comment.isExpanded else { return CommentCell.verticalMargins }
+        guard comment.isExpanded else { return CommentsCell.verticalMargins }
         guard let delegate = delegate else { return 0 }
-        let textWidth = delegate.viewFrameWidth - delegate.viewHorizontalMargins - CommentCell.indentationWidth * CGFloat(comment.depth)
+        let textWidth = delegate.viewFrameWidth - delegate.viewHorizontalMargins - CommentsCell.indentationWidth * CGFloat(comment.depth)
         let numberOfCharacters: Int = Int(comment.body?.characters.count ?? 0)
-        let averageCharacterWidth = 1.98026 / CommentCell.bodyLabelFont.pointSize
+        let averageCharacterWidth = 1.98026 / CommentsCell.bodyLabelFont.pointSize
         let charactersPerLine = textWidth * averageCharacterWidth
         let numberOfNewlineCharacters = (comment.body?.components(separatedBy: .newlines).count ?? 1) - 1
         let numberOfLines = CGFloat(numberOfCharacters) / charactersPerLine
-        return (ceil(numberOfLines) + CGFloat(numberOfNewlineCharacters)) * CommentCell.bodyLabelFont.lineHeight + CommentCell.verticalMargins
+        return (ceil(numberOfLines) + CGFloat(numberOfNewlineCharacters)) * CommentsCell.bodyLabelFont.lineHeight + CommentsCell.verticalMargins
     }
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
@@ -287,7 +287,7 @@ extension CommentsDataSource: UITableViewDelegate {
             flipCommentExpanded(for: comment, at: indexPath, in: tableView)
         case .other(let more):
             loadingCells.insert(more)
-            updateMoreCell(tableView.cellForRow(at: indexPath) as? MoreCell, more)
+            updateMoreCell(tableView.cellForRow(at: indexPath) as? MoreCommentsCell, more)
             fetchMoreComments(using: more, updating: tableView)
         }
         tableView.deselectRow(at: indexPath, animated: true)

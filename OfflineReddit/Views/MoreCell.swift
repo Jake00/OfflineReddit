@@ -15,15 +15,6 @@ class MoreCell: UITableViewCell {
     @IBOutlet weak var containerLeading: NSLayoutConstraint?
     @IBOutlet weak var container: UIView?
     
-    override var indentationLevel: Int {
-        didSet {
-            let indentation = CommentCell.indentationWidth * CGFloat(indentationLevel)
-            containerLeading?.constant = indentation
-            layoutMargins.left = indentation + contentView.layoutMargins.left
-            separatorInset.left = layoutMargins.left
-        }
-    }
-    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .offWhite

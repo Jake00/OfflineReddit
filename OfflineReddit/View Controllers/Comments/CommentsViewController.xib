@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12117" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12084"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CommentsViewController" customModule="OfflineReddit" customModuleProvider="target">
+            <connections>
+                <outlet property="authorTimeLabel" destination="i30-o4-BUB" id="1b9-mZ-Zw1"/>
+                <outlet property="commentsLabel" destination="vcK-ph-YsK" id="ywO-65-tDl"/>
+                <outlet property="expandCommentsButton" destination="1qr-6o-QK7" id="tUP-pb-w0x"/>
+                <outlet property="headerView" destination="RON-06-iIT" id="r9h-jK-ZAc"/>
+                <outlet property="loadingButton" destination="MzY-8j-69R" id="uoL-kh-vdO"/>
+                <outlet property="selfLabel" destination="LqB-Eq-g3n" id="3Uf-7o-cXL"/>
+                <outlet property="subredditLabel" destination="oXA-CI-Uca" id="7n7-Ub-UBB"/>
+                <outlet property="tableView" destination="mv9-Rk-VbH" id="z2x-SJ-Llg"/>
+                <outlet property="titleLabel" destination="sCe-zb-bie" id="Ytv-NS-cqv"/>
+                <outlet property="view" destination="epg-0J-jet" id="jJJ-Cw-fUB"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="epg-0J-jet">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="mv9-Rk-VbH">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
+                    <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                </tableView>
+            </subviews>
+            <color key="backgroundColor" white="0.94913736979999996" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="mv9-Rk-VbH" firstAttribute="top" secondItem="epg-0J-jet" secondAttribute="top" id="2QD-Vq-7A9"/>
+                <constraint firstAttribute="bottom" secondItem="mv9-Rk-VbH" secondAttribute="bottom" id="QSD-p6-1DM"/>
+                <constraint firstItem="mv9-Rk-VbH" firstAttribute="leading" secondItem="epg-0J-jet" secondAttribute="leading" id="RGt-id-dh8"/>
+                <constraint firstAttribute="trailing" secondItem="mv9-Rk-VbH" secondAttribute="trailing" id="g1s-eT-7hG"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+        </view>
+        <view contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" id="RON-06-iIT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="114"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O3W-9X-RpZ" customClass="SeparatorView" customModule="OfflineReddit" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="113" width="375" height="1"/>
+                    <color key="backgroundColor" white="0.80000000000000004" alpha="1" colorSpace="deviceWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="qWy-Gv-nkD"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="r/[subreddit]" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oXA-CI-Uca">
+                    <rect key="frame" x="8" y="8" width="273" height="14.5"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
+                    <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="u/[user] • [x time] ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i30-o4-BUB">
+                    <rect key="frame" x="8" y="22" width="273" height="14.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" horizontalCompressionResistancePriority="753" verticalCompressionResistancePriority="751" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vcK-ph-YsK">
+                    <rect key="frame" x="289" y="8" width="78" height="29"/>
+                    <string key="text">[x] comments
+[x]/[x] saved</string>
+                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="[Title]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sCe-zb-bie">
+                    <rect key="frame" x="8" y="44.5" width="359" height="18"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                    <color key="textColor" white="0.14999999999999999" alpha="1" colorSpace="deviceWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" text="[Self text]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LqB-Eq-g3n">
+                    <rect key="frame" x="8" y="66.5" width="359" height="39.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <color key="textColor" white="0.14999999999999999" alpha="1" colorSpace="deviceWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
+            <constraints>
+                <constraint firstItem="vcK-ph-YsK" firstAttribute="top" secondItem="RON-06-iIT" secondAttribute="topMargin" id="18j-sk-e0L"/>
+                <constraint firstItem="LqB-Eq-g3n" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="8Tw-5q-FzY"/>
+                <constraint firstItem="vcK-ph-YsK" firstAttribute="leading" secondItem="oXA-CI-Uca" secondAttribute="trailing" constant="8" id="B3k-4C-HFc"/>
+                <constraint firstItem="sCe-zb-bie" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="Eg3-f8-KOc"/>
+                <constraint firstAttribute="trailingMargin" secondItem="sCe-zb-bie" secondAttribute="trailing" id="JLS-l2-iUz"/>
+                <constraint firstAttribute="trailing" secondItem="O3W-9X-RpZ" secondAttribute="trailing" id="L8m-U3-Yfx"/>
+                <constraint firstItem="oXA-CI-Uca" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="N23-Ti-yOE"/>
+                <constraint firstAttribute="bottomMargin" secondItem="LqB-Eq-g3n" secondAttribute="bottom" id="OPw-eF-9bd"/>
+                <constraint firstItem="i30-o4-BUB" firstAttribute="top" secondItem="oXA-CI-Uca" secondAttribute="bottom" id="VRa-ql-ViH"/>
+                <constraint firstItem="oXA-CI-Uca" firstAttribute="top" secondItem="RON-06-iIT" secondAttribute="topMargin" id="YVQ-GR-flt"/>
+                <constraint firstItem="LqB-Eq-g3n" firstAttribute="top" secondItem="sCe-zb-bie" secondAttribute="bottom" constant="4" id="b03-Ct-Blt"/>
+                <constraint firstItem="i30-o4-BUB" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="bc6-pk-reh"/>
+                <constraint firstItem="sCe-zb-bie" firstAttribute="top" secondItem="i30-o4-BUB" secondAttribute="bottom" constant="8" id="fk3-KK-lNQ"/>
+                <constraint firstAttribute="bottom" secondItem="O3W-9X-RpZ" secondAttribute="bottom" id="jPo-aL-Ic5"/>
+                <constraint firstItem="vcK-ph-YsK" firstAttribute="trailing" secondItem="RON-06-iIT" secondAttribute="trailingMargin" id="lAI-UQ-WFz"/>
+                <constraint firstItem="vcK-ph-YsK" firstAttribute="leading" secondItem="i30-o4-BUB" secondAttribute="trailing" constant="8" id="r7P-mv-Me4"/>
+                <constraint firstItem="LqB-Eq-g3n" firstAttribute="trailing" secondItem="RON-06-iIT" secondAttribute="trailingMargin" id="rZy-rl-d70"/>
+                <constraint firstItem="O3W-9X-RpZ" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leading" id="upe-Gm-r2V"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="34" y="-429"/>
+        </view>
+        <barButtonItem title="Save More" id="1qr-6o-QK7">
+            <connections>
+                <action selector="expandCommentsButtonPressed:" destination="-1" id="oIO-z1-nge"/>
+            </connections>
+        </barButtonItem>
+        <barButtonItem enabled="NO" style="plain" id="MzY-8j-69R">
+            <view key="customView" contentMode="scaleToFill" id="WTK-oP-ulX">
+                <rect key="frame" x="190" y="5" width="33" height="33"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="cEi-99-Sy4">
+                        <rect key="frame" x="6.5" y="6.5" width="20" height="20"/>
+                    </activityIndicatorView>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstItem="cEi-99-Sy4" firstAttribute="centerX" secondItem="WTK-oP-ulX" secondAttribute="centerX" id="NEl-zM-Zs7"/>
+                    <constraint firstItem="cEi-99-Sy4" firstAttribute="centerY" secondItem="WTK-oP-ulX" secondAttribute="centerY" id="uC4-GW-HML"/>
+                </constraints>
+            </view>
+        </barButtonItem>
+    </objects>
+</document>

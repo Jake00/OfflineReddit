@@ -12,12 +12,12 @@ import BoltsSwift
 class PostsViewController: UIViewController, Loadable {
     
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var footerView: UIView!
     @IBOutlet weak var loadMoreButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var activityIndicatorCenterX: NSLayoutConstraint!
     @IBOutlet weak var hintLabel: UILabel!
     @IBOutlet weak var hintImage: UIImageView!
+    @IBOutlet var footerView: UIView!
     @IBOutlet var subredditsButton: UIBarButtonItem!
     @IBOutlet var chooseDownloadsButton: UIBarButtonItem!
     @IBOutlet var startDownloadsButton: UIBarButtonItem!
@@ -26,9 +26,14 @@ class PostsViewController: UIViewController, Loadable {
     let dataSource = PostsDataSource()
     lazy var reachability: Reachable = Reachability.shared
     
-    struct Segues {
-        static let comments = "Comments"
-        static let subreddits = "Subreddits"
+    // MARK: - Init
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: String(describing: PostsViewController.self), bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
     
     deinit {
@@ -43,8 +48,12 @@ class PostsViewController: UIViewController, Loadable {
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
         tableView.dataSource = dataSource
+        tableView.tableFooterView = footerView
+        tableView.register(UINib(nibName: String(describing: PostCell.self), bundle: nil), forCellReuseIdentifier: String(describing: PostCell.self))
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
+        
+        updateNavigationItemButtons()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,38 +66,39 @@ class PostsViewController: UIViewController, Loadable {
             )
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
-//        if dataSource.subreddits.isEmpty {
-//            updateFooterView()
-//            fetchInitial()
-//        } else if dataSource.rows.isEmpty {
-//            fetchPosts()
-//        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        switch segue.identifier {
-        case Segues.comments?:
-            let commentsViewController = segue.destination as! CommentsViewController
-            commentsViewController.dataSource.post = sender as? Post
-        case Segues.subreddits?:
-            let subredditsViewController = segue.destination as! SubredditsViewController
-            subredditsViewController.didSelectSubreddits = { [weak self] in
-                self?.dataSource.subreddits = $0
-                self?.tableView.reloadData()
-                self?.updateFooterView()
-            }
-        default: ()
+        if dataSource.subreddits.isEmpty {
+            updateFooterView()
+            fetchInitial()
+        } else if dataSource.rows.isEmpty {
+            fetchPosts()
         }
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        tableView.setEditing(isEditing, animated: true)
+        tableView.setEditing(editing, animated: true)
         tableView.beginUpdates()
         tableView.endUpdates()
         updateStartDownloadsButtonEnabled()
-        navigationItem.setRightBarButtonItems(editing ? [cancelDownloadsButton, startDownloadsButton] : [subredditsButton], animated: animated)
-        navigationItem.setLeftBarButtonItems(editing ? nil : [chooseDownloadsButton], animated: animated)
+        updateNavigationItemButtons(animated: animated)
+    }
+    
+    // MARK: - Navigation
+    
+    func showCommentsViewController(post: Post) {
+        let commentsViewController = CommentsViewController()
+        commentsViewController.dataSource.post = post
+        navigationController?.pushViewController(commentsViewController, animated: true)
+    }
+    
+    func showSubredditsViewController() {
+        let subredditsViewController = SubredditsViewController()
+        subredditsViewController.didSelectSubreddits = { [weak self] in
+            self?.dataSource.subreddits = $0
+            self?.tableView.reloadData()
+            self?.updateFooterView()
+        }
+        navigationController?.pushViewController(subredditsViewController, animated: true)
     }
     
     // MARK: - Fetching
@@ -128,6 +138,11 @@ class PostsViewController: UIViewController, Loadable {
         loadMoreButton.isEnabled = reachability.isOnline
         loadMoreButton.setTitle(reachability.isOnline ? SharedText.loadingLowercase : SharedText.offline, for: .disabled)
         activityIndicator.setAnimating(hideHints && isLoading)
+    }
+    
+    func updateNavigationItemButtons(animated: Bool = false) {
+        navigationItem.setRightBarButtonItems(isEditing ? [cancelDownloadsButton, startDownloadsButton] : [subredditsButton], animated: animated)
+        navigationItem.setLeftBarButtonItems(isEditing ? nil : [chooseDownloadsButton], animated: animated)
     }
     
     func updateStartDownloadsButtonEnabled() {
@@ -174,7 +189,7 @@ class PostsViewController: UIViewController, Loadable {
             setEditing(false, animated: true)
         }
         dataSource.rows = []
-        self.tableView.reloadData()
+        tableView.reloadData()
         fetchPosts()
     }
     
@@ -201,6 +216,10 @@ class PostsViewController: UIViewController, Loadable {
             fetchPosts()
         }
     }
+    
+    @IBAction func showSubredditsButtonPressed(_ sender: UIButton) {
+        showSubredditsViewController()
+    }
 }
 
 // MARK: - Table view delegate
@@ -215,7 +234,7 @@ extension PostsViewController: UITableViewDelegate {
         if isEditing {
             updateStartDownloadsButtonEnabled()
         } else {
-            performSegue(withIdentifier: Segues.comments, sender: dataSource.post(at: indexPath))
+            showCommentsViewController(post: dataSource.post(at: indexPath))
         }
     }
     
@@ -224,10 +243,4 @@ extension PostsViewController: UITableViewDelegate {
             updateStartDownloadsButtonEnabled()
         }
     }
-}
-
-// MARK: - Storyboard init
-
-extension PostsViewController: StoryboardInitializable {
-    static let storyboardIdentifier = "Posts"
 }

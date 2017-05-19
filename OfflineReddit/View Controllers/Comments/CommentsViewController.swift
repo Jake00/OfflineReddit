@@ -37,6 +37,10 @@ class CommentsViewController: UIViewController, Loadable {
         dataSource.delegate = self
         tableView.dataSource = dataSource
         tableView.delegate = dataSource
+        tableView.tableHeaderView = headerView
+        tableView.tableFooterView = UIView()
+        tableView.register(UINib(nibName: String(describing: CommentsCell.self), bundle: nil), forCellReuseIdentifier: String(describing: CommentsCell.self))
+        tableView.register(UINib(nibName: String(describing: MoreCommentsCell.self), bundle: nil), forCellReuseIdentifier: String(describing: MoreCommentsCell.self))
         subredditLabel.text = dataSource.post?.subredditNamePrefixed
         authorTimeLabel.text = dataSource.post?.authorTimeText
         titleLabel.text = dataSource.post?.title
@@ -81,7 +85,7 @@ class CommentsViewController: UIViewController, Loadable {
 extension CommentsViewController: CommentsDataSourceDelegate {
     
     var viewHorizontalMargins: CGFloat {
-        return headerView.readableContentGuide.layoutFrame.minX * 2
+        return headerView.layoutMargins.left * 2
     }
     
     var viewFrameWidth: CGFloat {

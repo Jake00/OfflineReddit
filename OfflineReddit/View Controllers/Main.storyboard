@@ -176,8 +176,8 @@
                         <constraints>
                             <constraint firstItem="eFD-51-deS" firstAttribute="top" secondItem="D34-lT-pFP" secondAttribute="top" id="5jv-m9-6di"/>
                             <constraint firstItem="eFD-51-deS" firstAttribute="leading" secondItem="D34-lT-pFP" secondAttribute="leading" id="BFu-NN-wdT"/>
+                            <constraint firstItem="TUd-c0-7I9" firstAttribute="top" secondItem="eFD-51-deS" secondAttribute="bottom" id="R8a-2n-6ib"/>
                             <constraint firstAttribute="trailing" secondItem="eFD-51-deS" secondAttribute="trailing" id="hq3-7N-9zN"/>
-                            <constraint firstItem="TUd-c0-7I9" firstAttribute="top" secondItem="eFD-51-deS" secondAttribute="bottom" id="oC6-oQ-Iq8"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="OEK-ui-584">

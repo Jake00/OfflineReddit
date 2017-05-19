@@ -1,5 +1,5 @@
 //
-//  CommentsCells.swift
+//  CommentsCell.swift
 //  OfflineReddit
 //
 //  Created by Jake Bellamy on 20/03/17.
@@ -8,7 +8,8 @@
 
 import UIKit
 
-class CommentCell: UITableViewCell {
+class CommentsCell: UITableViewCell {
+    
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var bodyLabel: UILabel!
     @IBOutlet weak var bodyLabelLeading: NSLayoutConstraint!
@@ -20,7 +21,7 @@ class CommentCell: UITableViewCell {
     
     override var indentationLevel: Int {
         didSet {
-            bodyLabelLeading.constant = CommentCell.indentationWidth * CGFloat(indentationLevel)
+            bodyLabelLeading.constant = CommentsCell.indentationWidth * CGFloat(indentationLevel)
             layoutMargins.left = bodyLabelLeading.constant + contentView.layoutMargins.left
             separatorInset.left = layoutMargins.left
         }

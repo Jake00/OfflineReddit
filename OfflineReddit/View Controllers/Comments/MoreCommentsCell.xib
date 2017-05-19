@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12117" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12084"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="15" shouldIndentWhileEditing="NO" reuseIdentifier="MoreCommentsCell" rowHeight="36" id="sCN-ac-VPp" customClass="MoreCommentsCell" customModule="OfflineReddit" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="36"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" layoutMarginsFollowReadableWidth="YES" tableViewCell="sCN-ac-VPp" id="wTj-VR-rNG">
+                <rect key="frame" x="0.0" y="0.0" width="375" height="36"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3a5-Mt-CWm">
+                        <rect key="frame" x="4" y="4" width="367" height="27.5"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="752" text="LOADING" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mrV-kD-Ibu">
+                                <rect key="frame" x="8" y="0.0" width="351" height="27.5"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
+                                <color key="textColor" white="0.5" alpha="1" colorSpace="deviceWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.92000000000000004" alpha="1" colorSpace="deviceWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="mrV-kD-Ibu" secondAttribute="trailing" id="fNc-F0-S8H"/>
+                            <constraint firstItem="mrV-kD-Ibu" firstAttribute="leading" secondItem="3a5-Mt-CWm" secondAttribute="leadingMargin" id="fpS-1u-LGa"/>
+                            <constraint firstItem="mrV-kD-Ibu" firstAttribute="top" secondItem="3a5-Mt-CWm" secondAttribute="top" id="jcz-xR-cWq"/>
+                            <constraint firstAttribute="bottom" secondItem="mrV-kD-Ibu" secondAttribute="bottom" id="kBL-D9-gag"/>
+                        </constraints>
+                    </view>
+                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="H5q-qf-f1x">
+                        <rect key="frame" x="135.5" y="7.5" width="20" height="20"/>
+                    </activityIndicatorView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="3a5-Mt-CWm" firstAttribute="leading" secondItem="wTj-VR-rNG" secondAttribute="leadingMargin" id="3Hf-UR-1lS"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="3a5-Mt-CWm" secondAttribute="trailing" id="InZ-o3-2NK"/>
+                    <constraint firstItem="H5q-qf-f1x" firstAttribute="centerX" secondItem="3a5-Mt-CWm" secondAttribute="centerX" constant="-42" id="UQg-Jt-Z2E"/>
+                    <constraint firstItem="H5q-qf-f1x" firstAttribute="centerY" secondItem="3a5-Mt-CWm" secondAttribute="centerY" id="VWZ-FQ-Ejg"/>
+                    <constraint firstItem="3a5-Mt-CWm" firstAttribute="top" secondItem="wTj-VR-rNG" secondAttribute="topMargin" id="jf9-5h-X2B"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="3a5-Mt-CWm" secondAttribute="bottom" id="lpx-Fq-kV3"/>
+                </constraints>
+                <edgeInsets key="layoutMargins" top="4" left="4" bottom="4" right="4"/>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
+            <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
+            <connections>
+                <outlet property="activityIndicator" destination="H5q-qf-f1x" id="hOQ-ap-Ra6"/>
+                <outlet property="container" destination="3a5-Mt-CWm" id="qHd-kn-GUV"/>
+                <outlet property="containerLeading" destination="3Hf-UR-1lS" id="g0a-zS-RQu"/>
+                <outlet property="titleLabel" destination="mrV-kD-Ibu" id="rqM-If-hrr"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>
