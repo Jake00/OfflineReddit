@@ -57,7 +57,6 @@
 		23A395F71E7DDF9800030DEF /* Mapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395E81E7DDF9800030DEF /* Mapper.swift */; };
 		23A395F81E7DDF9800030DEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 23A395EA1E7DDF9800030DEF /* Assets.xcassets */; };
 		23A395FA1E7DDF9800030DEF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23A395EC1E7DDF9800030DEF /* LaunchScreen.storyboard */; };
-		23A395FB1E7DDF9800030DEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23A395EE1E7DDF9800030DEF /* Main.storyboard */; };
 		23A395FE1E7DE0A000030DEF /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		23A396011E7E00F400030DEF /* Subreddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A396001E7E00F400030DEF /* Subreddit.swift */; };
 		23A396031E7E011D00030DEF /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A396021E7E011D00030DEF /* Post.swift */; };
@@ -141,7 +140,6 @@
 		23A395EA1E7DDF9800030DEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		23A395EB1E7DDF9800030DEF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		23A395EC1E7DDF9800030DEF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		23A395EE1E7DDF9800030DEF /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BoltsSwift.framework; path = Carthage/Build/iOS/BoltsSwift.framework; sourceTree = "<group>"; };
 		23A396001E7E00F400030DEF /* Subreddit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subreddit.swift; sourceTree = "<group>"; };
 		23A396021E7E011D00030DEF /* Post.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
@@ -328,7 +326,6 @@
 				2379B06D1ECF787900925F9A /* Posts */,
 				2379B0671ECF787900925F9A /* Comments */,
 				2379B0731ECF787900925F9A /* Subreddits */,
-				23A395EE1E7DDF9800030DEF /* Main.storyboard */,
 				235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */,
 				235E08021E80E4BF00D83D16 /* NavigationController.swift */,
 			);
@@ -484,7 +481,6 @@
 				2379B0851ECF794900925F9A /* PostCell.xib in Resources */,
 				23A395F81E7DDF9800030DEF /* Assets.xcassets in Resources */,
 				2379B08B1ECF7DFB00925F9A /* MoreCommentsCell.xib in Resources */,
-				23A395FB1E7DDF9800030DEF /* Main.storyboard in Resources */,
 				2379B0911ECF821200925F9A /* SubredditCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
