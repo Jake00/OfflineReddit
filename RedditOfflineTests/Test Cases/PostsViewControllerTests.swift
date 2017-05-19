@@ -15,17 +15,18 @@ class TestingPostsViewController: PostsViewController {
     var didCallReachabilityChanged = false
     
     override func reachabilityChanged(_ notification: Notification) {
+        didCallReachabilityChanged = true
         super.reachabilityChanged(notification)
     }
 }
 
 class PostsViewControllerTests: BaseTestCase {
     
-    var postsViewController: PostsViewController!
+    var postsViewController: TestingPostsViewController!
     
     override func setUp() {
         super.setUp()
-        postsViewController = PostsViewController.instantiateFromStoryboard()
+        postsViewController = TestingPostsViewController()
         postsViewController.dataSource.provider = DataProvider(remote: remote, local: controller.context)
         postsViewController.dataSource.provider.reachability = reachability
         postsViewController.reachability = reachability
@@ -40,6 +41,7 @@ class PostsViewControllerTests: BaseTestCase {
     func fillDataSource() {
         let posts = try? controller.context.fetch(Post.fetchRequest() as NSFetchRequest<Post>)
         postsViewController.dataSource.rows = posts?.map(PostCellModel.init) ?? []
+        postsViewController.tableView.reloadData()
     }
     
     // MARK: - Tests
@@ -112,8 +114,9 @@ class PostsViewControllerTests: BaseTestCase {
     }
     
     func testThatItReceivesReachabilityNotifications() {
+        XCTAssertFalse(postsViewController.didCallReachabilityChanged, "No notifications have been sent yet")
         NotificationCenter.default.post(name: .ReachabilityChanged, object: nil)
-        
+        XCTAssertTrue(postsViewController.didCallReachabilityChanged, "Controller should have received the notification")
     }
     
     func testThatItDownloadsPosts() {
@@ -128,7 +131,6 @@ class PostsViewControllerTests: BaseTestCase {
                 return
         }
         
-        // Post starts not being available offline
         XCTAssertFalse(post.isAvailableOffline, "Post starts not available offline")
         
         let finishedPostsDownload = expectation(description: "Finished posts download")
