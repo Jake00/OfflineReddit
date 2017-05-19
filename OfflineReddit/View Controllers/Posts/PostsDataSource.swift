@@ -127,6 +127,8 @@ class PostsDataSource: NSObject {
             self.setState(.checked, for: post, in: tableView)
         }
         self.downloader = downloader
+        setAllStates(to: .indented, in: tableView)
+        setState(.loading, at: indexPaths, in: tableView)
         return downloader.start()
             .continueWithTask(.mainThread) { task -> Task<[Post]> in
                 self.downloader = nil
