@@ -30,6 +30,7 @@ class TestableCoreDataController {
     
     func reset() {
         context.reset()
+        TestableCoreDataController.parent.reset()
         context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.parent = TestableCoreDataController.parent
     }

@@ -12,10 +12,7 @@
 		2337562D1EC1E9220051ED2C /* CommentsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2337562C1EC1E9220051ED2C /* CommentsDataSource.swift */; };
 		233756311EC64F500051ED2C /* CommentsDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756301EC64F500051ED2C /* CommentsDownloader.swift */; };
 		233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756321EC650A40051ED2C /* MoreCommentsBatching.swift */; };
-		2337563B1EC6794F0051ED2C /* PostsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2337563A1EC6794F0051ED2C /* PostsViewControllerTests.swift */; };
 		233756431EC703BD0051ED2C /* StoryboardInitializing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756421EC703BD0051ED2C /* StoryboardInitializing.swift */; };
-		2358C7A31EC75CE1007F7B82 /* SettableReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2358C7A21EC75CE1007F7B82 /* SettableReachability.swift */; };
-		2358C7A51EC75F2F007F7B82 /* TestableCoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2358C7A41EC75F2F007F7B82 /* TestableCoreDataController.swift */; };
 		2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		235E07C51E7E8E1E00D83D16 /* PostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
@@ -57,7 +54,11 @@
 		23A396051E7E021500030DEF /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A396041E7E021500030DEF /* Identifiable.swift */; };
 		23A396091E7E19DC00030DEF /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A396081E7E19DC00030DEF /* AsyncOperation.swift */; };
 		23A3960B1E7E22C300030DEF /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A3960A1E7E22C300030DEF /* Comment.swift */; };
-		23B332221ECB4C6E00480122 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B332211ECB4C6E00480122 /* BaseTestCase.swift */; };
+		23B3322F1ECF464100480122 /* SettableReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B3322A1ECF464100480122 /* SettableReachability.swift */; };
+		23B332301ECF464100480122 /* TestableCoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B3322B1ECF464100480122 /* TestableCoreDataController.swift */; };
+		23B332311ECF464100480122 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B3322D1ECF464100480122 /* BaseTestCase.swift */; };
+		23B332321ECF464100480122 /* PostsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B3322E1ECF464100480122 /* PostsViewControllerTests.swift */; };
+		23B332341ECF465300480122 /* TestableCoreDataControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B332331ECF465300480122 /* TestableCoreDataControllerTests.swift */; };
 		23BED71D1EBDE71E0072C2CE /* PostsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */; };
 		23BED71F1EBE03ED0072C2CE /* PostCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */; };
 		23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */; };
@@ -83,11 +84,8 @@
 		233756301EC64F500051ED2C /* CommentsDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsDownloader.swift; sourceTree = "<group>"; };
 		233756321EC650A40051ED2C /* MoreCommentsBatching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreCommentsBatching.swift; sourceTree = "<group>"; };
 		233756381EC6794F0051ED2C /* RedditOfflineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RedditOfflineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2337563A1EC6794F0051ED2C /* PostsViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsViewControllerTests.swift; sourceTree = "<group>"; };
 		2337563C1EC6794F0051ED2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		233756421EC703BD0051ED2C /* StoryboardInitializing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardInitializing.swift; sourceTree = "<group>"; };
-		2358C7A21EC75CE1007F7B82 /* SettableReachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettableReachability.swift; sourceTree = "<group>"; };
-		2358C7A41EC75F2F007F7B82 /* TestableCoreDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableCoreDataController.swift; sourceTree = "<group>"; };
 		235E07C41E7E8E1E00D83D16 /* PostsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsViewController.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07C81E7E9A7600D83D16 /* CommentsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
@@ -133,7 +131,11 @@
 		23A396041E7E021500030DEF /* Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifiable.swift; sourceTree = "<group>"; };
 		23A396081E7E19DC00030DEF /* AsyncOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		23A3960A1E7E22C300030DEF /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
-		23B332211ECB4C6E00480122 /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
+		23B3322A1ECF464100480122 /* SettableReachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettableReachability.swift; sourceTree = "<group>"; };
+		23B3322B1ECF464100480122 /* TestableCoreDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableCoreDataController.swift; sourceTree = "<group>"; };
+		23B3322D1ECF464100480122 /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
+		23B3322E1ECF464100480122 /* PostsViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsViewControllerTests.swift; sourceTree = "<group>"; };
+		23B332331ECF465300480122 /* TestableCoreDataControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableCoreDataControllerTests.swift; sourceTree = "<group>"; };
 		23BED71C1EBDE71E0072C2CE /* PostsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsDataSource.swift; sourceTree = "<group>"; };
 		23BED71E1EBE03ED0072C2CE /* PostCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCellModel.swift; sourceTree = "<group>"; };
 		23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorViewAnimating.swift; sourceTree = "<group>"; };
@@ -166,11 +168,9 @@
 		233756391EC6794F0051ED2C /* RedditOfflineTests */ = {
 			isa = PBXGroup;
 			children = (
-				2337563A1EC6794F0051ED2C /* PostsViewControllerTests.swift */,
-				2358C7A41EC75F2F007F7B82 /* TestableCoreDataController.swift */,
-				2358C7A21EC75CE1007F7B82 /* SettableReachability.swift */,
+				23B3322C1ECF464100480122 /* Test Cases */,
+				23B332291ECF464100480122 /* Services */,
 				2337563C1EC6794F0051ED2C /* Info.plist */,
-				23B332211ECB4C6E00480122 /* BaseTestCase.swift */,
 			);
 			path = RedditOfflineTests;
 			sourceTree = "<group>";
@@ -310,6 +310,25 @@
 				23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		23B332291ECF464100480122 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				23B3322A1ECF464100480122 /* SettableReachability.swift */,
+				23B3322B1ECF464100480122 /* TestableCoreDataController.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		23B3322C1ECF464100480122 /* Test Cases */ = {
+			isa = PBXGroup;
+			children = (
+				23B3322D1ECF464100480122 /* BaseTestCase.swift */,
+				23B3322E1ECF464100480122 /* PostsViewControllerTests.swift */,
+				23B332331ECF465300480122 /* TestableCoreDataControllerTests.swift */,
+			);
+			path = "Test Cases";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -458,10 +477,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				23B332221ECB4C6E00480122 /* BaseTestCase.swift in Sources */,
-				2337563B1EC6794F0051ED2C /* PostsViewControllerTests.swift in Sources */,
-				2358C7A51EC75F2F007F7B82 /* TestableCoreDataController.swift in Sources */,
-				2358C7A31EC75CE1007F7B82 /* SettableReachability.swift in Sources */,
+				23B332341ECF465300480122 /* TestableCoreDataControllerTests.swift in Sources */,
+				23B332321ECF464100480122 /* PostsViewControllerTests.swift in Sources */,
+				23B332301ECF464100480122 /* TestableCoreDataController.swift in Sources */,
+				23B332311ECF464100480122 /* BaseTestCase.swift in Sources */,
+				23B3322F1ECF464100480122 /* SettableReachability.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
