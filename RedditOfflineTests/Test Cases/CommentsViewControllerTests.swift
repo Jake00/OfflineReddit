@@ -10,10 +10,6 @@ import XCTest
 import CoreData
 @testable import OfflineReddit
 
-class TestingCommentsViewController: CommentsViewController {
-    
-}
-
 class CommentsViewControllerTests: BaseTestCase {
     
     var commentsViewController: CommentsViewController!
