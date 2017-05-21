@@ -51,6 +51,7 @@
 		2379B0A11ED1D63100925F9A /* SettableReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0A01ED1D63100925F9A /* SettableReachability.swift */; };
 		2379B0A31ED20E6600925F9A /* SubredditsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0A21ED20E6600925F9A /* SubredditsDataSource.swift */; };
 		2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0A41ED20EB600925F9A /* SubredditsProvider.swift */; };
+		2379B0A81ED22EE700925F9A /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2379B0A71ED22EE700925F9A /* Dwifft.framework */; };
 		23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395C81E7DDE8600030DEF /* AppDelegate.swift */; };
 		23A395F01E7DDF9800030DEF /* OfflineReddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 23A395DE1E7DDF9800030DEF /* OfflineReddit.xcdatamodeld */; };
 		23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395E21E7DDF9800030DEF /* APIClient+Endpoints.swift */; };
@@ -135,6 +136,7 @@
 		2379B0A01ED1D63100925F9A /* SettableReachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettableReachability.swift; sourceTree = "<group>"; };
 		2379B0A21ED20E6600925F9A /* SubredditsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditsDataSource.swift; sourceTree = "<group>"; };
 		2379B0A41ED20EB600925F9A /* SubredditsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditsProvider.swift; sourceTree = "<group>"; };
+		2379B0A71ED22EE700925F9A /* Dwifft.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Dwifft.framework; path = Carthage/Build/iOS/Dwifft.framework; sourceTree = "<group>"; };
 		23A395C51E7DDE8600030DEF /* OfflineReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23A395C81E7DDE8600030DEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23A395DF1E7DDF9800030DEF /* OfflineReddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OfflineReddit.xcdatamodel; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				235E08081E81431D00D83D16 /* SystemConfiguration.framework in Frameworks */,
+				2379B0A81ED22EE700925F9A /* Dwifft.framework in Frameworks */,
 				23A395FE1E7DE0A000030DEF /* BoltsSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -359,6 +362,7 @@
 			isa = PBXGroup;
 			children = (
 				235E08071E81431D00D83D16 /* SystemConfiguration.framework */,
+				2379B0A71ED22EE700925F9A /* Dwifft.framework */,
 				23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */,
 			);
 			name = Frameworks;
@@ -520,6 +524,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/BoltsSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Dwifft.framework",
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (

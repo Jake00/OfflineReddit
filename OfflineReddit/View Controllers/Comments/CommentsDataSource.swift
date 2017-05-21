@@ -8,6 +8,7 @@
 
 import UIKit
 import BoltsSwift
+import Dwifft
 
 protocol CommentsDataSourceDelegate: class {
     var viewHorizontalMargins: CGFloat { get }
@@ -42,6 +43,28 @@ class CommentsDataSource: NSObject {
         let v = Either<Comment, MoreComments>.other(more)
         return comments.index(where: { $0 == v })
             .map { IndexPath(row: $0, section: 0) }
+    }
+    
+    private func animateCommentsUpdate() {
+        let old = comments.map(EitherEquatable.init)
+        updateComments()
+        guard let tableView = tableView else { return }
+        let new = comments.map(EitherEquatable.init)
+        var deleting: [Int] = []
+        var inserting: [Int] = []
+        if old.isEmpty {
+            deleting.append(0)
+        }
+        for diff in Dwifft.diff(old, new) {
+            switch diff {
+            case .insert(let index, _): inserting.append(index)
+            case .delete(let index, _): deleting.append(index)
+            }
+        }
+        tableView.beginUpdates()
+        tableView.deleteRows(at: deleting.map { IndexPath(row: $0, section: 0) }, with: .fade)
+        tableView.insertRows(at: inserting.map { IndexPath(row: $0, section: 0) }, with: .fade)
+        tableView.endUpdates()
     }
     
     private func updateComments() {
@@ -143,26 +166,8 @@ class CommentsDataSource: NSObject {
     
     func fetchComments() -> Task<Void> {
         return provider.getComments(for: post).continueOnSuccessWith(.mainThread) { _ in
-            self.didFetchComments()
-        }
-    }
-    
-    private func didFetchComments() {
-        defer { provider.local.trySave() }
-        let old = comments.count
-        updateComments()
-        let new = comments.count
-        guard new > 0 else {
-            tableView?.reloadData()
-            return
-        }
-        if old == 0 {
-            tableView?.beginUpdates()
-            tableView?.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
-        }
-        tableView?.insertRows(at: (max(1, old)..<new).map { IndexPath(row: $0, section: 0) }, with: .fade)
-        if old == 0 {
-            tableView?.endUpdates()
+            self.animateCommentsUpdate()
+            self.provider.local.trySave()
         }
     }
     
@@ -177,30 +182,14 @@ class CommentsDataSource: NSObject {
     
     private func didFetchMoreComments(_ more: MoreComments, task: Task<[Comment]>) -> Task<[Comment]> {
         loadingCells.remove(more)
-        guard let indexPath = self.indexPath(of: more) else {
-            updateComments()
-            tableView?.reloadData()
-            return task
-        }
-        guard task.error == nil else {
-            let cell = tableView?.cellForRow(at: indexPath) as? MoreCommentsCell
+        if task.error == nil {
+            self.animateCommentsUpdate()
+        } else {
+            let cell = indexPath(of: more).flatMap {
+                tableView?.cellForRow(at: $0) as? MoreCommentsCell
+            }
             updateMoreCell(cell, more)
-            return task
         }
-        let start = min(indexPath.row + 1, comments.endIndex - 1)
-        let next = comments[start]
-        updateComments()
-        guard let end = comments.index(where: { $0 == next }), end - start >= 0 else {
-            tableView?.reloadData()
-            return task
-        }
-        tableView?.beginUpdates()
-        tableView?.reloadRows(at: [indexPath], with: .fade)
-        if end - start > 0 {
-            tableView?.insertRows(at: (start..<end).map { IndexPath(row: $0, section: 0) }, with: .fade)
-        }
-        tableView?.endUpdates()
-        provider.local.trySave()
         return task
     }
     
