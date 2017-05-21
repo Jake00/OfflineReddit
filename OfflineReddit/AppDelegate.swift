@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 reachability: SettableReachability())
         }
         
-        let reachability = NetworkReachability()
+        let reachability = NetworkReachability.forInternetConnection()
         reachability.startNotifier()
         return DataProvider(
             remote: APIClient(),

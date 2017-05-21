@@ -129,6 +129,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 - (BOOL)startNotifier
 {
+    NSAssert(_reachabilityRef != NULL, @"startNotifier called with NULL reachabilityRef");
 	BOOL returnValue = NO;
 	SCNetworkReachabilityContext context = {0, (__bridge void *)(self), NULL, NULL, NULL};
 
