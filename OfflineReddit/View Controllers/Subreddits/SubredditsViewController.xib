@@ -13,6 +13,7 @@
                 <outlet property="footerView" destination="FvY-8M-vC7" id="8at-mj-AK3"/>
                 <outlet property="inputToolbar" destination="yl9-xi-Vp0" id="hBn-ke-8ay"/>
                 <outlet property="newTextField" destination="bw2-T9-VNU" id="QZJ-kE-vXX"/>
+                <outlet property="saveSubredditButton" destination="QSL-Ti-VMC" id="ylb-zo-L42"/>
                 <outlet property="tableView" destination="Fve-Bt-g2t" id="6Lk-83-roe"/>
                 <outlet property="view" destination="VCb-tS-uUv" id="OgJ-rM-PR3"/>
             </connections>
@@ -25,10 +26,6 @@
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="40" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Fve-Bt-g2t">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                     <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
-                    <connections>
-                        <outlet property="dataSource" destination="-1" id="9a1-iJ-HsK"/>
-                        <outlet property="delegate" destination="-1" id="OkS-tg-i9g"/>
-                    </connections>
                 </tableView>
             </subviews>
             <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
@@ -91,6 +88,11 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
             <items>
                 <barButtonItem style="plain" systemItem="flexibleSpace" id="ETA-aj-gG3"/>
+                <barButtonItem enabled="NO" systemItem="save" id="QSL-Ti-VMC">
+                    <connections>
+                        <action selector="saveButtonPressed:" destination="-1" id="lel-jf-wai"/>
+                    </connections>
+                </barButtonItem>
                 <barButtonItem systemItem="done" id="6ye-a3-SSd">
                     <connections>
                         <action selector="doneButtonPressed:" destination="-1" id="oeG-qC-QAJ"/>

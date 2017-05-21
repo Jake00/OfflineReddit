@@ -49,6 +49,8 @@
 		2379B09D1ED1BE2E00925F9A /* PostsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B09C1ED1BE2E00925F9A /* PostsProvider.swift */; };
 		2379B09F1ED1CDFB00925F9A /* CommentsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B09E1ED1CDFB00925F9A /* CommentsProvider.swift */; };
 		2379B0A11ED1D63100925F9A /* SettableReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0A01ED1D63100925F9A /* SettableReachability.swift */; };
+		2379B0A31ED20E6600925F9A /* SubredditsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0A21ED20E6600925F9A /* SubredditsDataSource.swift */; };
+		2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0A41ED20EB600925F9A /* SubredditsProvider.swift */; };
 		23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395C81E7DDE8600030DEF /* AppDelegate.swift */; };
 		23A395F01E7DDF9800030DEF /* OfflineReddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 23A395DE1E7DDF9800030DEF /* OfflineReddit.xcdatamodeld */; };
 		23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395E21E7DDF9800030DEF /* APIClient+Endpoints.swift */; };
@@ -131,6 +133,8 @@
 		2379B09C1ED1BE2E00925F9A /* PostsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsProvider.swift; sourceTree = "<group>"; };
 		2379B09E1ED1CDFB00925F9A /* CommentsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsProvider.swift; sourceTree = "<group>"; };
 		2379B0A01ED1D63100925F9A /* SettableReachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettableReachability.swift; sourceTree = "<group>"; };
+		2379B0A21ED20E6600925F9A /* SubredditsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditsDataSource.swift; sourceTree = "<group>"; };
+		2379B0A41ED20EB600925F9A /* SubredditsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditsProvider.swift; sourceTree = "<group>"; };
 		23A395C51E7DDE8600030DEF /* OfflineReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23A395C81E7DDE8600030DEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23A395DF1E7DDF9800030DEF /* OfflineReddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OfflineReddit.xcdatamodel; sourceTree = "<group>"; };
@@ -227,6 +231,8 @@
 			children = (
 				2379B0751ECF787900925F9A /* SubredditsViewController.swift */,
 				2379B08E1ECF81D400925F9A /* SubredditsViewController.xib */,
+				2379B0A21ED20E6600925F9A /* SubredditsDataSource.swift */,
+				2379B0A41ED20EB600925F9A /* SubredditsProvider.swift */,
 				2379B0741ECF787900925F9A /* SubredditCell.swift */,
 				2379B0901ECF821200925F9A /* SubredditCell.xib */,
 			);
@@ -560,6 +566,7 @@
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
 				2379B0951ED1B3E700925F9A /* ReusableCell.swift in Sources */,
+				2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */,
 				233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */,
 				23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */,
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,
@@ -575,6 +582,7 @@
 				2379B0781ECF787900925F9A /* CommentsDownloader.swift in Sources */,
 				2379B0801ECF787900925F9A /* SubredditCell.swift in Sources */,
 				23A395F71E7DDF9800030DEF /* Mapper.swift in Sources */,
+				2379B0A31ED20E6600925F9A /* SubredditsDataSource.swift in Sources */,
 				235E07DD1E7F637000D83D16 /* Either.swift in Sources */,
 				2379B08D1ECF7E0A00925F9A /* MoreCommentsCell.swift in Sources */,
 				23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */,

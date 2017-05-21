@@ -13,41 +13,52 @@ class SubredditsViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var newTextField: UITextField!
+    @IBOutlet weak var saveSubredditButton: UIBarButtonItem!
     @IBOutlet var footerView: UIView!
     @IBOutlet var inputToolbar: UIToolbar!
     
-    let context = CoreDataController.shared.viewContext
     var didSelectSubreddits: (([Subreddit]) -> Void)?
-    var subreddits: [Subreddit] = []
+    let dataSource: SubredditsDataSource
+    
+    // MARK: - Init
+    
+    init(provider: DataProvider) {
+        dataSource = SubredditsDataSource(provider: provider)
+        super.init(nibName: String(describing: SubredditsViewController.self), bundle: nil)
+    }
+    
+    @available(*, unavailable, message: "init(coder:) is not available. Use init(provider:) instead.")
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not available. Use init(provider:) instead.")
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - View controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        dataSource.tableView = tableView
+        tableView.dataSource = dataSource
+        tableView.delegate = dataSource
         tableView.tableFooterView = footerView
         tableView.registerReusableNibCell(SubredditCell.self)
         newTextField.inputAccessoryView = inputToolbar
         navigationItem.rightBarButtonItem = editButtonItem
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(_:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear(_:)), name: .UIKeyboardWillHide, object: nil)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(textFieldTextChanged(_:)), name: .UITextFieldTextDidChange, object: newTextField)
         
-        if subreddits.isEmpty {
-            let request: NSFetchRequest<Subreddit> = Subreddit.fetchRequest()
-            request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))]
-            subreddits = (try? context.fetch(request)) ?? []
-            if subreddits.isEmpty {
-                subreddits = Subreddit.insertDefaults(into: context)
-            }
-        }
+        dataSource.fillSubreddits()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if context.hasChanges {
-            didSelectSubreddits?(subreddits.filter { $0.isSelected })
-            _ = try? context.save()
+        if dataSource.provider.local.hasChanges {
+            didSelectSubreddits?(dataSource.subreddits.filter { $0.isSelected })
+            _ = try? dataSource.provider.local.save()
         }
     }
     
@@ -56,11 +67,17 @@ class SubredditsViewController: UIViewController {
         tableView.setEditing(editing, animated: animated)
     }
     
+    // MARK: - Notifications
+    
     func keyboardWillAppear(_ notification: Notification) {
-        if let height = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? CGRect)?.height {
-            tableView.contentInset.bottom = height
-            tableView.scrollIndicatorInsets.bottom = height
-        }
+        guard let height = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? CGRect)?.height else { return }
+        tableView.contentInset.bottom = height
+        tableView.scrollIndicatorInsets.bottom = height
+        let duration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? TimeInterval ?? 0
+        let rawCurve = notification.userInfo?[UIKeyboardAnimationCurveUserInfoKey] as? Int ?? 0
+        UIView.animate(withDuration: duration, delay: 0, options: UIViewAnimationOptions(rawValue: UInt(rawCurve << 16)), animations: { 
+            self.tableView.contentOffset.y = self.tableView.contentSize.height - self.tableView.frame.height + height
+        }, completion: nil)
     }
     
     func keyboardWillDisappear(_ notification: Notification) {
@@ -68,59 +85,35 @@ class SubredditsViewController: UIViewController {
         tableView.scrollIndicatorInsets.bottom = 0
     }
     
+    func textFieldTextChanged(_ notification: Notification) {
+        saveSubredditButton.isEnabled = newTextField.hasText
+    }
+    
+    // MARK: - UI Actions
+    
     @IBAction func doneButtonPressed(_ sender: UIBarButtonItem) {
         newTextField.resignFirstResponder()
     }
-}
-
-// MARK: - Table view data source
-
-extension SubredditsViewController: UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return subreddits.count
+    @IBAction func saveButtonPressed(_ sender: UIBarButtonItem) {
+        attemptSubredditInsert(named: newTextField.text)
+        sender.isEnabled = false
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: SubredditCell = tableView.dequeueReusableCell(for: indexPath)
-        let subreddit = subreddits[indexPath.row]
-        cell.textLabel?.text = subreddit.name
-        cell.isChecked = subreddit.isSelected
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        guard editingStyle == .delete else { return }
-        context.delete(subreddits.remove(at: indexPath.row))
-        tableView.deleteRows(at: [indexPath], with: .automatic)
+    @discardableResult
+    func attemptSubredditInsert(named subredditName: String?) -> Bool {
+        guard let subredditName = subredditName, !subredditName.isEmpty
+            else { return false }
+        dataSource.insertSubreddit(named: subredditName)
+        newTextField.text = nil
+        return true
     }
 }
-
-// MARK: - Table view delegate
-
-extension SubredditsViewController: UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let subreddit = subreddits[indexPath.row]
-        subreddit.isSelected = !subreddit.isSelected
-        (tableView.cellForRow(at: indexPath) as? SubredditCell)?.isChecked = subreddit.isSelected
-    }
-}
-
-// MARK: - Text field delegate
 
 extension SubredditsViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard let name = textField.text, !name.isEmpty else { return false }
-        
-        let indexPath = IndexPath(row: subreddits.endIndex, section: 0)
-        let subreddit = Subreddit.create(in: context, name: name)
-        subreddit.isSelected = true
-        subreddits.append(subreddit)
-        tableView.insertRows(at: [indexPath], with: .automatic)
-        textField.text = nil
-        return textField.resignFirstResponder()
+        return attemptSubredditInsert(named: textField.text)
+            && textField.resignFirstResponder()
     }
 }

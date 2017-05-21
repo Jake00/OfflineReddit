@@ -36,7 +36,7 @@ final class Mapper {
         
         return try context.performAndWait { context -> [Post] in
             let existingPosts = try self.fetchExistingPosts(postsJSON.map { $0.id }, context)
-            let existingSubreddits = try context.fetch(subredditsRequest)
+            let existingSubreddits: [Subreddit] = try context.fetch(subredditsRequest)
             
             let subreddits = subredditNames.flatMap { name -> Subreddit in
                 let subreddit = existingSubreddits.first(where: { $0.name.caseInsensitiveCompare(name) == .orderedSame })

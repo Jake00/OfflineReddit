@@ -85,13 +85,14 @@ class PostsViewController: UIViewController, Loadable {
     // MARK: - Navigation
     
     func showCommentsViewController(post: Post) {
-        let provider = DataProvider(remote: dataSource.provider.remote, local: dataSource.provider.local, reachability: reachability)
+        let provider = DataProvider(remote: dataSource.postsProvider.remote, local: dataSource.postsProvider.local, reachability: reachability)
         let commentsViewController = CommentsViewController(post: post, provider: provider)
         navigationController?.pushViewController(commentsViewController, animated: true)
     }
     
     func showSubredditsViewController() {
-        let subredditsViewController = SubredditsViewController()
+        let provider = DataProvider(remote: dataSource.postsProvider.remote, local: dataSource.postsProvider.local, reachability: reachability)
+        let subredditsViewController = SubredditsViewController(provider: provider)
         subredditsViewController.didSelectSubreddits = { [weak self] in
             self?.dataSource.subreddits = $0
             self?.tableView.reloadData()
@@ -115,7 +116,7 @@ class PostsViewController: UIViewController, Loadable {
     
     @discardableResult
     func fetchInitial() -> Task<Void> {
-        return fetch(dataSource.provider.getAllSelectedSubreddits())
+        return fetch(dataSource.subredditsProvider.getAllSelectedSubreddits())
             .continueOnSuccessWithTask { subreddits -> Task<Void> in
                 self.dataSource.subreddits = subreddits
                 self.updateFooterView()

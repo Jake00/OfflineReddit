@@ -32,9 +32,9 @@ class CommentsViewController: UIViewController, Loadable {
         super.init(nibName: String(describing: CommentsViewController.self), bundle: nil)
     }
     
-    @available(*, unavailable, message: "init(coder:) is not available. Use init(provider:) instead.")
+    @available(*, unavailable, message: "init(post:coder:) is not available. Use init(provider:) instead.")
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not available. Use init(provider:) instead.")
+        fatalError("init(coder:) is not available. Use init(post:provider:) instead.")
     }
     
     // MARK: - View controller

@@ -19,10 +19,12 @@ class PostsDataSource: NSObject {
     
     // MARK: - Init
     
-    let provider: PostsProvider
+    let postsProvider: PostsProvider
+    let subredditsProvider: SubredditsProvider
     
     init(provider: DataProvider) {
-        self.provider = PostsProvider(provider: provider)
+        self.postsProvider = PostsProvider(provider: provider)
+        self.subredditsProvider = SubredditsProvider(provider: provider)
     }
     
     // MARK: - Rows
@@ -104,17 +106,9 @@ class PostsDataSource: NSObject {
     
     // MARK: - Fetching
     
-    func fetchInitial() -> Task<Void> {
-        return provider.getAllSelectedSubreddits()
-            .continueOnSuccessWithTask(.mainThread) { _ -> Task<[Post]> in
-                self.tableView?.reloadData()
-                return self.fetchNextPage()
-            }.continueOnSuccessWith(.immediate) { _ -> Void in }
-    }
-    
     func fetchNextPage() -> Task<[Post]> {
         guard !subreddits.isEmpty else { return Task<[Post]>([]) }
-        return provider.getPosts(for: subreddits, after: rows.last?.post)
+        return postsProvider.getPosts(for: subreddits, after: rows.last?.post)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 guard !posts.isEmpty else { return posts }
                 let new = posts.map(PostCellModel.init)
@@ -129,7 +123,7 @@ class PostsDataSource: NSObject {
     }
     
     func reloadWithOfflinePosts() -> Task<[Post]> {
-        return provider.getAllOfflinePosts(for: subreddits)
+        return postsProvider.getAllOfflinePosts(for: subreddits)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 self.rows = posts.map(PostCellModel.init)
                 self.tableView?.reloadData()
@@ -143,7 +137,7 @@ class PostsDataSource: NSObject {
     
     @discardableResult
     func startDownload(for indexPaths: [IndexPath]) -> Task<[Post]> {
-        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: provider.remote)
+        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: postsProvider.remote)
         downloader.completionForPost = { post in
             self.setState(.checked, for: post)
         }
@@ -157,7 +151,7 @@ class PostsDataSource: NSObject {
                     self.updateIsAvailableOffline(for: posts)
                 }
                 self.setAllStates(to: .normal)
-                self.provider.local.trySave()
+                self.postsProvider.local.trySave()
                 return task
         }
     }

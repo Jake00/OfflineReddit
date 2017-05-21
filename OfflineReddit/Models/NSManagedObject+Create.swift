@@ -7,6 +7,7 @@
 //
 
 import CoreData
+import BoltsSwift
 
 extension NSManagedObject {
     
@@ -91,5 +92,18 @@ extension NSManagedObjectContext {
         performGrouped {
             _ = try? self.save()
         }
+    }
+    
+    func fetch<T>(_ request: NSFetchRequest<T>) -> Task<[T]> where T : NSFetchRequestResult {
+        let source = TaskCompletionSource<[T]>()
+        performGrouped {
+            do {
+                let result = try self.fetch(request) as [T]
+                source.set(result: result)
+            } catch {
+                source.set(error: error)
+            }
+        }
+        return source.task
     }
 }
