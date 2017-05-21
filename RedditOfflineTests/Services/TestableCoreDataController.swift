@@ -22,8 +22,7 @@ class TestableCoreDataController {
         context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.parent = TestableCoreDataController.parent
         if !TestableCoreDataController.hasImported {
-            mapper.context = TestableCoreDataController.parent
-            importModels()
+            importPosts(to: TestableCoreDataController.parent)
             TestableCoreDataController.hasImported = true
         }
     }
@@ -33,6 +32,18 @@ class TestableCoreDataController {
         TestableCoreDataController.parent.reset()
         context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         context.parent = TestableCoreDataController.parent
+    }
+    
+    func newEmptyManagedObjectContext() -> NSManagedObjectContext {
+        let store = NSPersistentStoreCoordinator(managedObjectModel: CoreDataController.managedObjectModel)
+        do {
+            try store.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: nil, options: nil)
+        } catch {
+            fatalError("Error adding store: \(error)")
+        }
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = store
+        return context
     }
     
     private static let parent: NSManagedObjectContext = {
@@ -65,63 +76,52 @@ class TestableCoreDataController {
         return fileJSON
     }()
     
-    func importModels() {
-        print("starting import of test models")
+    struct ImportOptions: OptionSet {
+        let rawValue: Int
+        static let comments = ImportOptions(rawValue: 1 << 0)
+        static let moreComments = ImportOptions(rawValue: 1 << 1)
+    }
+    
+    func importPosts(to context: NSManagedObjectContext, including `import`: ImportOptions = [.comments, .moreComments]) {
+        mapper.context = context
+        
+        print("TestableCoreDataController: Starting import of test models")
         let start = Date()
         
         let postsFilename = OfflineRemoteProvider.postsFilename()
         guard let postsJSON = TestableCoreDataController.fileJSON[postsFilename] else {
             fatalError("No file \(postsFilename) loaded in main bundle. Cannot run tests")
         }
-        let posts: [Post]
+        
         do {
-            posts = try mapper.mapPosts(json: postsJSON)
+            let posts = try mapper.mapPosts(json: postsJSON)
+            
+            /* Speed up fetching existing objects without using the slower NSFetchRequest */
+            mapper.fetchExistingPosts = { _, _ in posts }
+            mapper.fetchExistingComments = { postId, _ in Array(posts.first { $0.id == postId }?.comments ?? [])}
+            mapper.fetchPost = { postId, _ in posts.first { $0.id == postId }}
+            
+            if `import`.contains(.comments) {
+                try posts.forEach { try importComments(from: $0, including: `import`) }
+            }
         } catch {
             fatalError("Error loading the testing managed object context: \(error)")
         }
-        
-        mapper.fetchExistingPosts = { _, _ in posts }
-        mapper.fetchExistingComments = { postId, _ in Array(posts.first { $0.id == postId }?.comments ?? [])}
-        mapper.fetchPost = { postId, _ in posts.first { $0.id == postId }}
-        
-        let iterations = 4
-        let numberOfElements = posts.count / iterations
-        var completed = false
-        
-        DispatchQueue.global().async {
-            DispatchQueue.concurrentPerform(iterations: iterations) {
-                let startIndex = $0 * numberOfElements
-                let endIndex = $0 == iterations - 1 ? posts.endIndex : startIndex + numberOfElements
-                do {
-                    try posts[startIndex..<endIndex].forEach(self.importModels(from:))
-                } catch {
-                    fatalError("Error loading the testing managed object context: \(error)")
-                }
-            }
-            completed = true
-        }
-        
-        /* Block the main thread until import is complete, but allow the context to queue work. */
-        while !completed {
-            let interval = 0.002
-            let date = Date(timeIntervalSinceNow: interval)
-            if !RunLoop.main.run(mode: .defaultRunLoopMode, before: date) {
-                Thread.sleep(forTimeInterval: interval)
-            }
-        }
-        print("finished -- took \(-start.timeIntervalSinceNow) seconds")
+        print("TestableCoreDataController: Finished -- took \(-start.timeIntervalSinceNow) seconds")
     }
     
-    private func importModels(from post: Post) throws {
+    private func importComments(from post: Post, including `import`: ImportOptions) throws {
         let commentsFilename = OfflineRemoteProvider.commentsFilename(post: post)
         guard let commentsJSON = TestableCoreDataController.fileJSON[commentsFilename] else { return }
-        _ = try self.mapper.mapComments(json: commentsJSON)
+        _ = try mapper.mapComments(json: commentsJSON)
         
-        let moresBatched = batch(comments: post.displayComments, maximum: self.moreCommentsBatchSize)
+        guard `import`.contains(.moreComments) else { return }
+        
+        let moresBatched = batch(comments: post.displayComments, maximum: moreCommentsBatchSize)
         for moreComments in moresBatched {
             if let moresFilename = OfflineRemoteProvider.moreCommentsFilename(post: post, mores: moreComments),
                 let moresJSON = TestableCoreDataController.fileJSON[moresFilename] {
-                _ = try self.mapper.mapMoreComments(json: moresJSON, mores: moreComments, post: post)
+                _ = try mapper.mapMoreComments(json: moresJSON, mores: moreComments, post: post)
             }
         }
     }

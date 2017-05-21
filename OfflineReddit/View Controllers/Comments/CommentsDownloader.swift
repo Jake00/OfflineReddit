@@ -15,7 +15,7 @@ final class CommentsDownloader: NSObject, ProgressReporting {
     let post: Post
     let remote: DataProviding
     let comments: [[MoreComments]]
-    var remaining: [[MoreComments]]
+    private(set) var remaining: [[MoreComments]]
     
     init(post: Post, comments: [Either<Comment, MoreComments>], remote: DataProviding, numberOfCommentBatches: Int = 5) {
         self.post = post

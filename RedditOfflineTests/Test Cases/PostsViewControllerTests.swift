@@ -38,7 +38,7 @@ class PostsViewControllerTests: BaseTestCase {
         postsViewController.dataSource.provider = DataProvider(remote: remote, local: controller.context)
         postsViewController.dataSource.provider.reachability = reachability
         postsViewController.reachability = reachability
-        _ = postsViewController.view
+        _ = postsViewController.view // load view
     }
     
     override func tearDown() {
@@ -47,7 +47,8 @@ class PostsViewControllerTests: BaseTestCase {
     }
     
     func fillDataSource() {
-        let posts = try? controller.context.fetch(Post.fetchRequest() as NSFetchRequest<Post>)
+        let fetch = NSFetchRequest<Post>(entityName: String(describing: Post.self))
+        let posts = try? controller.context.fetch(fetch)
         postsViewController.dataSource.rows = posts?.map(PostCellModel.init) ?? []
         postsViewController.tableView.reloadData()
     }

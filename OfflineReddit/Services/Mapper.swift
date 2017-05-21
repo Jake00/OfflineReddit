@@ -130,18 +130,30 @@ final class Mapper {
         
         return try context.performAndWait { context -> [Comment] in
             let mores = mores.inContext(context, inContextsQueue: false)
-            let post = post.inContext(context)
-            
+            let post = post.inContext(context, inContextsQueue: false)
             let existingComments = try self.fetchExistingComments(post.id, context)
             var orders: [MoreComments: Int64] = [:]
             mores.forEach { orders[$0] = Int64($0.parentComment?.children.count ?? $0.parentPost?.comments.count ?? 0) }
+            
+            /* 
+             The Reddit API often sends back child comments that we did not request via a 'MoreComments' id.
+             eg. Request comment 1 and 2. Reddit gives us back comments 1, 2 and 3.
+             We handle this by putting them in the `unset` array and setting their relationship.
+             */
             var unset: [Comment] = []
             
             let comments = commentsJSON.flatMap { json -> [Comment] in
                 let more: MoreComments? = Comment.id(from: json)
                     .flatMap { $1["id"] as? String }
                     .flatMap { id in mores.first { $0.children.contains(id) }}
-                guard let (parent, replies) = self.mapComment(json: json, parent: more?.parentComment, topLevelPost: more?.parentPost, existing: existingComments) else { return [] }
+                
+                guard let (parent, replies) = self.mapComment(
+                    json: json,
+                    parent: more?.parentComment,
+                    topLevelPost: more?.parentPost,
+                    existing: existingComments
+                    ) else { return [] }
+                
                 if let more = more, let order = orders[more] {
                     parent.order = order
                     orders[more] = order + 1

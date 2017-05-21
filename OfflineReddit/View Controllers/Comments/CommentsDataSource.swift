@@ -123,6 +123,7 @@ class CommentsDataSource: NSObject {
     
     lazy var provider = DataProvider.shared
     
+    @discardableResult
     func fetchCommentsIfNeeded(updating tableView: UITableView) -> Task<Void>? {
         if allComments.isEmpty {
             updateComments()
@@ -209,6 +210,7 @@ class CommentsDataSource: NSObject {
         self.downloader = downloader
         
         return downloader.start().continueWithTask(.mainThread) {
+            self.downloader = nil
             self.updateComments()
             tableView.reloadData()
             self.provider.save()

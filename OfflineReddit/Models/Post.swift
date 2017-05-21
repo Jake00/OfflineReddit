@@ -64,6 +64,14 @@ extension Post {
         return displayComments
     }
     
+    var allMoreComments: [MoreComments] {
+        var allMoreComments = comments.sorted().flatMap { $0.more }
+        if let more = more {
+            allMoreComments.append(more)
+        }
+        return allMoreComments
+    }
+    
     func update(json: JSON) {
         author = json["author"] as? String
         selfText = json["selftext"] as? String

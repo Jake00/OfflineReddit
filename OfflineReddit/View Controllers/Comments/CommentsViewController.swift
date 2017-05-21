@@ -62,10 +62,15 @@ class CommentsViewController: UIViewController, Loadable {
         headerView.frame.size.height = headerView.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
     }
     
-    // MARK: -
+    // MARK: - Comments downloading
     
-    func startCommentsDownload() {
-        fetch(dataSource.startDownload(updating: tableView))
+    var isSavingComments: Bool {
+        return dataSource.downloader != nil
+    }
+    
+    @discardableResult
+    func startCommentsDownload() -> Task<Void> {
+        let task = fetch(dataSource.startDownload(updating: tableView))
             .continueOnSuccessWith(.mainThread) { _ -> Void in
                 self.navigationBarProgressView?.observedProgress = nil
                 self.navigationBarProgressView?.isHidden = true
@@ -73,7 +78,10 @@ class CommentsViewController: UIViewController, Loadable {
         navigationBarProgressView?.isHidden = false
         navigationBarProgressView?.setProgress(0, animated: false)
         navigationBarProgressView?.observedProgress = dataSource.downloader?.progress
+        return task
     }
+    
+    // MARK: - UI Actions
     
     @IBAction func expandCommentsButtonPressed(_ sender: UIBarButtonItem) {
         startCommentsDownload()
