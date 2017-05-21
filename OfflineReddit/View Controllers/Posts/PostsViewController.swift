@@ -45,6 +45,7 @@ class PostsViewController: UIViewController, Loadable {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        dataSource.tableView = tableView
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
         tableView.dataSource = dataSource
@@ -124,7 +125,7 @@ class PostsViewController: UIViewController, Loadable {
     
     @discardableResult
     func fetchPosts() -> Task<Void> {
-        return fetch(dataSource.fetchNextPage(updating: tableView))
+        return fetch(dataSource.fetchNextPage())
             .continueOnSuccessWith(.mainThread) { _ in self.updateChooseDownloadsButtonEnabled() }
     }
     
@@ -161,7 +162,7 @@ class PostsViewController: UIViewController, Loadable {
     
     @discardableResult
     func startPostsDownload(for indexPaths: [IndexPath]) -> Task<Void> {
-        let task = fetch(dataSource.startDownload(for: indexPaths, updating: tableView))
+        let task = fetch(dataSource.startDownload(for: indexPaths))
             .continueWith(.mainThread) { _ in
                 self.navigationBarProgressView?.observedProgress = nil
                 self.navigationBarProgressView?.isHidden = true

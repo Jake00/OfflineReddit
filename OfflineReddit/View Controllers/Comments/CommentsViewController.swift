@@ -35,6 +35,7 @@ class CommentsViewController: UIViewController, Loadable {
     override func viewDidLoad() {
         super.viewDidLoad()
         dataSource.delegate = self
+        dataSource.tableView = tableView
         tableView.dataSource = dataSource
         tableView.delegate = dataSource
         tableView.tableHeaderView = headerView
@@ -53,7 +54,7 @@ class CommentsViewController: UIViewController, Loadable {
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
-        _ = dataSource.fetchCommentsIfNeeded(updating: tableView).map(fetch)
+        _ = dataSource.fetchCommentsIfNeeded().map(fetch)
     }
     
     override func viewDidLayoutSubviews() {

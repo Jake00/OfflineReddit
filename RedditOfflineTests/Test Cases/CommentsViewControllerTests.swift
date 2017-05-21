@@ -38,7 +38,7 @@ class CommentsViewControllerTests: BaseTestCase {
         fetch.sortDescriptors = [NSSortDescriptor(key: "commentsCount", ascending: false)]
         let post = (try? context.fetch(fetch))?.first
         commentsViewController.dataSource.post = post
-        commentsViewController.dataSource.fetchCommentsIfNeeded(updating: commentsViewController.tableView)
+        commentsViewController.dataSource.fetchCommentsIfNeeded()
         return post
     }
     

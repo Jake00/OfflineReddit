@@ -11,6 +11,8 @@ import BoltsSwift
 
 class PostsDataSource: NSObject {
     
+    weak var tableView: UITableView?
+    
     var rows: [PostCellModel] = []
     var subreddits: [Subreddit] = [] {
         didSet { rows.removeAll() }
@@ -50,7 +52,8 @@ class PostsDataSource: NSObject {
         cell?.offlineImageView.isHidden = !isAvailableOffline
     }
     
-    func updateIsAvailableOffline(for posts: [Post], in tableView: UITableView) {
+    func updateIsAvailableOffline(for posts: [Post]) {
+        guard let tableView = tableView else { return }
         for post in posts {
             let cell = indexPath(for: post).flatMap(tableView.cellForRow(at:))
             update(cell: cell as? PostCell, isAvailableOffline: post.isAvailableOffline)
@@ -59,32 +62,32 @@ class PostsDataSource: NSObject {
     
     // MARK: - Set models
     
-    func setState(_ state: PostCellModel.State, at indexPath: IndexPath, in tableView: UITableView) {
-        let cell = tableView.cellForRow(at: indexPath) as? PostCell
+    func setState(_ state: PostCellModel.State, at indexPath: IndexPath) {
+        let cell = tableView?.cellForRow(at: indexPath) as? PostCell
         rows[indexPath.row].state = state
         update(cell: cell, state: state)
     }
     
-    func setState(_ state: PostCellModel.State, at indexPaths: [IndexPath], in tableView: UITableView) {
+    func setState(_ state: PostCellModel.State, at indexPaths: [IndexPath]) {
         for indexPath in indexPaths {
-            setState(state, at: indexPath, in: tableView)
+            setState(state, at: indexPath)
         }
     }
     
-    func setState(_ state: PostCellModel.State, for post: Post, in tableView: UITableView) {
+    func setState(_ state: PostCellModel.State, for post: Post) {
         if let (row, _) = rows.enumerated().first(where: { $0.1.post == post }) {
-            setState(state, at: IndexPath(row: row, section: 0), in: tableView)
+            setState(state, at: IndexPath(row: row, section: 0))
         }
     }
     
-    func setAllStates(to state: PostCellModel.State, in tableView: UITableView) {
+    func setAllStates(to state: PostCellModel.State) {
         let indexPaths = (0..<rows.count).map { IndexPath(row: $0, section: 0) }
-        setState(state, at: indexPaths, in: tableView)
+        setState(state, at: indexPaths)
     }
     
-    func setIsAvailableOffline(_ isAvailableOffline: Bool, at indexPath: IndexPath, in tableView: UITableView) {
+    func setIsAvailableOffline(_ isAvailableOffline: Bool, at indexPath: IndexPath) {
         post(at: indexPath).isAvailableOffline = isAvailableOffline
-        let cell = tableView.cellForRow(at: indexPath) as? PostCell
+        let cell = tableView?.cellForRow(at: indexPath) as? PostCell
         update(cell: cell, isAvailableOffline: isAvailableOffline)
     }
     
@@ -92,19 +95,19 @@ class PostsDataSource: NSObject {
     
     lazy var provider = DataProvider.shared
     
-    func fetchNextPage(updating tableView: UITableView) -> Task<[Post]> {
+    func fetchNextPage() -> Task<[Post]> {
         let get = provider.getPosts(for: subreddits, after: rows.last?.post)
         return get.continueOnSuccessWith(.mainThread) { posts, context -> [Post] in
             let new = posts.map(PostCellModel.init)
             switch context {
             case .replace:
                 self.rows = new
-                tableView.reloadData()
+                self.tableView?.reloadData()
             case .append where !new.isEmpty:
                 self.rows += new
                 let indexPaths = (self.rows.count - new.count..<self.rows.count)
                     .map { IndexPath(row: $0, section: 0) }
-                tableView.insertRowsSafe(at: indexPaths, with: .fade)
+                self.tableView?.insertRowsSafe(at: indexPaths, with: .fade)
             default: ()
             }
             return posts
@@ -121,21 +124,21 @@ class PostsDataSource: NSObject {
     private(set) var downloader: PostsDownloader?
     
     @discardableResult
-    func startDownload(for indexPaths: [IndexPath], updating tableView: UITableView) -> Task<[Post]> {
+    func startDownload(for indexPaths: [IndexPath]) -> Task<[Post]> {
         let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: provider.remote)
         downloader.completionForPost = { post in
-            self.setState(.checked, for: post, in: tableView)
+            self.setState(.checked, for: post)
         }
         self.downloader = downloader
-        setAllStates(to: .indented, in: tableView)
-        setState(.loading, at: indexPaths, in: tableView)
+        setAllStates(to: .indented)
+        setState(.loading, at: indexPaths)
         return downloader.start()
             .continueWithTask(.mainThread) { task -> Task<[Post]> in
                 self.downloader = nil
                 if let posts = task.result {
-                    self.updateIsAvailableOffline(for: posts, in: tableView)
+                    self.updateIsAvailableOffline(for: posts)
                 }
-                self.setAllStates(to: .normal, in: tableView)
+                self.setAllStates(to: .normal)
                 self.provider.save()
                 return task
         }

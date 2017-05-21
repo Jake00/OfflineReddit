@@ -18,6 +18,8 @@ protocol CommentsDataSourceDelegate: class {
 
 class CommentsDataSource: NSObject {
     
+    weak var tableView: UITableView?
+    
     var post: Post?
     var allComments: [Either<Comment, MoreComments>] = []
     private(set) var comments: [Either<Comment, MoreComments>] = []
@@ -69,18 +71,18 @@ class CommentsDataSource: NSObject {
         cell?.activityIndicator.setAnimating(isLoading)
     }
     
-    func flipCommentExpanded(for comment: Comment, at indexPath: IndexPath, in tableView: UITableView) {
+    func flipCommentExpanded(for comment: Comment, at indexPath: IndexPath) {
         comment.isExpanded = !comment.isExpanded
-        let cell = tableView.cellForRow(at: indexPath) as? CommentsCell
+        let cell = tableView?.cellForRow(at: indexPath) as? CommentsCell
         cell?.isExpanded = comment.isExpanded
         cell?.isExpanding = comment.isExpanded
-        updateExpanded(for: comment, at: indexPath, in: tableView)
+        updateExpanded(for: comment, at: indexPath)
         cell?.isExpanding = false
-        tableView.scrollToRow(at: indexPath, at: .none, animated: true)
+        tableView?.scrollToRow(at: indexPath, at: .none, animated: true)
     }
     
-    func updateExpanded(for comment: Comment, at indexPath: IndexPath, in tableView: UITableView) {
-        tableView.beginUpdates()
+    func updateExpanded(for comment: Comment, at indexPath: IndexPath) {
+        tableView?.beginUpdates()
         var delta = 0
         let makeIndexPaths: () -> [IndexPath] = {
             (indexPath.row + 1..<indexPath.row + 1 + delta).map {
@@ -98,7 +100,7 @@ class CommentsDataSource: NSObject {
                         row += 1; index += 1; delta += 1
                 }
                 if delta > 0 {
-                    tableView.insertRows(at: makeIndexPaths(), with: .fade)
+                    tableView?.insertRows(at: makeIndexPaths(), with: .fade)
                 }
             }
         } else {
@@ -109,10 +111,10 @@ class CommentsDataSource: NSObject {
                     delta += 1
             }
             if delta > 0 {
-                tableView.deleteRows(at: makeIndexPaths(), with: .fade)
+                tableView?.deleteRows(at: makeIndexPaths(), with: .fade)
             }
         }
-        tableView.endUpdatesSafe()
+        tableView?.endUpdatesSafe()
     }
     
     // MARK: - Fetching
@@ -124,61 +126,61 @@ class CommentsDataSource: NSObject {
     lazy var provider = DataProvider.shared
     
     @discardableResult
-    func fetchCommentsIfNeeded(updating tableView: UITableView) -> Task<Void>? {
+    func fetchCommentsIfNeeded() -> Task<Void>? {
         if allComments.isEmpty {
             updateComments()
         }
         if allComments.isEmpty {
-            return fetchComments(updating: tableView)
+            return fetchComments()
         }
         return nil
     }
     
-    func fetchComments(updating tableView: UITableView) -> Task<Void> {
+    func fetchComments() -> Task<Void> {
         guard let post = post else { return Task(error: Error.nilPost) }
         return provider.getComments(for: post).continueOnSuccessWith(.mainThread) { _ in
-            self.didFetchComments(tableView: tableView)
+            self.didFetchComments()
         }
     }
     
-    private func didFetchComments(tableView: UITableView) {
+    private func didFetchComments() {
         defer { provider.save() }
         let old = comments.count
         updateComments()
         let new = comments.count
         guard new > 0 else {
-            tableView.reloadData()
+            tableView?.reloadData()
             return
         }
         if old == 0 {
-            tableView.beginUpdates()
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
+            tableView?.beginUpdates()
+            tableView?.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .fade)
         }
-        tableView.insertRows(at: (max(1, old)..<new).map { IndexPath(row: $0, section: 0) }, with: .fade)
+        tableView?.insertRows(at: (max(1, old)..<new).map { IndexPath(row: $0, section: 0) }, with: .fade)
         if old == 0 {
-            tableView.endUpdates()
+            tableView?.endUpdates()
         }
     }
     
     @discardableResult
-    func fetchMoreComments(using more: MoreComments, updating tableView: UITableView) -> Task<[Comment]> {
+    func fetchMoreComments(using more: MoreComments) -> Task<[Comment]> {
         guard let post = post else { return Task(error: Error.nilPost) }
         let task = provider.getMoreComments(using: [more], post: post).continueWithTask(.mainThread) {
-            self.didFetchMoreComments(more, task: $0, tableView: tableView)
+            self.didFetchMoreComments(more, task: $0)
         }
         delegate?.isFetchingMoreComments(with: task)
         return task
     }
     
-    private func didFetchMoreComments(_ more: MoreComments, task: Task<[Comment]>, tableView: UITableView) -> Task<[Comment]> {
+    private func didFetchMoreComments(_ more: MoreComments, task: Task<[Comment]>) -> Task<[Comment]> {
         loadingCells.remove(more)
         guard let indexPath = self.indexPath(of: more) else {
             updateComments()
-            tableView.reloadData()
+            tableView?.reloadData()
             return task
         }
         guard task.error == nil else {
-            let cell = tableView.cellForRow(at: indexPath) as? MoreCommentsCell
+            let cell = tableView?.cellForRow(at: indexPath) as? MoreCommentsCell
             updateMoreCell(cell, more)
             return task
         }
@@ -186,15 +188,15 @@ class CommentsDataSource: NSObject {
         let next = comments[start]
         updateComments()
         guard let end = comments.index(where: { $0 == next }), end - start >= 0 else {
-            tableView.reloadData()
+            tableView?.reloadData()
             return task
         }
-        tableView.beginUpdates()
-        tableView.reloadRows(at: [indexPath], with: .fade)
+        tableView?.beginUpdates()
+        tableView?.reloadRows(at: [indexPath], with: .fade)
         if end - start > 0 {
-            tableView.insertRows(at: (start..<end).map { IndexPath(row: $0, section: 0) }, with: .fade)
+            tableView?.insertRows(at: (start..<end).map { IndexPath(row: $0, section: 0) }, with: .fade)
         }
-        tableView.endUpdatesSafe()
+        tableView?.endUpdatesSafe()
         provider.save()
         return task
     }
@@ -286,11 +288,11 @@ extension CommentsDataSource: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch comments[indexPath.row] {
         case .first(let comment):
-            flipCommentExpanded(for: comment, at: indexPath, in: tableView)
+            flipCommentExpanded(for: comment, at: indexPath)
         case .other(let more):
             loadingCells.insert(more)
             updateMoreCell(tableView.cellForRow(at: indexPath) as? MoreCommentsCell, more)
-            fetchMoreComments(using: more, updating: tableView)
+            fetchMoreComments(using: more)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
