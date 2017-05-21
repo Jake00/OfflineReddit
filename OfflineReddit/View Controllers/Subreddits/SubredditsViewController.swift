@@ -35,7 +35,7 @@ class SubredditsViewController: UIViewController {
         
         if subreddits.isEmpty {
             let request: NSFetchRequest<Subreddit> = Subreddit.fetchRequest()
-            request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+            request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))]
             subreddits = (try? context.fetch(request)) ?? []
             if subreddits.isEmpty {
                 subreddits = Subreddit.insertDefaults(into: context)

@@ -118,6 +118,7 @@ class PostsViewController: UIViewController, Loadable {
         return fetch(dataSource.provider.getAllSelectedSubreddits())
             .continueOnSuccessWithTask { subreddits -> Task<Void> in
                 self.dataSource.subreddits = subreddits
+                self.updateFooterView()
                 return self.fetchNextPageOrReloadIfOffline()
         }
     }

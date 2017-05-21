@@ -113,6 +113,7 @@ class PostsDataSource: NSObject {
     }
     
     func fetchNextPage() -> Task<[Post]> {
+        guard !subreddits.isEmpty else { return Task<[Post]>([]) }
         return provider.getPosts(for: subreddits, after: rows.last?.post)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 guard !posts.isEmpty else { return posts }
