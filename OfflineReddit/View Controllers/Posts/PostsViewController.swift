@@ -63,14 +63,7 @@ class PostsViewController: UIViewController, Loadable {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        if let selectedIndexPath = tableView.indexPathForSelectedRow {
-            dataSource.update(
-                cell: tableView.cellForRow(at: selectedIndexPath) as? PostCell,
-                isAvailableOffline: dataSource.post(at: selectedIndexPath).isAvailableOffline
-            )
-            tableView.deselectRow(at: selectedIndexPath, animated: animated)
-        }
+        updateSelectedRow()
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -153,6 +146,20 @@ class PostsViewController: UIViewController, Loadable {
     
     func updateChooseDownloadsButtonEnabled() {
         chooseDownloadsButton.isEnabled = !dataSource.rows.isEmpty && !isSavingOffline && reachability.isOnline
+    }
+    
+    func updateSelectedRow() {
+        guard let selectedIndexPath = tableView.indexPathForSelectedRow else { return }
+        guard !dataSource.post(at: selectedIndexPath).isRead else {
+            dataSource.rows.remove(at: selectedIndexPath.row)
+            tableView.deleteRows(at: [selectedIndexPath], with: .fade)
+            return
+        }
+        dataSource.update(
+            cell: tableView.cellForRow(at: selectedIndexPath) as? PostCell,
+            isAvailableOffline: dataSource.post(at: selectedIndexPath).isAvailableOffline
+        )
+        tableView.deselectRow(at: selectedIndexPath, animated: true)
     }
     
     // MARK: - Posts downloading

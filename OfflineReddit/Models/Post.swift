@@ -19,6 +19,7 @@ class Post: NSManagedObject {
     @NSManaged var urlValue: String?
     @NSManaged var title: String?
     @NSManaged var created: Date?
+    @NSManaged var isRead: Bool
     @NSManaged var isAvailableOffline: Bool
     @NSManaged var score: Int64
     @NSManaged var order: Int64

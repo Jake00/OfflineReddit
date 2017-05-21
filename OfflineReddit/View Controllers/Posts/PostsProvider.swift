@@ -20,7 +20,7 @@ final class PostsProvider {
     }
     
     func getAllOfflinePosts(for subreddits: [Subreddit]) -> Task<[Post]> {
-        let request = Post.fetchRequest(predicate: NSPredicate(format: "isAvailableOffline == YES AND subredditName IN %@", subreddits.map { $0.name }))
+        let request = Post.fetchRequest(predicate: NSPredicate(format: "isAvailableOffline == YES AND isRead == NO AND subredditName IN %@", subreddits.map { $0.name }))
         request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
         return local.fetch(request)
     }

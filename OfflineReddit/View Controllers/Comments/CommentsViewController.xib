@@ -16,6 +16,7 @@
                 <outlet property="expandCommentsButton" destination="1qr-6o-QK7" id="tUP-pb-w0x"/>
                 <outlet property="headerView" destination="RON-06-iIT" id="r9h-jK-ZAc"/>
                 <outlet property="loadingButton" destination="MzY-8j-69R" id="uoL-kh-vdO"/>
+                <outlet property="markAsReadButton" destination="fsK-Rr-jbF" id="Bo5-dJ-6jm"/>
                 <outlet property="selfLabel" destination="LqB-Eq-g3n" id="3Uf-7o-cXL"/>
                 <outlet property="subredditLabel" destination="oXA-CI-Uca" id="7n7-Ub-UBB"/>
                 <outlet property="tableView" destination="mv9-Rk-VbH" id="z2x-SJ-Llg"/>
@@ -133,5 +134,13 @@
                 </constraints>
             </view>
         </barButtonItem>
+        <barButtonItem image="read" id="fsK-Rr-jbF">
+            <connections>
+                <action selector="markAsReadButtonPressed:" destination="-1" id="73Y-zm-zEe"/>
+            </connections>
+        </barButtonItem>
     </objects>
+    <resources>
+        <image name="read" width="30" height="24"/>
+    </resources>
 </document>

@@ -20,6 +20,7 @@ class CommentsViewController: UIViewController, Loadable {
     @IBOutlet weak var selfLabel: UILabel!
     @IBOutlet var loadingButton: UIBarButtonItem!
     @IBOutlet var expandCommentsButton: UIBarButtonItem!
+    @IBOutlet var markAsReadButton: UIBarButtonItem!
     
     let dataSource: CommentsDataSource
     let reachability: Reachability
@@ -54,6 +55,8 @@ class CommentsViewController: UIViewController, Loadable {
         titleLabel.text = dataSource.post.title
         selfLabel.text = dataSource.post.selfText
         isLoading = false
+        toolbarItems = [markAsReadButton]
+        markAsReadButton.isEnabled = !dataSource.post.isRead
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,6 +65,12 @@ class CommentsViewController: UIViewController, Loadable {
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
         _ = dataSource.fetchCommentsIfNeeded().map(fetch)
+        navigationController?.setToolbarHidden(false, animated: animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setToolbarHidden(true, animated: animated)
     }
     
     override func viewDidLayoutSubviews() {
@@ -101,6 +110,11 @@ class CommentsViewController: UIViewController, Loadable {
     
     @IBAction func expandCommentsButtonPressed(_ sender: UIBarButtonItem) {
         startCommentsDownload()
+    }
+    
+    @IBAction func markAsReadButtonPressed(_ sender: UIBarButtonItem) {
+        dataSource.post.isRead = true
+        sender.isEnabled = false
     }
 }
 
