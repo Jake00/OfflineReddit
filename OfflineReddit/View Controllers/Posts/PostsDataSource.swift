@@ -155,7 +155,7 @@ extension PostsDataSource: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as! PostCell
+        let cell: PostCell = tableView.dequeueReusableCell(for: indexPath)
         updateAll(cell: cell, row: rows[indexPath.row])
         cell.setNeedsLayout()
         cell.layoutIfNeeded()

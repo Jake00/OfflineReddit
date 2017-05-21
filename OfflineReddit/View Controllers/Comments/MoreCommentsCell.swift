@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MoreCommentsCell: UITableViewCell {
+class MoreCommentsCell: UITableViewCell, ReusableNibCell {
     
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!

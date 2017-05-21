@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CommentsCell: UITableViewCell {
+class CommentsCell: UITableViewCell, ReusableNibCell {
     
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var bodyLabel: UILabel!

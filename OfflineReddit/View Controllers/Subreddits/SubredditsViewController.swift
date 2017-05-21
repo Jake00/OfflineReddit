@@ -23,7 +23,7 @@ class SubredditsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = footerView
-        tableView.register(UINib(nibName: String(describing: SubredditCell.self), bundle: nil), forCellReuseIdentifier: String(describing: SubredditCell.self))
+        tableView.registerReusableNibCell(SubredditCell.self)
         newTextField.inputAccessoryView = inputToolbar
         navigationItem.rightBarButtonItem = editButtonItem
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(_:)), name: .UIKeyboardWillShow, object: nil)
@@ -82,7 +82,7 @@ extension SubredditsViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SubredditCell", for: indexPath) as! SubredditCell
+        let cell: SubredditCell = tableView.dequeueReusableCell(for: indexPath)
         let subreddit = subreddits[indexPath.row]
         cell.textLabel?.text = subreddit.name
         cell.isChecked = subreddit.isSelected

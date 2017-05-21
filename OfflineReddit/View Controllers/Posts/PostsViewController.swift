@@ -50,7 +50,7 @@ class PostsViewController: UIViewController, Loadable {
         tableView.estimatedRowHeight = 50
         tableView.dataSource = dataSource
         tableView.tableFooterView = footerView
-        tableView.register(UINib(nibName: String(describing: PostCell.self), bundle: nil), forCellReuseIdentifier: String(describing: PostCell.self))
+        tableView.registerReusableNibCell(PostCell.self)
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
         

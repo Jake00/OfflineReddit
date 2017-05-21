@@ -231,14 +231,14 @@ extension CommentsDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard !comments.isEmpty else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MoreCommentsCell", for: indexPath) as! MoreCommentsCell
+            let cell: MoreCommentsCell = tableView.dequeueReusableCell(for: indexPath)
             updateMoreCell(cell, forceLoad: true)
             cell.indentationLevel = 0
             return cell
         }
         switch comments[indexPath.row] {
         case .first(let comment):
-            let cell = tableView.dequeueReusableCell(withIdentifier: "CommentsCell", for: indexPath) as! CommentsCell
+            let cell: CommentsCell = tableView.dequeueReusableCell(for: indexPath)
             cell.topLabel.text = comment.authorScoreTimeText
             cell.bodyLabel.text = comment.body
             cell.indentationLevel = Int(comment.depth)
@@ -247,7 +247,7 @@ extension CommentsDataSource: UITableViewDataSource {
             cell.layoutIfNeeded()
             return cell
         case .other(let more):
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MoreCommentsCell", for: indexPath) as! MoreCommentsCell
+            let cell: MoreCommentsCell = tableView.dequeueReusableCell(for: indexPath)
             updateMoreCell(cell, more)
             cell.indentationLevel = Int(more.depth)
             return cell

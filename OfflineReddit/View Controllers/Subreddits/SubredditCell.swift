@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SubredditCell: UITableViewCell {
+class SubredditCell: UITableViewCell, ReusableNibCell {
     
     var isChecked = false {
         didSet {

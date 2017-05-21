@@ -40,8 +40,8 @@ class CommentsViewController: UIViewController, Loadable {
         tableView.delegate = dataSource
         tableView.tableHeaderView = headerView
         tableView.tableFooterView = UIView()
-        tableView.register(UINib(nibName: String(describing: CommentsCell.self), bundle: nil), forCellReuseIdentifier: String(describing: CommentsCell.self))
-        tableView.register(UINib(nibName: String(describing: MoreCommentsCell.self), bundle: nil), forCellReuseIdentifier: String(describing: MoreCommentsCell.self))
+        tableView.registerReusableNibCell(CommentsCell.self)
+        tableView.registerReusableNibCell(MoreCommentsCell.self)
         subredditLabel.text = dataSource.post?.subredditNamePrefixed
         authorTimeLabel.text = dataSource.post?.authorTimeText
         titleLabel.text = dataSource.post?.title

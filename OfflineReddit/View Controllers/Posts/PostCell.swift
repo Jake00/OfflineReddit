@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PostCell: UITableViewCell {
+class PostCell: UITableViewCell, ReusableNibCell {
     
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
