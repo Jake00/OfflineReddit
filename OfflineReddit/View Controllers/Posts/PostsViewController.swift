@@ -23,17 +23,20 @@ class PostsViewController: UIViewController, Loadable {
     @IBOutlet var startDownloadsButton: UIBarButtonItem!
     @IBOutlet var cancelDownloadsButton: UIBarButtonItem!
     
-    let dataSource = PostsDataSource()
-    lazy var reachability: Reachable = Reachability.shared
+    let dataSource: PostsDataSource
+    let reachability: Reachability
     
     // MARK: - Init
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    init(provider: DataProvider) {
+        self.dataSource = PostsDataSource(provider: provider)
+        self.reachability = provider.reachability
         super.init(nibName: String(describing: PostsViewController.self), bundle: nil)
     }
     
+    @available(*, unavailable, message: "init(coder:) is not available. Use init(provider:) instead.")
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) is not available. Use init(provider:) instead.")
     }
     
     deinit {
@@ -55,6 +58,7 @@ class PostsViewController: UIViewController, Loadable {
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
         
         updateNavigationItemButtons()
+        fetchInitial()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -66,12 +70,6 @@ class PostsViewController: UIViewController, Loadable {
                 isAvailableOffline: dataSource.post(at: selectedIndexPath).isAvailableOffline
             )
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
-        }
-        if dataSource.subreddits.isEmpty {
-            updateFooterView()
-            fetchInitial()
-        } else if dataSource.rows.isEmpty {
-            fetchPosts()
         }
     }
     
@@ -87,8 +85,8 @@ class PostsViewController: UIViewController, Loadable {
     // MARK: - Navigation
     
     func showCommentsViewController(post: Post) {
-        let commentsViewController = CommentsViewController()
-        commentsViewController.dataSource.post = post
+        let provider = DataProvider(remote: dataSource.provider.remote, local: dataSource.provider.local, reachability: reachability)
+        let commentsViewController = CommentsViewController(post: post, provider: provider)
         navigationController?.pushViewController(commentsViewController, animated: true)
     }
     
@@ -98,6 +96,7 @@ class PostsViewController: UIViewController, Loadable {
             self?.dataSource.subreddits = $0
             self?.tableView.reloadData()
             self?.updateFooterView()
+            self?.fetchNextPageOrReloadIfOffline()
         }
         navigationController?.pushViewController(subredditsViewController, animated: true)
     }
@@ -106,6 +105,7 @@ class PostsViewController: UIViewController, Loadable {
     
     var isLoading = false {
         didSet {
+            updateChooseDownloadsButtonEnabled()
             guard reachability.isOnline else { return }
             loadMoreButton.isEnabled = !isLoading
             loadMoreButton.titleEdgeInsets.left = isLoading ? -activityIndicatorCenterX.constant : 0
@@ -115,18 +115,17 @@ class PostsViewController: UIViewController, Loadable {
     
     @discardableResult
     func fetchInitial() -> Task<Void> {
-        return fetch(dataSource.updateSelectedSubreddits())
-            .continueOnSuccessWithTask(.mainThread) {
-                self.tableView.reloadData()
-                self.updateFooterView()
-                return self.fetchPosts()
-            }
+        return fetch(dataSource.provider.getAllSelectedSubreddits())
+            .continueOnSuccessWithTask { subreddits -> Task<Void> in
+                self.dataSource.subreddits = subreddits
+                return self.fetchNextPageOrReloadIfOffline()
+        }
     }
     
     @discardableResult
-    func fetchPosts() -> Task<Void> {
-        return fetch(dataSource.fetchNextPage())
-            .continueOnSuccessWith(.mainThread) { _ in self.updateChooseDownloadsButtonEnabled() }
+    func fetchNextPageOrReloadIfOffline() -> Task<Void> {
+        return fetch((reachability.isOnline ? dataSource.fetchNextPage : dataSource.reloadWithOfflinePosts)())
+            .continueOnSuccessWith(.immediate) { _ in }
     }
     
     // MARK: - UI Updating
@@ -191,7 +190,7 @@ class PostsViewController: UIViewController, Loadable {
         }
         dataSource.rows = []
         tableView.reloadData()
-        fetchPosts()
+        fetchNextPageOrReloadIfOffline()
     }
     
     // MARK: - UI Actions
@@ -214,7 +213,7 @@ class PostsViewController: UIViewController, Loadable {
     
     @IBAction func loadMoreButtonPressed(_ sender: UIButton) {
         if !isLoading && !isSavingOffline {
-            fetchPosts()
+            fetchNextPageOrReloadIfOffline()
         }
     }
     

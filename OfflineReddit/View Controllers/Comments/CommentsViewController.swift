@@ -21,13 +21,20 @@ class CommentsViewController: UIViewController, Loadable {
     @IBOutlet var loadingButton: UIBarButtonItem!
     @IBOutlet var expandCommentsButton: UIBarButtonItem!
     
-    let dataSource = CommentsDataSource()
-    lazy var reachability: Reachable = Reachability.shared
+    let dataSource: CommentsDataSource
+    let reachability: Reachability
     
-    var isLoading = false {
-        didSet {
-            navigationItem.setRightBarButtonItems([isLoading ? loadingButton : expandCommentsButton], animated: true)
-        }
+    // MARK: - Init
+    
+    init(post: Post, provider: DataProvider) {
+        self.dataSource = CommentsDataSource(post: post, provider: provider)
+        self.reachability = provider.reachability
+        super.init(nibName: String(describing: CommentsViewController.self), bundle: nil)
+    }
+    
+    @available(*, unavailable, message: "init(coder:) is not available. Use init(provider:) instead.")
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not available. Use init(provider:) instead.")
     }
     
     // MARK: - View controller
@@ -42,10 +49,10 @@ class CommentsViewController: UIViewController, Loadable {
         tableView.tableFooterView = UIView()
         tableView.registerReusableNibCell(CommentsCell.self)
         tableView.registerReusableNibCell(MoreCommentsCell.self)
-        subredditLabel.text = dataSource.post?.subredditNamePrefixed
-        authorTimeLabel.text = dataSource.post?.authorTimeText
-        titleLabel.text = dataSource.post?.title
-        selfLabel.text = dataSource.post?.selfText
+        subredditLabel.text = dataSource.post.subredditNamePrefixed
+        authorTimeLabel.text = dataSource.post.authorTimeText
+        titleLabel.text = dataSource.post.title
+        selfLabel.text = dataSource.post.selfText
         isLoading = false
     }
     
@@ -61,6 +68,14 @@ class CommentsViewController: UIViewController, Loadable {
         super.viewDidLayoutSubviews()
         let fittingSize = CGSize(width: tableView.frame.width, height: UILayoutFittingCompressedSize.height)
         headerView.frame.size.height = headerView.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
+    }
+    
+    // MARK: - Loadable
+    
+    var isLoading = false {
+        didSet {
+            navigationItem.setRightBarButtonItems([isLoading ? loadingButton : expandCommentsButton], animated: true)
+        }
     }
     
     // MARK: - Comments downloading
@@ -109,6 +124,6 @@ extension CommentsViewController: CommentsDataSourceDelegate {
         expandCommentsButton.isEnabled = toExpand > 0 && reachability.isOnline
         commentsLabel.text = String.localizedStringWithFormat(
             NSLocalizedString("comments_saved_format", value: "%ld comments\n%ld / %ld saved", comment: "Format for number of comments and amount saved. eg. '50 comments\n30 / 40 saved'"),
-            dataSource.post?.commentsCount ?? 0, saved, saved + toExpand)
+            dataSource.post.commentsCount, saved, saved + toExpand)
     }
 }

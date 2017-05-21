@@ -15,32 +15,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        startReachability()
+        let provider = enableDataProviding()
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = {
-            let navigationController = NavigationController(rootViewController: PostsViewController())
-            return navigationController
-        }()
+        window?.rootViewController = NavigationController(rootViewController: PostsViewController(provider: provider))
         window?.makeKeyAndVisible()
         
         return true
     }
     
-    func startReachability() {
-        /*
-         For developing while the device is offline (unable to actually be online...) and needs to appear online for 'downloading' posts.
-         By switching on emulating online `Reachability` will always report its status as being reachable via WiFi.
-         */
+    private func enableDataProviding() -> DataProvider {
         if isDebugBuild && ProcessInfo.processInfo.arguments.contains("EMULATE_ONLINE") {
             print("Enabling offline development. Application will report being online with no reachability change callbacks.")
-            if Reachability.shared.isNotifiying {
-                Reachability.shared.stopNotifier()
-            }
-            Reachability.shared.isEmulatingOnline = true
-            DataProvider.shared.remote = OfflineRemoteProvider()
-        } else {
-            Reachability.shared.startNotifier()
+            return DataProvider(
+                remote: OfflineRemoteProvider(),
+                local: CoreDataController.shared.viewContext,
+                reachability: SettableReachability())
         }
+        
+        let reachability = NetworkReachability()
+        reachability.startNotifier()
+        return DataProvider(
+            remote: APIClient(),
+            local: CoreDataController.shared.viewContext,
+            reachability: reachability)
     }
 }

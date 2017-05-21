@@ -8,7 +8,7 @@
 
 import BoltsSwift
 
-extension APIClient: DataProviding {
+extension APIClient: RemoteDataProviding {
     
     func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
         let path: String = "r/" + subreddits.map { $0.name }.joined(separator: "+") + ".json"

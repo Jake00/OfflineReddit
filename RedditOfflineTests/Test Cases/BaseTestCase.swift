@@ -16,6 +16,10 @@ class BaseTestCase: XCTestCase {
     let controller = TestableCoreDataController()
     private(set) var remote: OfflineRemoteProvider!
     
+    var provider: DataProvider {
+        return DataProvider(remote: remote, local: controller.context, reachability: reachability)
+    }
+    
     override func setUp() {
         super.setUp()
         reachability.isOnline = true

@@ -13,10 +13,21 @@ class PostsDataSource: NSObject {
     
     weak var tableView: UITableView?
     
-    var rows: [PostCellModel] = []
     var subreddits: [Subreddit] = [] {
         didSet { rows.removeAll() }
     }
+    
+    // MARK: - Init
+    
+    let provider: PostsProvider
+    
+    init(provider: DataProvider) {
+        self.provider = PostsProvider(provider: provider)
+    }
+    
+    // MARK: - Rows
+    
+    var rows: [PostCellModel] = []
     
     func post(at indexPath: IndexPath) -> Post {
         return rows[indexPath.row].post
@@ -93,30 +104,36 @@ class PostsDataSource: NSObject {
     
     // MARK: - Fetching
     
-    lazy var provider = DataProvider.shared
+    func fetchInitial() -> Task<Void> {
+        return provider.getAllSelectedSubreddits()
+            .continueOnSuccessWithTask(.mainThread) { _ -> Task<[Post]> in
+                self.tableView?.reloadData()
+                return self.fetchNextPage()
+            }.continueOnSuccessWith(.immediate) { _ -> Void in }
+    }
     
     func fetchNextPage() -> Task<[Post]> {
-        let get = provider.getPosts(for: subreddits, after: rows.last?.post)
-        return get.continueOnSuccessWith(.mainThread) { posts, context -> [Post] in
-            let new = posts.map(PostCellModel.init)
-            switch context {
-            case .replace:
-                self.rows = new
-                self.tableView?.reloadData()
-            case .append where !new.isEmpty:
+        return provider.getPosts(for: subreddits, after: rows.last?.post)
+            .continueOnSuccessWith(.mainThread) { posts -> [Post] in
+                guard !posts.isEmpty else { return posts }
+                let new = posts.map(PostCellModel.init)
+                self.tableView?.beginUpdates()
                 self.rows += new
                 let indexPaths = (self.rows.count - new.count..<self.rows.count)
                     .map { IndexPath(row: $0, section: 0) }
-                self.tableView?.insertRowsSafe(at: indexPaths, with: .fade)
-            default: ()
-            }
-            return posts
+                self.tableView?.insertRows(at: indexPaths, with: .fade)
+                self.tableView?.endUpdates()
+                return posts
         }
     }
     
-    func updateSelectedSubreddits() -> Task<Void> {
-        return provider.getSelectedSubreddits()
-            .continueOnSuccessWith { self.subreddits = $0 }
+    func reloadWithOfflinePosts() -> Task<[Post]> {
+        return provider.getAllOfflinePosts(for: subreddits)
+            .continueOnSuccessWith(.mainThread) { posts -> [Post] in
+                self.rows = posts.map(PostCellModel.init)
+                self.tableView?.reloadData()
+                return posts
+        }
     }
     
     // MARK: Offline saving
@@ -139,7 +156,7 @@ class PostsDataSource: NSObject {
                     self.updateIsAvailableOffline(for: posts)
                 }
                 self.setAllStates(to: .normal)
-                self.provider.save()
+                self.provider.local.trySave()
                 return task
         }
     }

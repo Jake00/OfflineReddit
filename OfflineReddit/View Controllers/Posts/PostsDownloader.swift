@@ -14,7 +14,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
     
     let progress: Progress
     let numberOfCommentBatches: Int
-    let remote: DataProviding
+    let remote: RemoteDataProviding
     let posts: [Post]
     var completionForPost: ((Post) -> Void)?
     private var remainingPosts: [Post]
@@ -32,7 +32,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
         }
     }
     
-    init(posts: [Post], remote: DataProviding, numberOfCommentBatches: Int = 3) {
+    init(posts: [Post], remote: RemoteDataProviding, numberOfCommentBatches: Int = 3) {
         self.posts = posts
         self.remainingPosts = posts
         self.remote = remote

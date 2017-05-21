@@ -16,11 +16,22 @@ class CommentsViewControllerTests: BaseTestCase {
     
     override func setUp() {
         super.setUp()
-        commentsViewController = CommentsViewController()
-        commentsViewController.dataSource.provider = DataProvider(remote: remote, local: controller.context)
-        commentsViewController.dataSource.provider.reachability = reachability
-        commentsViewController.reachability = reachability
+        let context = controller.newEmptyManagedObjectContext()
+        controller.context = context
+        remote.context = context
+        remote.mapper.context = context
+        controller.importPosts(to: context, including: .comments)
+
+        
+        let fetch = NSFetchRequest<Post>(entityName: String(describing: Post.self))
+        fetch.sortDescriptors = [NSSortDescriptor(key: "commentsCount", ascending: false)]
+        guard let post = (try? context.fetch(fetch))?.first else {
+            fatalError("No post available for testing CommentsViewController")
+        }
+        
+        commentsViewController = CommentsViewController(post: post, provider: provider)
         _ = commentsViewController.view // load view
+        commentsViewController.dataSource.fetchCommentsIfNeeded()
     }
     
     override func tearDown() {
@@ -28,30 +39,11 @@ class CommentsViewControllerTests: BaseTestCase {
         super.tearDown()
     }
     
-    @discardableResult
-    func fillDataSource(context: NSManagedObjectContext) -> Post? {
-        let fetch = NSFetchRequest<Post>(entityName: String(describing: Post.self))
-        fetch.sortDescriptors = [NSSortDescriptor(key: "commentsCount", ascending: false)]
-        let post = (try? context.fetch(fetch))?.first
-        commentsViewController.dataSource.post = post
-        commentsViewController.dataSource.fetchCommentsIfNeeded()
-        return post
-    }
-    
     // MARK: - Tests
     
     func testThatItDownloadsComments() {
-        let context = controller.newEmptyManagedObjectContext()
-        remote.context = context
-        remote.mapper.context = context
-        controller.importPosts(to: context, including: .comments)
-        
-        guard let post = fillDataSource(context: context) else {
-            XCTFail("No post to download comments for")
-            return
-        }
-        
         let commentsViewController = self.commentsViewController!
+        let post = commentsViewController.dataSource.post
         let oldMoreCommentsCount = post.allMoreComments.count
         let finishedCommentsDownload = expectation(description: "Finished comments download")
         commentsViewController.startCommentsDownload().continueWith { _ in

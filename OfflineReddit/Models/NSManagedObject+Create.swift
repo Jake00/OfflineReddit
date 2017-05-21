@@ -86,4 +86,10 @@ extension NSManagedObjectContext {
         }
         return value!
     }
+    
+    func trySave() {
+        performGrouped {
+            _ = try? self.save()
+        }
+    }
 }

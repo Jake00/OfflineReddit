@@ -12,7 +12,7 @@ import BoltsSwift
 
 class TestableCoreDataController {
     
-    private(set) var context: NSManagedObjectContext
+    var context: NSManagedObjectContext
     let moreCommentsBatchSize = 3
     let mapper = Mapper()
     

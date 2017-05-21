@@ -92,7 +92,7 @@ final class OfflineRemoteProvider {
 
 // MARK: - Data providing
 
-extension OfflineRemoteProvider: DataProviding {
+extension OfflineRemoteProvider: RemoteDataProviding {
 
     func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
         let filename = OfflineRemoteProvider.postsFilename()

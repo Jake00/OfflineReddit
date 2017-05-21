@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol Reachable <NSObject>
+@protocol Reachability
 
 @property (nonatomic, assign, readonly) BOOL isOnline;
 @property (nonatomic, assign, readonly) BOOL isOffline;
@@ -32,9 +32,7 @@ typedef enum : NSInteger {
 extern NSNotificationName const ReachabilityChangedNotification;
 
 
-@interface Reachability : NSObject <Reachable>
-
-@property (nonatomic, strong, class, readonly) Reachability *sharedReachability;
+@interface NetworkReachability : NSObject <Reachability>
 
 /*!
  * Use to check the reachability of a given host name.
@@ -66,9 +64,6 @@ extern NSNotificationName const ReachabilityChangedNotification;
 @property (nonatomic, assign, readonly) NetworkStatus status;
 @property (nonatomic, assign, readonly) BOOL isOnline;
 @property (nonatomic, assign, readonly) BOOL isOffline;
-
-/// Used for development purposes only when debugging without a connection.
-@property (nonatomic, assign, getter=isEmulatingOnline) BOOL emulatingOnline;
 
 /*!
  * WWAN may be available, but not active until a connection has been established. WiFi may require a connection for VPN on Demand.

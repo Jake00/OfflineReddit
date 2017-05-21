@@ -6,9 +6,7 @@
 //  Copyright © 2017 Jake Bellamy. All rights reserved.
 //
 
-@testable import OfflineReddit
-
-final class SettableReachability: NSObject, Reachable {
+final class SettableReachability: Reachability {
     
     var isOnline: Bool = true
     

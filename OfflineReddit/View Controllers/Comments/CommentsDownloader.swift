@@ -13,11 +13,11 @@ final class CommentsDownloader: NSObject, ProgressReporting {
     
     let progress: Progress
     let post: Post
-    let remote: DataProviding
+    let remote: RemoteDataProviding
     let comments: [[MoreComments]]
     private(set) var remaining: [[MoreComments]]
     
-    init(post: Post, comments: [Either<Comment, MoreComments>], remote: DataProviding, numberOfCommentBatches: Int = 5) {
+    init(post: Post, comments: [Either<Comment, MoreComments>], remote: RemoteDataProviding, numberOfCommentBatches: Int = 5) {
         self.post = post
         self.remote = remote
         let batches = batch(comments: comments, maximum: numberOfCommentBatches)

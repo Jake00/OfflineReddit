@@ -9,13 +9,19 @@
 import BoltsSwift
 import CoreData
 
-protocol DataProviding {
+protocol RemoteDataProviding {
     
     func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]>
     func getComments(for post: Post) -> Task<[Comment]>
     func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]>
 }
 
+struct DataProvider {
+    let remote: RemoteDataProviding
+    let local: NSManagedObjectContext
+    let reachability: Reachability
+}
+/*
 final class DataProvider {
     
     static let shared = DataProvider(remote: APIClient.shared, local: CoreDataController.shared.viewContext)
@@ -76,3 +82,4 @@ final class DataProvider {
         return remote.getMoreComments(using: mores, post: post)
     }
 }
+*/

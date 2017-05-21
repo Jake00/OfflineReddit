@@ -14,7 +14,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 
-#import "Reachability.h"
+#import "NetworkReachability.h"
 
 #pragma mark IPv6 Support
 //Reachability fully support IPv6.  For full details, see ReadMe.md.
@@ -52,9 +52,9 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 {
 #pragma unused (target, flags)
 	NSCAssert(info != NULL, @"info was NULL in ReachabilityCallback");
-	NSCAssert([(__bridge NSObject*) info isKindOfClass: [Reachability class]], @"info was wrong class in ReachabilityCallback");
+	NSCAssert([(__bridge NSObject*) info isKindOfClass: [NetworkReachability class]], @"info was wrong class in ReachabilityCallback");
 
-    Reachability* noteObject = (__bridge Reachability *)info;
+    NetworkReachability *noteObject = (__bridge NetworkReachability *)info;
     // Post a notification to notify the client that the network reachability changed.
     [[NSNotificationCenter defaultCenter] postNotificationName: ReachabilityChangedNotification object: noteObject];
 }
@@ -62,26 +62,16 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 #pragma mark - Reachability implementation
 
-@implementation Reachability
+@implementation NetworkReachability
 {
 	SCNetworkReachabilityRef _reachabilityRef;
 }
 
 @synthesize notifiying = _notifiying;
 
-+ (Reachability *)sharedReachability
-{
-    static Reachability *reachability;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        reachability = [Reachability reachabilityForInternetConnection];
-    });
-    return reachability;
-}
-
 + (instancetype)reachabilityWithHostName:(NSString *)hostName
 {
-	Reachability* returnValue = NULL;
+	NetworkReachability* returnValue = NULL;
 	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(NULL, [hostName UTF8String]);
 	if (reachability != NULL)
 	{
@@ -102,7 +92,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 {
 	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, hostAddress);
 
-	Reachability* returnValue = NULL;
+	NetworkReachability* returnValue = NULL;
 
 	if (reachability != NULL)
 	{
@@ -239,10 +229,6 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
 - (NetworkStatus)status
 {
-    if (self.isEmulatingOnline) {
-        return ReachableViaWiFi;
-    }
-    
     NSAssert(_reachabilityRef != NULL, @"currentNetworkStatus called with NULL SCNetworkReachabilityRef");
     SCNetworkReachabilityFlags flags;
     if (SCNetworkReachabilityGetFlags(_reachabilityRef, &flags)) {

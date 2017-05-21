@@ -20,7 +20,18 @@ class CommentsDataSource: NSObject {
     
     weak var tableView: UITableView?
     
-    var post: Post?
+    // MARK: - Init
+    
+    let post: Post
+    let provider: CommentsProvider
+    
+    init(post: Post, provider: DataProvider) {
+        self.post = post
+        self.provider = CommentsProvider(provider: provider)
+    }
+    
+    // MARK: -
+    
     var allComments: [Either<Comment, MoreComments>] = []
     private(set) var comments: [Either<Comment, MoreComments>] = []
     var loadingCells: Set<MoreComments> = []
@@ -34,7 +45,7 @@ class CommentsDataSource: NSObject {
     }
     
     private func updateComments() {
-        allComments = post?.displayComments ?? []
+        allComments = post.displayComments
         var condensedComment: Comment?
         comments = allComments.filter {
             switch $0 {
@@ -114,16 +125,10 @@ class CommentsDataSource: NSObject {
                 tableView?.deleteRows(at: makeIndexPaths(), with: .fade)
             }
         }
-        tableView?.endUpdatesSafe()
+        tableView?.endUpdates()
     }
     
     // MARK: - Fetching
-    
-    enum Error: Swift.Error {
-        case nilPost
-    }
-    
-    lazy var provider = DataProvider.shared
     
     @discardableResult
     func fetchCommentsIfNeeded() -> Task<Void>? {
@@ -137,14 +142,13 @@ class CommentsDataSource: NSObject {
     }
     
     func fetchComments() -> Task<Void> {
-        guard let post = post else { return Task(error: Error.nilPost) }
         return provider.getComments(for: post).continueOnSuccessWith(.mainThread) { _ in
             self.didFetchComments()
         }
     }
     
     private func didFetchComments() {
-        defer { provider.save() }
+        defer { provider.local.trySave() }
         let old = comments.count
         updateComments()
         let new = comments.count
@@ -164,7 +168,6 @@ class CommentsDataSource: NSObject {
     
     @discardableResult
     func fetchMoreComments(using more: MoreComments) -> Task<[Comment]> {
-        guard let post = post else { return Task(error: Error.nilPost) }
         let task = provider.getMoreComments(using: [more], post: post).continueWithTask(.mainThread) {
             self.didFetchMoreComments(more, task: $0)
         }
@@ -196,8 +199,8 @@ class CommentsDataSource: NSObject {
         if end - start > 0 {
             tableView?.insertRows(at: (start..<end).map { IndexPath(row: $0, section: 0) }, with: .fade)
         }
-        tableView?.endUpdatesSafe()
-        provider.save()
+        tableView?.endUpdates()
+        provider.local.trySave()
         return task
     }
     
@@ -207,7 +210,6 @@ class CommentsDataSource: NSObject {
     
     @discardableResult
     func startDownload(updating tableView: UITableView) -> Task<Void> {
-        guard let post = post else { return Task(error: Error.nilPost) }
         let downloader = CommentsDownloader(post: post, comments: allComments, remote: provider.remote)
         self.downloader = downloader
         
@@ -215,7 +217,7 @@ class CommentsDataSource: NSObject {
             self.downloader = nil
             self.updateComments()
             tableView.reloadData()
-            self.provider.save()
+            self.provider.local.trySave()
             return $0
         }
     }
