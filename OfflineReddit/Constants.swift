@@ -36,6 +36,10 @@ struct SharedText {
     static let loadingCaps = NSLocalizedString("loading_caps", value: "LOADING", comment: "Loading text")
     static let loadingLowercase = NSLocalizedString("loading_lowercase", value: "Loading", comment: "Loading text")
     static let offline = NSLocalizedString("offline", value: "Offline", comment: "Offline")
+    static let sortTitle = NSLocalizedString("sort_title", value: "Sort comments by", comment: "Title of sorting options")
+    static let sortFormat = NSLocalizedString("sort_format", value: "Sort: %@", comment: "eg. Sort: Best")
+    static let best = NSLocalizedString("sort.best", value: "Best", comment: "Sort by best")
+    static let top = NSLocalizedString("sort.top", value: "Top", comment: "Sort by top")
 }
 
 extension UIColor {

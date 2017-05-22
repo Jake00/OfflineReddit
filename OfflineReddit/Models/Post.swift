@@ -57,16 +57,16 @@ extension Post {
         return author + " • " + time
     }
     
-    var displayComments: [Either<Comment, MoreComments>] {
-        var displayComments = comments.sorted().flatMap { $0.displayComments }
+    func displayComments(sortedBy sort: Comment.Sort = .best) -> [Either<Comment, MoreComments>] {
+        var displayComments = comments.sorted(by: sort).flatMap { $0.displayComments }
         if let more = more {
             displayComments.append(.other(more))
         }
         return displayComments
     }
     
-    var allMoreComments: [MoreComments] {
-        var allMoreComments = comments.sorted().flatMap { $0.more }
+    func allMoreComments(sortedBy sort: Comment.Sort = .best) -> [MoreComments] {
+        var allMoreComments = comments.sorted(by: sort).flatMap { $0.more }
         if let more = more {
             allMoreComments.append(more)
         }

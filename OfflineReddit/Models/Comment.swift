@@ -105,11 +105,28 @@ extension Comment {
 
 extension Comment: Identifiable { }
 
-extension Comment: Comparable { }
+extension Comment: Comparable {
+    enum Sort {
+        case best, top
+        
+        static let all: [Sort] = [.best, .top]
+        
+        var displayName: String {
+            switch self {
+            case .best: return SharedText.best
+            case .top: return SharedText.top
+            }
+        }
+    }
+}
 
 func < (lhs: Comment, rhs: Comment) -> Bool {
+    return best(lhs: lhs, rhs: rhs)
+}
+
+private func compare(_ lhs: Comment, _ rhs: Comment, _ comparison: (Comment, Comment) -> Bool) -> Bool {
     if lhs.parent == rhs.parent {
-        return lhs.order < rhs.order
+        return comparison(lhs, rhs)
     }
     let lhsHierarchy = lhs.hierarchy
     let rhsHierarchy = rhs.hierarchy
@@ -117,10 +134,20 @@ func < (lhs: Comment, rhs: Comment) -> Bool {
     for (index, lhsComment) in lhsHierarchy.enumerated() where index < rhsHierarchy.endIndex {
         let rhsComment = rhsHierarchy[index]
         if lhsComment != rhsComment {
-            return lhsComment.order < rhsComment.order
+            return comparison(lhsComment, rhsComment)
         }
     }
     return rhsHierarchy.contains(lhs) || !lhsHierarchy.contains(rhs)
+}
+
+/// This named is to enable the syntax `comments.sorted(by: best)`
+private func best(lhs: Comment, rhs: Comment) -> Bool {
+    return compare(lhs, rhs) { $0.order < $1.order }
+}
+
+/// This named is to enable the syntax `comments.sorted(by: top)`
+private func top(lhs: Comment, rhs: Comment) -> Bool {
+    return compare(lhs, rhs) { $0.score > $1.score }
 }
 
 extension Collection where Iterator.Element == Comment {
@@ -131,5 +158,12 @@ extension Collection where Iterator.Element == Comment {
             comments.formUnion(comment.all)
         }
         return comments
+    }
+    
+    func sorted(by sorting: Comment.Sort) -> [Comment] {
+        switch sorting {
+        case .best: return sorted(by: best)
+        case .top: return sorted(by: top)
+        }
     }
 }

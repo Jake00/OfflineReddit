@@ -21,6 +21,7 @@ class CommentsViewController: UIViewController, Loadable {
     @IBOutlet var loadingButton: UIBarButtonItem!
     @IBOutlet var expandCommentsButton: UIBarButtonItem!
     @IBOutlet var markAsReadButton: UIBarButtonItem!
+    @IBOutlet var sortButton: UIBarButtonItem!
     
     let dataSource: CommentsDataSource
     let reachability: Reachability
@@ -55,8 +56,13 @@ class CommentsViewController: UIViewController, Loadable {
         titleLabel.text = dataSource.post.title
         selfLabel.text = dataSource.post.selfText
         isLoading = false
-        toolbarItems = [markAsReadButton]
+        toolbarItems = [
+            markAsReadButton,
+            UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
+            sortButton
+        ]
         markAsReadButton.isEnabled = !dataSource.post.isRead
+        updateSortButtonTitle()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -115,6 +121,28 @@ class CommentsViewController: UIViewController, Loadable {
     @IBAction func markAsReadButtonPressed(_ sender: UIBarButtonItem) {
         dataSource.post.isRead = true
         sender.isEnabled = false
+    }
+    
+    @IBAction func sortButtonPressed(_ sender: UIBarButtonItem) {
+        showSortSelectionSheet()
+    }
+    
+    func showSortSelectionSheet() {
+        let sheet = UIAlertController(title: SharedText.sortTitle, message: nil, preferredStyle: .actionSheet)
+        for sort in Comment.Sort.all {
+            sheet.addAction(UIAlertAction(title: sort.displayName, style: .default) { _ in
+                self.dataSource.sort = sort
+                self.tableView.reloadData()
+                self.updateSortButtonTitle()
+            })
+        }
+        present(sheet, animated: true, completion: nil)
+    }
+    
+    // MARK: - UI Updates
+    
+    func updateSortButtonTitle() {
+        sortButton.title = String.localizedStringWithFormat(SharedText.sortFormat, dataSource.sort.displayName)
     }
 }
 

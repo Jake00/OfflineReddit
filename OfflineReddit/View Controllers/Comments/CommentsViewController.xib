@@ -18,6 +18,7 @@
                 <outlet property="loadingButton" destination="MzY-8j-69R" id="uoL-kh-vdO"/>
                 <outlet property="markAsReadButton" destination="fsK-Rr-jbF" id="Bo5-dJ-6jm"/>
                 <outlet property="selfLabel" destination="LqB-Eq-g3n" id="3Uf-7o-cXL"/>
+                <outlet property="sortButton" destination="R3b-d7-Hzy" id="DYj-AQ-fRX"/>
                 <outlet property="subredditLabel" destination="oXA-CI-Uca" id="7n7-Ub-UBB"/>
                 <outlet property="tableView" destination="mv9-Rk-VbH" id="z2x-SJ-Llg"/>
                 <outlet property="titleLabel" destination="sCe-zb-bie" id="Ytv-NS-cqv"/>
@@ -137,6 +138,11 @@
         <barButtonItem image="read" id="fsK-Rr-jbF">
             <connections>
                 <action selector="markAsReadButtonPressed:" destination="-1" id="73Y-zm-zEe"/>
+            </connections>
+        </barButtonItem>
+        <barButtonItem title="Sort" id="R3b-d7-Hzy">
+            <connections>
+                <action selector="sortButtonPressed:" destination="-1" id="FeB-qt-Koh"/>
             </connections>
         </barButtonItem>
     </objects>

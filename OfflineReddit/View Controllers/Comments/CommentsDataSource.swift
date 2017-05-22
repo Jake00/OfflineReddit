@@ -33,9 +33,18 @@ class CommentsDataSource: NSObject {
     
     // MARK: -
     
+    /// Master list of all the comments avaialable to display.
     var allComments: [Either<Comment, MoreComments>] = []
+    
+    /// List of comments which drives the table view. Is a subset of `allComments` when a comment is condensed and its children hidden.
     private(set) var comments: [Either<Comment, MoreComments>] = []
+    
+    /// The 'more comments' cells which are loading their children.
     var loadingCells: Set<MoreComments> = []
+    
+    var sort: Comment.Sort = .best {
+        didSet { updateComments() }
+    }
     
     weak var delegate: CommentsDataSourceDelegate?
     
@@ -68,23 +77,19 @@ class CommentsDataSource: NSObject {
     }
     
     private func updateComments() {
-        allComments = post.displayComments
-        var condensedComment: Comment?
-        comments = allComments.filter {
-            switch $0 {
-            case .other: return true
-            case .first(let next):
-                if let comment = condensedComment {
-                    let isSibling = next.depth > comment.depth
-                    if !isSibling {
-                        condensedComment = nil
-                    }
-                    return !isSibling
-                } else if !next.isExpanded {
-                    condensedComment = next
+        allComments = post.displayComments(sortedBy: sort)
+        var condensed: Comment?
+        comments = allComments.filter { next in
+            if let comment = condensed {
+                let isSibling = next.depth > comment.depth
+                if !isSibling {
+                    condensed = nil
                 }
-                return true
+                return !isSibling
+            } else if !next.isExpanded {
+                condensed = next.first
             }
+            return true
         }
         if let delegate = delegate {
             let (saved, toExpand) = allComments.reduce((0, 0) as (Int64, Int64)) {
