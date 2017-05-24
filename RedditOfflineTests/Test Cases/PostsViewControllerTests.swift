@@ -49,7 +49,7 @@ class PostsViewControllerTests: BaseTestCase {
     
     func fillDataSource() {
         let fetch = NSFetchRequest<Post>(entityName: String(describing: Post.self))
-        let posts = try? controller.context.fetch(fetch)
+        let posts: [Post]? = try? controller.context.fetch(fetch)
         postsViewController.dataSource.rows = posts?.map(PostCellModel.init) ?? []
         postsViewController.tableView.reloadData()
     }

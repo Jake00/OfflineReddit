@@ -44,7 +44,7 @@ class CommentsViewControllerTests: BaseTestCase {
     func testThatItDownloadsComments() {
         let commentsViewController = self.commentsViewController!
         let post = commentsViewController.dataSource.post
-        let oldMoreCommentsCount = post.allMoreComments.count
+        let oldMoreCommentsCount = post.allMoreComments(sortedBy: .best).count
         let finishedCommentsDownload = expectation(description: "Finished comments download")
         commentsViewController.startCommentsDownload().continueWith { _ in
             finishedCommentsDownload.fulfill()
@@ -52,7 +52,7 @@ class CommentsViewControllerTests: BaseTestCase {
             XCTAssertFalse(commentsViewController.isSavingComments, "Stops downloading on completion")
             
             // There are less 'more comments' to expand
-            let newMoreCommentsCount = post.allMoreComments.count
+            let newMoreCommentsCount = post.allMoreComments(sortedBy: .best).count
             XCTAssert(newMoreCommentsCount < oldMoreCommentsCount, "Post should have less 'more comments' to expand")
         }
         // `isSavingComments` == true

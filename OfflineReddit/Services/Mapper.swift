@@ -53,6 +53,7 @@ final class Mapper {
                 post.subreddit = subreddits.first { $0.name == post.subredditName }
                 return post
             }
+            posts.forEach { $0.updateCommentsBestOrders() }
             try context.save()
             return posts
         }
@@ -76,13 +77,11 @@ final class Mapper {
                 try self.fetchExistingComments($0, context)
                 } ?? []
             
-            var order: Int64 = 0
             let comments = commentsJSON.flatMap { json -> [Comment] in
                 guard let (parent, replies) = self.mapComment(json: json, parent: nil, topLevelPost: post, existing: existingComments) else { return [] }
-                parent.order = order
-                order += 1
                 return [parent] + replies
             }
+            post.updateCommentsBestOrders()
             try context.save()
             return comments
         }
@@ -101,12 +100,9 @@ final class Mapper {
         comment.post = topLevelPost
         comment.more.map(context.delete)
         
-        var order: Int64 = 0
         let replyJSON = ((json["replies"] as? JSON)?["data"] as? JSON)?["children"] as? [JSON] ?? []
         return (comment, replyJSON.flatMap { json -> [Comment] in
             guard let (parent, replies) = mapComment(json: json, parent: comment, topLevelPost: nil, existing: existing) else { return [] }
-            parent.order = order
-            order += 1
             return [parent] + replies
         })
     }
@@ -132,8 +128,6 @@ final class Mapper {
             let mores = mores.inContext(context, inContextsQueue: false)
             let post = post.inContext(context, inContextsQueue: false)
             let existingComments = try self.fetchExistingComments(post.id, context)
-            var orders: [MoreComments: Int64] = [:]
-            mores.forEach { orders[$0] = Int64($0.parentComment?.children.count ?? $0.parentPost?.comments.count ?? 0) }
             
             /* 
              The Reddit API often sends back child comments that we did not request via a 'MoreComments' id.
@@ -154,10 +148,7 @@ final class Mapper {
                     existing: existingComments
                     ) else { return [] }
                 
-                if let more = more, let order = orders[more] {
-                    parent.order = order
-                    orders[more] = order + 1
-                } else {
+                if more == nil {
                     unset.append(parent)
                 }
                 return [parent] + replies
@@ -171,6 +162,7 @@ final class Mapper {
                 }
             }
             _ = mores.map(context.delete)
+            post.updateCommentsBestOrders()
             try context.save()
             return comments
         }

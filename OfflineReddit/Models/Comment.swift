@@ -18,10 +18,12 @@ class Comment: NSManagedObject {
     @NSManaged var gildedCount: Int64
     @NSManaged var parentId: String?
     @NSManaged var postId: String?
+    @NSManaged var ups: Int64
+    @NSManaged var downs: Int64
     @NSManaged var score: Int64
     @NSManaged var isScoreHidden: Bool
     @NSManaged var depth: Int64
-    @NSManaged var order: Int64
+    @NSManaged var orderBest: Double
     @NSManaged var parent: Comment?
     @NSManaged var children: Set<Comment>
     @NSManaged var post: Post?
@@ -42,11 +44,17 @@ extension Comment {
         parentId = json["parent_id"] as? String
         created = (json["created_utc"] as? TimeInterval).map(Date.init(timeIntervalSince1970:))
         gildedCount = (json["gilded"] as? Int).map(Int64.init) ?? 0
+        ups = (json["ups"] as? Int).map(Int64.init) ?? 0
+        downs = (json["downs"] as? Int).map(Int64.init) ?? 0
         score = (json["score"] as? Int).map(Int64.init) ?? 0
         isScoreHidden = json["score_hidden"] as? Bool ?? false
         depth = (json["depth"] as? Int).map(Int64.init) ?? 0
         postId = json["link_id"] as? String
         shortId = json["id"] as? String
+    }
+    
+    var numberOfVotes: Int64 {
+        return ups + downs
     }
     
     var owningPost: Post? {
@@ -105,51 +113,6 @@ extension Comment {
 
 extension Comment: Identifiable { }
 
-extension Comment: Comparable {
-    enum Sort {
-        case best, top
-        
-        static let all: [Sort] = [.best, .top]
-        
-        var displayName: String {
-            switch self {
-            case .best: return SharedText.best
-            case .top: return SharedText.top
-            }
-        }
-    }
-}
-
-func < (lhs: Comment, rhs: Comment) -> Bool {
-    return best(lhs: lhs, rhs: rhs)
-}
-
-private func compare(_ lhs: Comment, _ rhs: Comment, _ comparison: (Comment, Comment) -> Bool) -> Bool {
-    if lhs.parent == rhs.parent {
-        return comparison(lhs, rhs)
-    }
-    let lhsHierarchy = lhs.hierarchy
-    let rhsHierarchy = rhs.hierarchy
-    
-    for (index, lhsComment) in lhsHierarchy.enumerated() where index < rhsHierarchy.endIndex {
-        let rhsComment = rhsHierarchy[index]
-        if lhsComment != rhsComment {
-            return comparison(lhsComment, rhsComment)
-        }
-    }
-    return rhsHierarchy.contains(lhs) || !lhsHierarchy.contains(rhs)
-}
-
-/// This named is to enable the syntax `comments.sorted(by: best)`
-private func best(lhs: Comment, rhs: Comment) -> Bool {
-    return compare(lhs, rhs) { $0.order < $1.order }
-}
-
-/// This named is to enable the syntax `comments.sorted(by: top)`
-private func top(lhs: Comment, rhs: Comment) -> Bool {
-    return compare(lhs, rhs) { $0.score > $1.score }
-}
-
 extension Collection where Iterator.Element == Comment {
     
     var allNested: Set<Comment> {
@@ -158,12 +121,5 @@ extension Collection where Iterator.Element == Comment {
             comments.formUnion(comment.all)
         }
         return comments
-    }
-    
-    func sorted(by sorting: Comment.Sort) -> [Comment] {
-        switch sorting {
-        case .best: return sorted(by: best)
-        case .top: return sorted(by: top)
-        }
     }
 }

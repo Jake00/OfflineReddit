@@ -85,12 +85,18 @@ extension Post {
         commentsCount = (json["num_comments"] as? Int).map(Int64.init) ?? 0
         score = (json["score"] as? Int).map(Int64.init) ?? 0
     }
+    
+    func updateCommentsBestOrders() {
+        for comment in comments.allNested {
+            comment.orderBest = comment.generateBestScore()
+        }
+    }
 }
 
 extension Post: Identifiable { }
 
-extension Post: Comparable { }
-
-func < (lhs: Post, rhs: Post) -> Bool {
-    return lhs.order < rhs.order
+extension Post: Comparable {
+    static func < (lhs: Post, rhs: Post) -> Bool {
+        return lhs.order < rhs.order
+    }
 }
