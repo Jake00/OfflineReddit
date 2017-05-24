@@ -14,7 +14,7 @@ class Comment: NSManagedObject {
     @NSManaged var shortId: String?
     @NSManaged var author: String?
     @NSManaged var body: String?
-    @NSManaged var created: Date?
+    @NSManaged var created: Date
     @NSManaged var gildedCount: Int64
     @NSManaged var parentId: String?
     @NSManaged var postId: String?
@@ -24,6 +24,7 @@ class Comment: NSManagedObject {
     @NSManaged var isScoreHidden: Bool
     @NSManaged var depth: Int64
     @NSManaged var orderBest: Double
+    @NSManaged var orderControversial: Double
     @NSManaged var parent: Comment?
     @NSManaged var children: Set<Comment>
     @NSManaged var post: Post?
@@ -42,7 +43,7 @@ extension Comment {
         author = json["author"] as? String
         body = json["body"] as? String
         parentId = json["parent_id"] as? String
-        created = (json["created_utc"] as? TimeInterval).map(Date.init(timeIntervalSince1970:))
+        created = (json["created_utc"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? Date()
         gildedCount = (json["gilded"] as? Int).map(Int64.init) ?? 0
         ups = (json["ups"] as? Int).map(Int64.init) ?? 0
         downs = (json["downs"] as? Int).map(Int64.init) ?? 0
@@ -99,8 +100,7 @@ extension Comment {
     
     var authorScoreTimeText: String {
         let author = self.author.map { "u/" + $0 } ?? SharedText.unknown
-        let time = created
-            .flatMap { intervalFormatter.string(from: -$0.timeIntervalSinceNow) }
+        let time = intervalFormatter.string(from: -created.timeIntervalSinceNow)
             .map { String.localizedStringWithFormat(SharedText.agoFormat, $0) }
             ?? SharedText.unknown
         return "\(author) • \(score) points • \(time)"

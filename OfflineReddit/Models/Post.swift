@@ -85,10 +85,6 @@ extension Post {
         commentsCount = (json["num_comments"] as? Int).map(Int64.init) ?? 0
         score = (json["score"] as? Int).map(Int64.init) ?? 0
     }
-    
-    func updateCommentsBestOrders() {
-        comments.allNested.forEach { $0.updateOrderBest() }
-    }
 }
 
 extension Post: Identifiable { }

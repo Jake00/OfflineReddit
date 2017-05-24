@@ -38,8 +38,11 @@ struct SharedText {
     static let offline = NSLocalizedString("offline", value: "Offline", comment: "Offline")
     static let sortTitle = NSLocalizedString("sort_title", value: "Sort comments by", comment: "Title of sorting options")
     static let sortFormat = NSLocalizedString("sort_format", value: "Sort: %@", comment: "eg. Sort: Best")
-    static let best = NSLocalizedString("sort.best", value: "Best", comment: "Sort by best")
-    static let top = NSLocalizedString("sort.top", value: "Top", comment: "Sort by top")
+    static let sortBest = NSLocalizedString("sort.best", value: "Best", comment: "Sort by best")
+    static let sortTop = NSLocalizedString("sort.top", value: "Top", comment: "Sort by top")
+    static let sortNew = NSLocalizedString("sort.new", value: "New", comment: "Sort by new")
+    static let sortOld = NSLocalizedString("sort.old", value: "Old", comment: "Sort by old")
+    static let sortControversial = NSLocalizedString("sort.controversial", value: "Controversial", comment: "Sort by controversial")
 }
 
 extension UIColor {

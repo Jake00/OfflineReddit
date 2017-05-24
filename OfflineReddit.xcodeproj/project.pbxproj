@@ -53,6 +53,7 @@
 		2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0A41ED20EB600925F9A /* SubredditsProvider.swift */; };
 		2379B0A81ED22EE700925F9A /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2379B0A71ED22EE700925F9A /* Dwifft.framework */; };
 		2379B0AB1ED5671600925F9A /* CommentSorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0AA1ED5671500925F9A /* CommentSorting.swift */; };
+		2379B0AD1ED5CFA100925F9A /* Sorts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0AC1ED5CFA100925F9A /* Sorts.swift */; };
 		23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395C81E7DDE8600030DEF /* AppDelegate.swift */; };
 		23A395F01E7DDF9800030DEF /* OfflineReddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 23A395DE1E7DDF9800030DEF /* OfflineReddit.xcdatamodeld */; };
 		23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395E21E7DDF9800030DEF /* APIClient+Endpoints.swift */; };
@@ -139,6 +140,7 @@
 		2379B0A41ED20EB600925F9A /* SubredditsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditsProvider.swift; sourceTree = "<group>"; };
 		2379B0A71ED22EE700925F9A /* Dwifft.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Dwifft.framework; path = Carthage/Build/iOS/Dwifft.framework; sourceTree = "<group>"; };
 		2379B0AA1ED5671500925F9A /* CommentSorting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentSorting.swift; sourceTree = "<group>"; };
+		2379B0AC1ED5CFA100925F9A /* Sorts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sorts.swift; sourceTree = "<group>"; };
 		23A395C51E7DDE8600030DEF /* OfflineReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23A395C81E7DDE8600030DEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23A395DF1E7DDF9800030DEF /* OfflineReddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OfflineReddit.xcdatamodel; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 				23A396021E7E011D00030DEF /* Post.swift */,
 				23A3960A1E7E22C300030DEF /* Comment.swift */,
 				2379B0AA1ED5671500925F9A /* CommentSorting.swift */,
+				2379B0AC1ED5CFA100925F9A /* Sorts.swift */,
 				235E07D41E7F492600D83D16 /* MoreComments.swift */,
 				23A396041E7E021500030DEF /* Identifiable.swift */,
 				235E07D61E7F525100D83D16 /* NSManagedObject+Create.swift */,
@@ -585,6 +588,7 @@
 				2379B0791ECF787900925F9A /* CommentsViewController.swift in Sources */,
 				23A395F41E7DDF9800030DEF /* APIClient+URLSessionDelegate.swift in Sources */,
 				2379B09D1ED1BE2E00925F9A /* PostsProvider.swift in Sources */,
+				2379B0AD1ED5CFA100925F9A /* Sorts.swift in Sources */,
 				2379B07B1ECF787900925F9A /* PostCell.swift in Sources */,
 				2379B09F1ED1CDFB00925F9A /* CommentsProvider.swift in Sources */,
 				235E08011E80D25100D83D16 /* SeparatorView.swift in Sources */,

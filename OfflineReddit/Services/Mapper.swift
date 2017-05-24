@@ -53,7 +53,7 @@ final class Mapper {
                 post.subreddit = subreddits.first { $0.name == post.subredditName }
                 return post
             }
-            posts.forEach { $0.updateCommentsBestOrders() }
+            posts.forEach { $0.comments.allNested.updateSortingScores() }
             try context.save()
             return posts
         }
@@ -81,7 +81,7 @@ final class Mapper {
                 guard let (parent, replies) = self.mapComment(json: json, parent: nil, topLevelPost: post, existing: existingComments) else { return [] }
                 return [parent] + replies
             }
-            post.updateCommentsBestOrders()
+            comments.updateSortingScores()
             try context.save()
             return comments
         }
@@ -162,7 +162,7 @@ final class Mapper {
                 }
             }
             _ = mores.map(context.delete)
-            post.updateCommentsBestOrders()
+            comments.updateSortingScores()
             try context.save()
             return comments
         }

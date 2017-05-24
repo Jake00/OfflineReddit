@@ -10,6 +10,7 @@
         <attribute name="id" attributeType="String" syncable="YES"/>
         <attribute name="isScoreHidden" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="orderBest" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="orderControversial" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="parentId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="postId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -54,7 +55,7 @@
         <relationship name="posts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Post" inverseName="subreddit" inverseEntity="Post" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Comment" positionX="223" positionY="-27" width="128" height="315"/>
+        <element name="Comment" positionX="223" positionY="-27" width="128" height="330"/>
         <element name="MoreComments" positionX="216" positionY="306" width="128" height="148"/>
         <element name="Post" positionX="45" positionY="-12" width="128" height="300"/>
         <element name="Subreddit" positionX="-135" positionY="213" width="128" height="88"/>
