@@ -35,39 +35,31 @@ extension Comment: Comparable {
         }
     }
     
-    func generateBestScore() -> Double {
+    func updateOrderBest() {
+        orderBest = confidenceScore
+    }
+    
+    var confidenceScore: Double {
         /* 
-         Taken from the Ruby example here
+         Taken from Reddit's confidence sort here:
+         https://github.com/reddit/reddit/blob/52728820cfc60a9a7be47272ff7fb1031c2710c7/r2/r2/lib/db/_sorts.pyx#L70
+         They in turn are using this algorithm here:
          http://www.evanmiller.org/how-not-to-sort-by-average-rating.html
-         
-         def ci_lower_bound(pos, n, confidence)
-            if n == 0
-                return 0
-            end
-            z = Statistics2.pnormaldist(1-(1-confidence)/2)
-            phat = 1.0*pos/n
-            (phat + z*z/(2*n) - z * Math.sqrt((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n)
-         end
-         
-         pos is the number of positive ratings,
-         n is the total number of ratings, 
+         Using the same variable names as the algorthm-
+         p is the number of positive ratings,
+         n is the total number of ratings,
          confidence refers to the statistical confidence level: pick 0.95 to have a 95% chance that your lower bound is correct, 0.975 to have a 97.5% chance, etc. The z-score in this function never changes, so if you don't have a statistics package handy or if performance is an issue you can always hard-code a value here for z. (Use 1.96 for a confidence level of 0.95.)
          */
-        if numberOfVotes == 0 {
+        let n = Double(ups + downs)
+        if n == 0 {
             return 0
         }
-        let n = Double(numberOfVotes)
-        let z = 1.96
-        let phat = Double(ups) / n
-        
-        /*
-         (phat + z*z/(2*n) - z * Math.sqrt((phat*(1-phat)+z*z/(4*n))/n))/(1+z*z/n)
-         'expression was too complex to be solved in reasonable time; consider breaking up the expression into distinct sub-expressions'
-         */
-        let sqrtDividend: Double = phat * (1 - phat) + z * z / (4 * n)
-        let dividend: Double = phat + z * z / (2 * n) - z * sqrt(sqrtDividend / n)
-        let divisor: Double = 1 + z * z / n
-        return dividend / divisor
+        let z = 1.281551565545 // 80% confidence
+        let p = Double(ups) / n
+        let left: Double = p + 1 / (2 * n) * z * z
+        let right: Double = z * sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+        let under: Double = 1 + 1 / n * z * z
+        return (left - right) / under
     }
 }
 

@@ -87,9 +87,7 @@ extension Post {
     }
     
     func updateCommentsBestOrders() {
-        for comment in comments.allNested {
-            comment.orderBest = comment.generateBestScore()
-        }
+        comments.allNested.forEach { $0.updateOrderBest() }
     }
 }
 

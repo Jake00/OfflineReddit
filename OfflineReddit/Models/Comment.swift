@@ -53,10 +53,6 @@ extension Comment {
         shortId = json["id"] as? String
     }
     
-    var numberOfVotes: Int64 {
-        return ups + downs
-    }
-    
     var owningPost: Post? {
         return post ?? parent?.owningPost
     }
