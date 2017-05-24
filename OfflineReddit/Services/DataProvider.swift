@@ -10,10 +10,9 @@ import BoltsSwift
 import CoreData
 
 protocol RemoteDataProviding {
-    
     func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]>
-    func getComments(for post: Post) -> Task<[Comment]>
-    func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]>
+    func getComments(for post: Post, sortedBy sort: Comment.Sort) -> Task<[Comment]>
+    func getMoreComments(using mores: [MoreComments], post: Post, sortedBy sort: Comment.Sort) -> Task<[Comment]>
 }
 
 struct DataProvider {

@@ -170,7 +170,7 @@ class CommentsDataSource: NSObject {
     }
     
     func fetchComments() -> Task<Void> {
-        return provider.getComments(for: post).continueOnSuccessWith(.mainThread) { _ in
+        return provider.getComments(for: post, sortedBy: sort).continueOnSuccessWith(.mainThread) { _ in
             self.animateCommentsUpdate()
             self.provider.local.trySave()
         }
@@ -178,7 +178,7 @@ class CommentsDataSource: NSObject {
     
     @discardableResult
     func fetchMoreComments(using more: MoreComments) -> Task<[Comment]> {
-        let task = provider.getMoreComments(using: [more], post: post).continueWithTask(.mainThread) {
+        let task = provider.getMoreComments(using: [more], post: post, sortedBy: sort).continueWithTask(.mainThread) {
             self.didFetchMoreComments(more, task: $0)
         }
         delegate?.isFetchingMoreComments(with: task)
@@ -204,7 +204,7 @@ class CommentsDataSource: NSObject {
     
     @discardableResult
     func startDownload(updating tableView: UITableView) -> Task<Void> {
-        let downloader = CommentsDownloader(post: post, comments: allComments, remote: provider.remote)
+        let downloader = CommentsDownloader(post: post, comments: allComments, remote: provider.remote, sort: sort)
         self.downloader = downloader
         
         return downloader.start().continueWithTask(.mainThread) {

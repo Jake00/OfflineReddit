@@ -33,7 +33,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
         }
     }
     
-    init(posts: [Post], remote: RemoteDataProviding, commentSort: Comment.Sort = .best, numberOfCommentBatches: Int = 3) {
+    init(posts: [Post], remote: RemoteDataProviding, commentSort: Comment.Sort, numberOfCommentBatches: Int = 3) {
         self.posts = posts
         self.remainingPosts = posts
         self.remote = remote
@@ -60,7 +60,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
     private func downloadNextPost() -> Task<Void> {
         guard !remainingPosts.isEmpty else { return Task(()) }
         let post = remainingPosts.removeFirst()
-        return remote.getComments(for: post)
+        return remote.getComments(for: post, sortedBy: commentSort)
             .continueOnSuccessWithTask(.immediate) { _ in self.nextPostDidDownload(post) }
     }
     
@@ -87,7 +87,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
         func downloadNextCommentBatch() -> Task<Void> {
             guard !next.more.isEmpty else { return Task(()) }
             let comments = next.more.removeFirst()
-            return remote.getMoreComments(using: comments, post: next.post)
+            return remote.getMoreComments(using: comments, post: next.post, sortedBy: commentSort)
                 .continueOnSuccessWithTask(.immediate) { _ in
                     next.progress?.completedUnitCount += 1
                     return downloadNextCommentBatch()

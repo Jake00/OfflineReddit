@@ -33,17 +33,6 @@ extension Comment: Comparable {
             }
         }
         
-        /** 'Sort' values to send to the Reddit API, taken from https://www.reddit.com/dev/api/ */
-        var apiKey: String {
-            switch self {
-            case .best: return "confidence"
-            case .top: return "top"
-            case .new: return "new"
-            case .old: return "old"
-            case .controversial: return "controversial"
-            }
-        }
-        
         var descriptor: NSSortDescriptor {
             switch self {
             case .best: return NSSortDescriptor(key: "orderBest", ascending: false)

@@ -19,14 +19,14 @@ final class CommentsProvider {
         self.local = provider.local
     }
     
-    func getComments(for post: Post) -> Task<[Comment]> {
-        return remote.getComments(for: post).continueOnSuccessWith(.immediate) {
+    func getComments(for post: Post, sortedBy sort: Comment.Sort) -> Task<[Comment]> {
+        return remote.getComments(for: post, sortedBy: sort).continueOnSuccessWith(.immediate) {
             post.isAvailableOffline = true
             return $0
         }
     }
     
-    func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]> {
-        return remote.getMoreComments(using: mores, post: post)
+    func getMoreComments(using mores: [MoreComments], post: Post, sortedBy sort: Comment.Sort) -> Task<[Comment]> {
+        return remote.getMoreComments(using: mores, post: post, sortedBy: sort)
     }
 }

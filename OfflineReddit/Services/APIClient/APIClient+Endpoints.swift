@@ -8,6 +8,8 @@
 
 import BoltsSwift
 
+// https://www.reddit.com/dev/api/
+
 extension APIClient: RemoteDataProviding {
     
     func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
@@ -23,24 +25,40 @@ extension APIClient: RemoteDataProviding {
             .continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
     }
     
-    func getComments(for post: Post) -> Task<[Comment]> {
+    func getComments(for post: Post, sortedBy sort: Comment.Sort) -> Task<[Comment]> {
         guard let permalink = post.permalink else { return Task(error: Errors.missingFields) }
-        let request = Request(.get, permalink + ".json", parameters: ["raw_json": "1"])
+        let request = Request(.get, permalink + ".json", parameters: [
+            "raw_json": "1",
+            "sort": sort.apiKey
+            ])
         return sendJSONRequest(request)
             .continueOnSuccessWith(.immediate, continuation: mapper.mapComments)
             .continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
     }
     
-    func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]> {
+    func getMoreComments(using mores: [MoreComments], post: Post, sortedBy sort: Comment.Sort) -> Task<[Comment]> {
         guard !mores.isEmpty else { return Task(error: Errors.missingFields) }
         let request = Request(.post, "api/morechildren.json", parameters: [
             "api_type": "json",
             "children": mores.flatMap { $0.children }.joined(separator: ","),
             "link_id": post.id,
-            "raw_json": "1"
+            "raw_json": "1",
+            "sort": sort.apiKey
             ])
         return sendJSONRequest(request).continueOnSuccessWith(.immediate) {
             try self.mapper.mapMoreComments(json: $0, mores: mores, post: post)
             }.continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
+    }
+}
+
+private extension Comment.Sort {
+    var apiKey: String {
+        switch self {
+        case .best: return "confidence"
+        case .top: return "top"
+        case .new: return "new"
+        case .old: return "old"
+        case .controversial: return "controversial"
+        }
     }
 }

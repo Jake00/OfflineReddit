@@ -101,14 +101,14 @@ extension OfflineRemoteProvider: RemoteDataProviding {
             .continueOnSuccessWith(.immediate) { $0.inContext(self.context, inContextsQueue: true) }
     }
     
-    func getComments(for post: Post) -> Task<[Comment]> {
+    func getComments(for post: Post, sortedBy sort: Comment.Sort) -> Task<[Comment]> {
         let filename = OfflineRemoteProvider.commentsFilename(post: post)
         return delay().continueWithTask { _ in self.readFile(named: filename) }
             .continueOnSuccessWith(.immediate, continuation: mapper.mapComments)
             .continueOnSuccessWith(.immediate) { $0.inContext(self.context, inContextsQueue: true) }
     }
     
-    func getMoreComments(using mores: [MoreComments], post: Post) -> Task<[Comment]> {
+    func getMoreComments(using mores: [MoreComments], post: Post, sortedBy sort: Comment.Sort) -> Task<[Comment]> {
         guard let filename = OfflineRemoteProvider.moreCommentsFilename(post: post, mores: mores) else {
             return Task(error: Error.noFileExists)
         }

@@ -137,7 +137,7 @@ class PostsDataSource: NSObject {
     
     @discardableResult
     func startDownload(for indexPaths: [IndexPath]) -> Task<[Post]> {
-        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: postsProvider.remote)
+        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: postsProvider.remote, commentSort: .best)
         downloader.completionForPost = { post in
             self.setState(.checked, for: post)
         }
