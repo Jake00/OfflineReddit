@@ -67,7 +67,6 @@ extension Comment: Comparable {
         let sqrtDividend: Double = phat * (1 - phat) + z * z / (4 * n)
         let dividend: Double = phat + z * z / (2 * n) - z * sqrt(sqrtDividend / n)
         let divisor: Double = 1 + z * z / n
-        print("best score from comment \(id): ups \(ups) downs \(downs) votes \(n) score: \(dividend / divisor)")
         return dividend / divisor
     }
 }
