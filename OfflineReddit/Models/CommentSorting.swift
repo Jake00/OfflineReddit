@@ -53,10 +53,6 @@ extension Comment: Comparable {
             }
         }
     }
-    
-    func updateSortingScores() {
-        
-    }
 }
 
 /// Compares two comments which may have different parent comments ie. they may not be in the same tree.
@@ -92,9 +88,5 @@ extension Collection where Iterator.Element == Comment {
     
     func sorted(by sorting: Comment.Sort) -> [Comment] {
         return sorted(by: sorting.comparitor)
-    }
-    
-    func updateSortingScores() {
-        forEach { $0.updateSortingScores() }
     }
 }
