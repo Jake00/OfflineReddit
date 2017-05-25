@@ -43,6 +43,7 @@ struct SharedText {
     static let sortNew = NSLocalizedString("sort.new", value: "New", comment: "Sort by new")
     static let sortOld = NSLocalizedString("sort.old", value: "Old", comment: "Sort by old")
     static let sortControversial = NSLocalizedString("sort.controversial", value: "Controversial", comment: "Sort by controversial")
+    static let sortWorst = NSLocalizedString("sort.worst", value: "Worst", comment: "Sort by worst")
 }
 
 extension UIColor {

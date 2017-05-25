@@ -18,13 +18,10 @@ class Comment: NSManagedObject {
     @NSManaged var gildedCount: Int64
     @NSManaged var parentId: String?
     @NSManaged var postId: String?
-    @NSManaged var ups: Int64
-    @NSManaged var downs: Int64
     @NSManaged var score: Int64
     @NSManaged var isScoreHidden: Bool
+    @NSManaged var isControversial: Bool
     @NSManaged var depth: Int64
-    @NSManaged var orderBest: Double
-    @NSManaged var orderControversial: Double
     @NSManaged var parent: Comment?
     @NSManaged var children: Set<Comment>
     @NSManaged var post: Post?
@@ -45,10 +42,9 @@ extension Comment {
         parentId = json["parent_id"] as? String
         created = (json["created_utc"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? Date()
         gildedCount = (json["gilded"] as? Int).map(Int64.init) ?? 0
-        ups = (json["ups"] as? Int).map(Int64.init) ?? 0
-        downs = (json["downs"] as? Int).map(Int64.init) ?? 0
         score = (json["score"] as? Int).map(Int64.init) ?? 0
         isScoreHidden = json["score_hidden"] as? Bool ?? false
+        isControversial = json["controversiality"] as? Int == 1
         depth = (json["depth"] as? Int).map(Int64.init) ?? 0
         postId = json["link_id"] as? String
         shortId = json["id"] as? String

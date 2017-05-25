@@ -57,7 +57,7 @@ extension Post {
         return author + " • " + time
     }
     
-    func displayComments(sortedBy sort: Comment.Sort = .best) -> [Either<Comment, MoreComments>] {
+    func displayComments(sortedBy sort: Comment.Sort) -> [Either<Comment, MoreComments>] {
         var displayComments = comments.sorted(by: sort).flatMap { $0.displayComments }
         if let more = more {
             displayComments.append(.other(more))
@@ -65,7 +65,7 @@ extension Post {
         return displayComments
     }
     
-    func allMoreComments(sortedBy sort: Comment.Sort = .best) -> [MoreComments] {
+    func allMoreComments(sortedBy sort: Comment.Sort) -> [MoreComments] {
         var allMoreComments = comments.sorted(by: sort).flatMap { $0.more }
         if let more = more {
             allMoreComments.append(more)

@@ -54,11 +54,10 @@ extension APIClient: RemoteDataProviding {
 private extension Comment.Sort {
     var apiKey: String {
         switch self {
-        case .best: return "confidence"
         case .top: return "top"
         case .new: return "new"
         case .old: return "old"
-        case .controversial: return "controversial"
+        case .controversial, .worst: return "controversial"
         }
     }
 }
