@@ -55,6 +55,7 @@
 		2379B0AB1ED5671600925F9A /* CommentSorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0AA1ED5671500925F9A /* CommentSorting.swift */; };
 		2379B0AD1ED5CFA100925F9A /* Sorts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0AC1ED5CFA100925F9A /* Sorts.swift */; };
 		2379B0AF1ED6D03800925F9A /* PostSorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0AE1ED6D03800925F9A /* PostSorting.swift */; };
+		2379B0D71ED884C300925F9A /* InfoToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0D61ED884C300925F9A /* InfoToolbar.swift */; };
 		23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395C81E7DDE8600030DEF /* AppDelegate.swift */; };
 		23A395F01E7DDF9800030DEF /* OfflineReddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 23A395DE1E7DDF9800030DEF /* OfflineReddit.xcdatamodeld */; };
 		23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395E21E7DDF9800030DEF /* APIClient+Endpoints.swift */; };
@@ -143,6 +144,7 @@
 		2379B0AA1ED5671500925F9A /* CommentSorting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentSorting.swift; sourceTree = "<group>"; };
 		2379B0AC1ED5CFA100925F9A /* Sorts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sorts.swift; sourceTree = "<group>"; };
 		2379B0AE1ED6D03800925F9A /* PostSorting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSorting.swift; sourceTree = "<group>"; };
+		2379B0D61ED884C300925F9A /* InfoToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoToolbar.swift; sourceTree = "<group>"; };
 		23A395C51E7DDE8600030DEF /* OfflineReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23A395C81E7DDE8600030DEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23A395DF1E7DDF9800030DEF /* OfflineReddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OfflineReddit.xcdatamodel; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 				235E08001E80D25100D83D16 /* SeparatorView.swift */,
 				235E07FC1E80943D00D83D16 /* MarginTextField.swift */,
 				23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */,
+				2379B0D61ED884C300925F9A /* InfoToolbar.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -582,6 +585,7 @@
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
 				2379B0951ED1B3E700925F9A /* ReusableCell.swift in Sources */,
 				2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */,
+				2379B0D71ED884C300925F9A /* InfoToolbar.swift in Sources */,
 				233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */,
 				2379B0AF1ED6D03800925F9A /* PostSorting.swift in Sources */,
 				23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */,

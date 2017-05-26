@@ -119,8 +119,12 @@ class CommentsViewController: UIViewController, Loadable {
     }
     
     @IBAction func markAsReadButtonPressed(_ sender: UIBarButtonItem) {
-        dataSource.post.isRead = true
-        sender.isEnabled = false
+        let setRead: (Bool) -> () -> Void = { read in {
+            self.dataSource.post.isRead = read
+            sender.isEnabled = !read
+            }}
+        setRead(true)()
+        showInfoToolbar(title: SharedText.readPost, undo: setRead(false))
     }
     
     @IBAction func sortButtonPressed(_ sender: UIBarButtonItem) {
