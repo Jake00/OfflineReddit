@@ -18,11 +18,13 @@ class Post: NSManagedObject {
     @NSManaged var permalink: String?
     @NSManaged var urlValue: String?
     @NSManaged var title: String?
-    @NSManaged var created: Date?
+    @NSManaged var created: Date
     @NSManaged var isRead: Bool
     @NSManaged var isAvailableOffline: Bool
     @NSManaged var score: Int64
-    @NSManaged var order: Int64
+    @NSManaged var orderHot: Double
+    @NSManaged var orderControversial: Double
+    @NSManaged var upvoteRatio: Double
     @NSManaged var commentsCount: Int64
     @NSManaged var subreddit: Subreddit?
     @NSManaged var comments: Set<Comment>
@@ -39,6 +41,14 @@ extension Post {
         return urlValue.flatMap(URL.init(string:))
     }
     
+    var votesEstimate: (upvotes: Int64, downvotes: Int64) {
+        let dividend = Double(score) * upvoteRatio
+        let divisor = 2 * upvoteRatio - 1
+        let upvotes = Int64((dividend / divisor).rounded())
+        let downvotes = score - upvotes
+        return (upvotes, downvotes)
+    }
+    
     var scoreCommentsText: String {
         return "\(score) points • \(commentsCount) comments"
     }
@@ -50,8 +60,7 @@ extension Post {
     
     var authorTimeText: String {
         let author = self.author.map { "u/" + $0 } ?? SharedText.unknown
-        let time = created
-            .flatMap { intervalFormatter.string(from: -$0.timeIntervalSinceNow) }
+        let time = intervalFormatter.string(from: -created.timeIntervalSinceNow)
             .map { String.localizedStringWithFormat(SharedText.agoFormat, $0) }
             ?? SharedText.unknown
         return author + " • " + time
@@ -81,16 +90,11 @@ extension Post {
         permalink = json["permalink"] as? String
         urlValue = json["url"] as? String
         title = json["title"] as? String
-        created = (json["created_utc"] as? TimeInterval).map(Date.init(timeIntervalSince1970:))
+        created = (json["created_utc"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? Date()
         commentsCount = (json["num_comments"] as? Int).map(Int64.init) ?? 0
         score = (json["score"] as? Int).map(Int64.init) ?? 0
+        upvoteRatio = json["upvote_ratio"] as? Double ?? 0
     }
 }
 
 extension Post: Identifiable { }
-
-extension Post: Comparable {
-    static func < (lhs: Post, rhs: Post) -> Bool {
-        return lhs.order < rhs.order
-    }
-}

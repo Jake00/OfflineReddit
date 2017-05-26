@@ -6,7 +6,7 @@
 //  Copyright © 2017 Jake Bellamy. All rights reserved.
 //
 
-import CoreData
+import Foundation
 
 extension Comment: Comparable {
     
@@ -49,7 +49,7 @@ extension Comment: Comparable {
             case .worst: return { compare($0, $1) { $0.score < $1.score }}
             case .new:   return { compare($0, $1) { $0.created > $1.created }}
             case .old:   return { compare($0, $1) { $0.created < $1.created }}
-            case .controversial: return contoversyEstimate
+            case .controversial: return controversyEstimate
             }
         }
     }
@@ -76,7 +76,7 @@ private func compare(_ lhs: Comment, _ rhs: Comment, _ comparison: (Comment, Com
 /// We can't get the total upvotes and downvotes (Reddit only exposes a single 'score', with upvotes=score and downvotes=0)
 /// https://github.com/reddit/reddit/blob/dbcf37afe2c5f5dd19f99b8a3484fc69eb27fcd5/r2/r2/lib/jsontemplates.py#L817
 /// So this estimates by putting the score closest to 0 at the top (equal number of upvotes and downvotes).
-private func contoversyEstimate(lhs: Comment, rhs: Comment) -> Bool {
+private func controversyEstimate(lhs: Comment, rhs: Comment) -> Bool {
     switch (lhs.isControversial, rhs.isControversial) {
     case (false, false): return compare(lhs, rhs) { $0.score < $1.score }
     case (true, true): return compare(lhs, rhs) { abs($0.score) < abs($1.score) }

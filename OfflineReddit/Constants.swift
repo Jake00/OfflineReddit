@@ -39,6 +39,7 @@ struct SharedText {
     static let sortTitle = NSLocalizedString("sort_title", value: "Sort comments by", comment: "Title of sorting options")
     static let sortFormat = NSLocalizedString("sort_format", value: "Sort: %@", comment: "eg. Sort: Best")
     static let sortBest = NSLocalizedString("sort.best", value: "Best", comment: "Sort by best")
+    static let sortHot = NSLocalizedString("sort.hot", value: "Hot", comment: "Sort by hot")
     static let sortTop = NSLocalizedString("sort.top", value: "Top", comment: "Sort by top")
     static let sortNew = NSLocalizedString("sort.new", value: "New", comment: "Sort by new")
     static let sortOld = NSLocalizedString("sort.old", value: "Old", comment: "Sort by old")
