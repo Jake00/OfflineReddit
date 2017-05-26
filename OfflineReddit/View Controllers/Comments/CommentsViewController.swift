@@ -71,12 +71,6 @@ class CommentsViewController: UIViewController, Loadable {
             tableView.deselectRow(at: selectedIndexPath, animated: animated)
         }
         _ = dataSource.fetchCommentsIfNeeded().map(fetch)
-        navigationController?.setToolbarHidden(false, animated: animated)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        navigationController?.setToolbarHidden(true, animated: animated)
     }
     
     override func viewDidLayoutSubviews() {

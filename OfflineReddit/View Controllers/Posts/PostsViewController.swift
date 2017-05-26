@@ -22,6 +22,7 @@ class PostsViewController: UIViewController, Loadable {
     @IBOutlet var chooseDownloadsButton: UIBarButtonItem!
     @IBOutlet var startDownloadsButton: UIBarButtonItem!
     @IBOutlet var cancelDownloadsButton: UIBarButtonItem!
+    @IBOutlet var filterButton: UIBarButtonItem!
     
     let dataSource: PostsDataSource
     let reachability: Reachability
@@ -54,6 +55,10 @@ class PostsViewController: UIViewController, Loadable {
         tableView.dataSource = dataSource
         tableView.tableFooterView = footerView
         tableView.registerReusableNibCell(PostCell.self)
+        toolbarItems = [
+            UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
+            filterButton
+        ]
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
         
@@ -64,6 +69,9 @@ class PostsViewController: UIViewController, Loadable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateSelectedRow()
+        if navigationController?.isToolbarHidden ?? false {
+            navigationController?.setToolbarHidden(false, animated: animated)
+        }
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -92,6 +100,7 @@ class PostsViewController: UIViewController, Loadable {
             self?.updateFooterView()
             self?.fetchNextPageOrReloadIfOffline()
         }
+        navigationController?.setToolbarHidden(true, animated: true)
         navigationController?.pushViewController(subredditsViewController, animated: true)
     }
     
@@ -228,6 +237,10 @@ class PostsViewController: UIViewController, Loadable {
     
     @IBAction func showSubredditsButtonPressed(_ sender: UIButton) {
         showSubredditsViewController()
+    }
+    
+    @IBAction func filterButtonPressed(_ sender: UIBarButtonItem) {
+        
     }
 }
 

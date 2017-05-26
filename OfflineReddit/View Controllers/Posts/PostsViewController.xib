@@ -14,6 +14,7 @@
                 <outlet property="activityIndicatorCenterX" destination="M5z-FE-WJa" id="qgk-S6-a9V"/>
                 <outlet property="cancelDownloadsButton" destination="4w4-tV-sFM" id="Yaz-Ff-4rw"/>
                 <outlet property="chooseDownloadsButton" destination="9iO-zd-iK7" id="L5c-Y1-Roo"/>
+                <outlet property="filterButton" destination="7fV-Jg-jiY" id="7An-L8-6h2"/>
                 <outlet property="footerView" destination="6iA-yc-XFR" id="NAr-Mg-q7x"/>
                 <outlet property="hintImage" destination="8Jc-ph-Re4" id="V4H-uG-ci9"/>
                 <outlet property="hintLabel" destination="tL5-Yg-B4w" id="WiP-KZ-smY"/>
@@ -112,9 +113,15 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="-382" y="-259"/>
         </view>
+        <barButtonItem image="filter" id="7fV-Jg-jiY">
+            <connections>
+                <action selector="filterButtonPressed:" destination="-1" id="Mkk-ur-ggz"/>
+            </connections>
+        </barButtonItem>
     </objects>
     <resources>
         <image name="arrow" width="39" height="15"/>
         <image name="download" width="30" height="30"/>
+        <image name="filter" width="30" height="30"/>
     </resources>
 </document>
