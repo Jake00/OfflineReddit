@@ -126,7 +126,7 @@ class CommentsViewController: UIViewController, Loadable {
     }
     
     func showSortSelectionSheet() {
-        let sheet = UIAlertController(title: SharedText.sortTitle, message: nil, preferredStyle: .actionSheet)
+        let sheet = UIAlertController(title: SharedText.sortCommentsTitle, message: nil, preferredStyle: .actionSheet)
         for sort in Comment.Sort.all {
             sheet.addAction(UIAlertAction(title: sort.displayName, style: .default) { _ in
                 self.dataSource.sort = sort

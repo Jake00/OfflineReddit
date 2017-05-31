@@ -16,7 +16,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
     let numberOfCommentBatches: Int
     let remote: RemoteDataProviding
     let posts: [Post]
-    let commentSort: Comment.Sort
+    let commentsSort: Comment.Sort
     var completionForPost: ((Post) -> Void)?
     private var remainingPosts: [Post]
     private var comments: [CommentsTask] = []
@@ -33,11 +33,11 @@ final class PostsDownloader: NSObject, ProgressReporting {
         }
     }
     
-    init(posts: [Post], remote: RemoteDataProviding, commentSort: Comment.Sort, numberOfCommentBatches: Int = 3) {
+    init(posts: [Post], remote: RemoteDataProviding, commentsSort: Comment.Sort, numberOfCommentBatches: Int = 3) {
         self.posts = posts
         self.remainingPosts = posts
         self.remote = remote
-        self.commentSort = commentSort
+        self.commentsSort = commentsSort
         self.numberOfCommentBatches = numberOfCommentBatches
         self.progress = Progress(totalUnitCount: Int64((1 + numberOfCommentBatches) * posts.count))
         super.init()
@@ -60,14 +60,14 @@ final class PostsDownloader: NSObject, ProgressReporting {
     private func downloadNextPost() -> Task<Void> {
         guard !remainingPosts.isEmpty else { return Task(()) }
         let post = remainingPosts.removeFirst()
-        return remote.getComments(for: post, sortedBy: commentSort)
+        return remote.getComments(for: post, sortedBy: commentsSort)
             .continueOnSuccessWithTask(.immediate) { _ in self.nextPostDidDownload(post) }
     }
     
     private func nextPostDidDownload(_ post: Post) -> Task<Void> {
         self.progress.completedUnitCount += 1
         post.isAvailableOffline = true
-        let more = batch(comments: post.displayComments(sortedBy: commentSort), maximum: numberOfCommentBatches)
+        let more = batch(comments: post.displayComments(sortedBy: commentsSort), maximum: numberOfCommentBatches)
         let commentsProgress: Progress? = more.isEmpty ? nil : Progress(
             totalUnitCount: Int64(more.count),
             parent: self.progress,
@@ -87,7 +87,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
         func downloadNextCommentBatch() -> Task<Void> {
             guard !next.more.isEmpty else { return Task(()) }
             let comments = next.more.removeFirst()
-            return remote.getMoreComments(using: comments, post: next.post, sortedBy: commentSort)
+            return remote.getMoreComments(using: comments, post: next.post, sortedBy: commentsSort)
                 .continueOnSuccessWithTask(.immediate) { _ in
                     next.progress?.completedUnitCount += 1
                     return downloadNextCommentBatch()

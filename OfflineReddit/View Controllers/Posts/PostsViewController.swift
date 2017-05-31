@@ -100,8 +100,18 @@ class PostsViewController: UIViewController, Loadable {
             self?.updateFooterView()
             self?.fetchNextPageOrReloadIfOffline()
         }
-        navigationController?.setToolbarHidden(true, animated: true)
         navigationController?.pushViewController(subredditsViewController, animated: true)
+        navigationController?.setToolbarHidden(true, animated: true)
+    }
+    
+    func showFilterPostsViewController() {
+        let filterPostsViewController = FilterPostsViewController()
+        filterPostsViewController.dataSource.selected = dataSource.sort
+        filterPostsViewController.didUpdate = { [weak self] sort in
+            self?.dataSource.sort = sort
+        }
+        navigationController?.pushViewController(filterPostsViewController, animated: true)
+        navigationController?.setToolbarHidden(true, animated: true)
     }
     
     // MARK: - Fetching
@@ -240,7 +250,7 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     @IBAction func filterButtonPressed(_ sender: UIBarButtonItem) {
-        
+        showFilterPostsViewController()
     }
 }
 

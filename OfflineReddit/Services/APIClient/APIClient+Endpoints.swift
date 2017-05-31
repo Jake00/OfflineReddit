@@ -12,9 +12,12 @@ import BoltsSwift
 
 extension APIClient: RemoteDataProviding {
     
-    func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
+    func getPosts(for subreddits: [Subreddit], after post: Post?, sortedBy sort: Post.Sort, period: Post.SortPeriod?) -> Task<[Post]> {
         let path: String = "r/" + subreddits.map { $0.name }.joined(separator: "+") + ".json"
-        var parameters: Parameters = ["raw_json": "1"]
+        var parameters: Parameters = [
+            "raw_json": "1",
+            "sort": sort.apiKey
+        ]
         if let post = post {
             parameters["after"] = post.id
             parameters["limit"] = "25"
@@ -48,6 +51,17 @@ extension APIClient: RemoteDataProviding {
         return sendJSONRequest(request).continueOnSuccessWith(.immediate) {
             try self.mapper.mapMoreComments(json: $0, mores: mores, post: post)
             }.continueOnSuccessWith(.mainThread) { $0.inContext(CoreDataController.shared.viewContext) }
+    }
+}
+
+private extension Post.Sort {
+    var apiKey: String {
+        switch self {
+        case .hot: return "hot"
+        case .top: return "top"
+        case .worst, .controversial: return "controversial"
+        case .new: return "new"
+        }
     }
 }
 

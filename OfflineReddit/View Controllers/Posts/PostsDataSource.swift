@@ -17,6 +17,8 @@ class PostsDataSource: NSObject {
         didSet { rows.removeAll() }
     }
     
+    var commentsSort: Comment.Sort = .top
+    
     // MARK: - Init
     
     let postsProvider: PostsProvider
@@ -31,6 +33,10 @@ class PostsDataSource: NSObject {
     
     var rows: [PostCellModel] = []
     
+    var sort = Post.SortFilter(sort: .hot, period: nil, filter: .none) {
+        didSet { sortRows(); tableView?.reloadData() }
+    }
+    
     func post(at indexPath: IndexPath) -> Post {
         return rows[indexPath.row].post
     }
@@ -39,6 +45,10 @@ class PostsDataSource: NSObject {
         return rows
             .index { $0.post == post }
             .map { IndexPath(row: $0, section: 0) }
+    }
+    
+    private func sortRows() {
+        rows.sortFilter(using: sort)
     }
     
     // MARK: - Updating cells
@@ -108,12 +118,13 @@ class PostsDataSource: NSObject {
     
     func fetchNextPage() -> Task<[Post]> {
         guard !subreddits.isEmpty else { return Task<[Post]>([]) }
-        return postsProvider.getPosts(for: subreddits, after: rows.last?.post)
+        return postsProvider.getPosts(for: subreddits, after: rows.last?.post, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 guard !posts.isEmpty else { return posts }
                 let new = posts.map(PostCellModel.init)
                 self.tableView?.beginUpdates()
                 self.rows += new
+                self.sortRows()
                 let indexPaths = (self.rows.count - new.count..<self.rows.count)
                     .map { IndexPath(row: $0, section: 0) }
                 self.tableView?.insertRows(at: indexPaths, with: .fade)
@@ -123,9 +134,10 @@ class PostsDataSource: NSObject {
     }
     
     func reloadWithOfflinePosts() -> Task<[Post]> {
-        return postsProvider.getAllOfflinePosts(for: subreddits)
+        return postsProvider.getAllOfflinePosts(for: subreddits, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 self.rows = posts.map(PostCellModel.init)
+                self.sortRows()
                 self.tableView?.reloadData()
                 return posts
         }
@@ -137,7 +149,7 @@ class PostsDataSource: NSObject {
     
     @discardableResult
     func startDownload(for indexPaths: [IndexPath]) -> Task<[Post]> {
-        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: postsProvider.remote, commentSort: .top)
+        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: postsProvider.remote, commentsSort: commentsSort)
         downloader.completionForPost = { post in
             self.setState(.checked, for: post)
         }

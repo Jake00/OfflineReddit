@@ -94,7 +94,7 @@ final class OfflineRemoteProvider {
 
 extension OfflineRemoteProvider: RemoteDataProviding {
 
-    func getPosts(for subreddits: [Subreddit], after post: Post?) -> Task<[Post]> {
+    func getPosts(for subreddits: [Subreddit], after post: Post?, sortedBy sort: Post.Sort, period: Post.SortPeriod?) -> Task<[Post]> {
         let filename = OfflineRemoteProvider.postsFilename()
         return delay().continueWithTask { _ in self.readFile(named: filename) }
             .continueOnSuccessWith(.immediate, continuation: mapper.mapPosts)
