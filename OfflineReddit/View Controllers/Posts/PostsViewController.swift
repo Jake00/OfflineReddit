@@ -132,6 +132,9 @@ class PostsViewController: UIViewController, Loadable {
             .continueOnSuccessWithTask { subreddits -> Task<Void> in
                 self.dataSource.subreddits = subreddits
                 self.updateFooterView()
+                if self.reachability.isOffline {
+                    self.dataSource.sort.filter.remove(.online)
+                }
                 return self.fetchNextPageOrReloadIfOffline()
         }
     }
@@ -169,15 +172,7 @@ class PostsViewController: UIViewController, Loadable {
     
     func updateSelectedRow() {
         guard let selectedIndexPath = tableView.indexPathForSelectedRow else { return }
-        guard !dataSource.post(at: selectedIndexPath).isRead else {
-            dataSource.rows.remove(at: selectedIndexPath.row)
-            tableView.deleteRows(at: [selectedIndexPath], with: .fade)
-            return
-        }
-        dataSource.update(
-            cell: tableView.cellForRow(at: selectedIndexPath) as? PostCell,
-            isAvailableOffline: dataSource.post(at: selectedIndexPath).isAvailableOffline
-        )
+        dataSource.processPostChanges(at: selectedIndexPath)
         tableView.deselectRow(at: selectedIndexPath, animated: true)
     }
     
@@ -213,11 +208,12 @@ class PostsViewController: UIViewController, Loadable {
     func reachabilityChanged(_ notification: Notification) {
         updateFooterView()
         updateChooseDownloadsButtonEnabled()
-        if isEditing && reachability.isOffline {
-            setEditing(false, animated: true)
+        if reachability.isOffline {
+            if isEditing {
+                setEditing(false, animated: true)
+            }
+            dataSource.sort.filter.remove(.online)
         }
-        dataSource.rows = []
-        tableView.reloadData()
         fetchNextPageOrReloadIfOffline()
     }
     

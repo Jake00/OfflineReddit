@@ -33,7 +33,7 @@ class CommentsDataSource: NSObject {
     
     // MARK: -
     
-    /// Master list of all the comments avaialable to display.
+    /// Master list of all the comments available to display, before filtering.
     var allComments: [Either<Comment, MoreComments>] = []
     
     /// List of comments which drives the table view. Is a subset of `allComments` when a comment is condensed and its children hidden.
@@ -55,25 +55,9 @@ class CommentsDataSource: NSObject {
     }
     
     private func animateCommentsUpdate() {
-        let old = comments.map(EitherEquatable.init)
-        updateComments()
-        guard let tableView = tableView else { return }
-        let new = comments.map(EitherEquatable.init)
-        var deleting: [Int] = []
-        var inserting: [Int] = []
-        if old.isEmpty {
-            deleting.append(0)
-        }
-        for diff in Dwifft.diff(old, new) {
-            switch diff {
-            case .insert(let index, _): inserting.append(index)
-            case .delete(let index, _): deleting.append(index)
-            }
-        }
-        tableView.beginUpdates()
-        tableView.deleteRows(at: deleting.map { IndexPath(row: $0, section: 0) }, with: .fade)
-        tableView.insertRows(at: inserting.map { IndexPath(row: $0, section: 0) }, with: .fade)
-        tableView.endUpdates()
+        tableView?.reload(
+            get: { self.comments.map(EitherEquatable.init) },
+            update: updateComments)
     }
     
     private func updateComments() {

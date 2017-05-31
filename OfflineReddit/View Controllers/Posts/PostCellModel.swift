@@ -33,7 +33,6 @@ extension PostCellModel: Equatable {
     
     static func == (lhs: PostCellModel, rhs: PostCellModel) -> Bool {
         return lhs.post == rhs.post
-            && lhs.state == rhs.state
     }
 }
 

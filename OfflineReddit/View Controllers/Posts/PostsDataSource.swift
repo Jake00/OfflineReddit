@@ -8,13 +8,14 @@
 
 import UIKit
 import BoltsSwift
+import Dwifft
 
 class PostsDataSource: NSObject {
     
     weak var tableView: UITableView?
     
     var subreddits: [Subreddit] = [] {
-        didSet { rows.removeAll() }
+        didSet { allRows.removeAll() }
     }
     
     var commentsSort: Comment.Sort = .top
@@ -31,10 +32,14 @@ class PostsDataSource: NSObject {
     
     // MARK: - Rows
     
-    var rows: [PostCellModel] = []
+    /// Master list of all posts available to display, before filtering.
+    var allRows: [PostCellModel] = []
+    
+    /// List of posts which drives the table view. Is a subset of `rows` when `sort.shouldFilter == true`, otherwise equals `allRows`.
+    private(set) var rows: [PostCellModel] = []
     
     var sort = Post.SortFilter(sort: .hot, period: nil, filter: .none) {
-        didSet { sortRows(); tableView?.reloadData() }
+        didSet { animateRowsUpdate() }
     }
     
     func post(at indexPath: IndexPath) -> Post {
@@ -47,8 +52,27 @@ class PostsDataSource: NSObject {
             .map { IndexPath(row: $0, section: 0) }
     }
     
-    private func sortRows() {
-        rows.sortFilter(using: sort)
+    private func animateRowsUpdate() {
+        tableView?.reload(get: { self.rows }, update: updateRows)
+    }
+    
+    private func updateRows() {
+        rows = allRows.sortFiltered(using: sort)
+    }
+    
+    func processPostChanges(at indexPath: IndexPath) {
+        let post = self.post(at: indexPath)
+        let shouldRemove = ( post.isRead && !sort.filter.contains(.read))
+            ||             (!post.isRead && !sort.filter.contains(.notRead))
+        if shouldRemove {
+            rows.remove(at: indexPath.row)
+            tableView?.deleteRows(at: [indexPath], with: .fade)
+        } else {
+            update(
+                cell: tableView?.cellForRow(at: indexPath) as? PostCell,
+                isAvailableOffline: post.isAvailableOffline
+            )
+        }
     }
     
     // MARK: - Updating cells
@@ -120,15 +144,10 @@ class PostsDataSource: NSObject {
         guard !subreddits.isEmpty else { return Task<[Post]>([]) }
         return postsProvider.getPosts(for: subreddits, after: rows.last?.post, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
-                guard !posts.isEmpty else { return posts }
-                let new = posts.map(PostCellModel.init)
-                self.tableView?.beginUpdates()
-                self.rows += new
-                self.sortRows()
-                let indexPaths = (self.rows.count - new.count..<self.rows.count)
-                    .map { IndexPath(row: $0, section: 0) }
-                self.tableView?.insertRows(at: indexPaths, with: .fade)
-                self.tableView?.endUpdates()
+                if !posts.isEmpty {
+                    self.allRows += posts.map(PostCellModel.init)
+                    self.animateRowsUpdate()
+                }
                 return posts
         }
     }
@@ -136,8 +155,8 @@ class PostsDataSource: NSObject {
     func reloadWithOfflinePosts() -> Task<[Post]> {
         return postsProvider.getAllOfflinePosts(for: subreddits, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
-                self.rows = posts.map(PostCellModel.init)
-                self.sortRows()
+                self.allRows = posts.map(PostCellModel.init)
+                self.animateRowsUpdate()
                 self.tableView?.reloadData()
                 return posts
         }

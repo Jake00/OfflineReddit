@@ -111,10 +111,10 @@ extension Post: Comparable {
         var filterer: ((Post) -> Bool) {
             guard self != .none else { return { _ in true }}
             return { post in
-                return (self.contains(.read)    &&  post.isRead)
-                    || (self.contains(.notRead) && !post.isRead)
-                    && (self.contains(.offline) &&  post.isAvailableOffline)
-                    || (self.contains(.online)  && !post.isAvailableOffline)
+                return ((self.contains(.read)    &&  post.isRead)
+                    ||  (self.contains(.notRead) && !post.isRead))
+                    && ((self.contains(.offline) &&  post.isAvailableOffline)
+                    ||  (self.contains(.online)  && !post.isAvailableOffline))
             }
         }
     }
