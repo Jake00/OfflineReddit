@@ -28,7 +28,7 @@ class FilterPostsDataSource: NSObject {
         Post.FilterOption(value: .online, displayName: SharedText.onlineOnly),
         Post.FilterOption(value: [.offline, .online], displayName: SharedText.both)
     ]
-    var selected = Post.SortFilter(sort: .hot, period: nil, filter: [.notRead, .online, .offline])
+    var selected = Defaults.postsSortFilter
     
     var hasChanges: Bool {
         return true

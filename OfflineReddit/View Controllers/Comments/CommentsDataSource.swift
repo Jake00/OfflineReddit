@@ -42,7 +42,7 @@ class CommentsDataSource: NSObject {
     /// The 'more comments' cells which are loading their children.
     var loadingCells: Set<MoreComments> = []
     
-    var sort: Comment.Sort = .top {
+    var sort = Defaults.commentsSort {
         didSet { updateComments() }
     }
     

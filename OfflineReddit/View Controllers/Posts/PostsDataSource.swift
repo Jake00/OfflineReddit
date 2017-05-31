@@ -18,7 +18,7 @@ class PostsDataSource: NSObject {
         didSet { allRows.removeAll() }
     }
     
-    var commentsSort: Comment.Sort = .top
+    var commentsSort = Defaults.commentsSort
     
     // MARK: - Init
     
@@ -38,7 +38,7 @@ class PostsDataSource: NSObject {
     /// List of posts which drives the table view. Is a subset of `rows` when `sort.shouldFilter == true`, otherwise equals `allRows`.
     private(set) var rows: [PostCellModel] = []
     
-    var sort = Post.SortFilter(sort: .hot, period: nil, filter: .none) {
+    var sort = Defaults.postsSortFilter {
         didSet { animateRowsUpdate() }
     }
     

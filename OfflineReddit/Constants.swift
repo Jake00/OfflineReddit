@@ -28,6 +28,11 @@ var isTesting: Bool {
     return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
 }
 
+struct Defaults {
+    static let postsSortFilter = Post.SortFilter(sort: .hot, period: nil, filter: [.notRead, .online, .offline])
+    static let commentsSort: Comment.Sort = .top
+}
+
 struct SharedText {
     static let agoFormat = NSLocalizedString("ago_format", value: "%@ ago", comment: "Used to say how much time has passed. e.g. '2 hrs ago'")
     static let unknown = NSLocalizedString("unknown", value: "Unknown", comment: "Used as a placeholder for null values")
