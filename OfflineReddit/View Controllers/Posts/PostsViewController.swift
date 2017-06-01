@@ -105,7 +105,7 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     func showFilterPostsViewController() {
-        let filterPostsViewController = FilterPostsViewController()
+        let filterPostsViewController = FilterPostsViewController(reachability: reachability)
         filterPostsViewController.dataSource.selected = dataSource.sort
         filterPostsViewController.didUpdate = { [weak self] sort in
             self?.dataSource.sort = sort

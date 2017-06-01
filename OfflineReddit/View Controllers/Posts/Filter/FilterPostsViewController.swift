@@ -12,9 +12,21 @@ class FilterPostsViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     
-    let dataSource = FilterPostsDataSource()
+    let dataSource: FilterPostsDataSource
     
     var didUpdate: ((Post.SortFilter) -> Void)?
+    
+    // MARK: - Init
+    
+    init(reachability: Reachability) {
+        self.dataSource = FilterPostsDataSource(reachability: reachability)
+        super.init(nibName: String(describing: FilterPostsViewController.self), bundle: nil)
+    }
+    
+    @available(*, unavailable, message: "init(coder:) is not available. Use init(reachability:) instead.")
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not available. Use init(reachability:) instead.")
+    }
     
     // MARK: - View controller
     
@@ -27,6 +39,7 @@ class FilterPostsViewController: UIViewController {
         tableView.delegate = dataSource
         tableView.registerReusableCell(FilterPostsSegmentedControlCell.self)
         tableView.registerReusableCell(FilterPostsSortCell.self)
+        dataSource.tableView = tableView
     }
     
     override func viewWillDisappear(_ animated: Bool) {

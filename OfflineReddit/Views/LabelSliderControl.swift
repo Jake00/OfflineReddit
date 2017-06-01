@@ -46,8 +46,17 @@ class LabelSliderControl: UIControl {
     }
     
     var selectedDiscreteValue: LabelSliderDisplayable? {
-        let index = nearestIndex
-        return isDiscrete && index < discreteValues.endIndex ? discreteValues[index] : nil
+        get {
+            let index = nearestIndex
+            return isDiscrete && index < discreteValues.endIndex ? discreteValues[index] : nil
+        } set {
+            guard let newValue = newValue,
+                let index = discreteValues.index(where: { $0.displayName == newValue.displayName })
+                else { slider.value = 0; return }
+            currentTitleIndex = index
+            slider.value = Float(index) / Float(steps)
+            updateLabelPosition()
+        }
     }
     
     // MARK: - Init
@@ -119,10 +128,15 @@ class LabelSliderControl: UIControl {
         }
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateLabelPosition()
+    }
+    
     // MARK: - Slider actions
     
     func sliderValueChanged(_ sender: UISlider) {
-        labelX.constant = sliderThumbRect(value: sender.value).midX
+        updateLabelPosition()
         let index = nearestIndex
         if index != currentTitleIndex {
             currentTitleIndex = index
@@ -157,5 +171,9 @@ class LabelSliderControl: UIControl {
         if isDiscrete {
             setNeedsDisplay()
         }
+    }
+    
+    func updateLabelPosition() {
+        labelX.constant = sliderThumbRect(value: slider.value).midX
     }
 }

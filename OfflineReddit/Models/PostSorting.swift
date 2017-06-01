@@ -138,8 +138,9 @@ extension Post: Comparable {
         }
         
         var filterer: ((Post) -> Bool) {
+            let periodFilter = sort.includesTimePeriods ? period?.filterer : nil
             return { post in
-                self.filter.filterer(post) && self.period?.filterer(post) ?? true
+                self.filter.filterer(post) && periodFilter?(post) ?? true
             }
         }
         

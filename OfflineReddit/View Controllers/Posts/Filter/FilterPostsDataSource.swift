@@ -16,6 +16,24 @@ class FilterPostsDataSource: NSObject {
         case sort
     }
     
+    weak var tableView: UITableView?
+    
+    // MARK: - Init
+    
+    let reachability: Reachability
+    
+    init(reachability: Reachability) {
+        self.reachability = reachability
+        super.init()
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - Sorts
+    
     let sorts = Post.Sort.all
     let sortPeriods: [Post.SortPeriod] = Post.SortPeriod.all.reversed()
     let readStatusFilters: [Post.FilterOption] = [
@@ -28,11 +46,25 @@ class FilterPostsDataSource: NSObject {
         Post.FilterOption(value: .online, displayName: SharedText.onlineOnly),
         Post.FilterOption(value: [.offline, .online], displayName: SharedText.both)
     ]
-    var selected = Defaults.postsSortFilter
+    var selected = Defaults.postsSortFilter {
+        didSet {
+            if isFirstSelectionSet {
+                isFirstSelectionSet = false
+                initialSelected = selected
+            }
+        }
+    }
+    
+    // MARK: - Changes
+    
+    private var initialSelected = Defaults.postsSortFilter
+    private var isFirstSelectionSet = true
     
     var hasChanges: Bool {
-        return true
+        return selected != initialSelected
     }
+    
+    // MARK: - UI actions
     
     fileprivate dynamic func readStatusSelectionChanged(_ sender: UISegmentedControl) {
         let new = readStatusFilters[sender.selectedSegmentIndex].value
@@ -48,6 +80,15 @@ class FilterPostsDataSource: NSObject {
         if let period = sender.selectedDiscreteValue as? Post.SortPeriod {
             selected.period = period
         }
+    }
+    
+    // MARK: - Reachability
+    
+    func reachabilityChanged(_ notification: Notification) {
+        if reachability.isOffline {
+            selected.filter.remove(.online)
+        }
+        tableView?.reloadSections(IndexSet(integer: Section.offlineStatus.rawValue), with: .fade)
     }
 }
 
@@ -90,6 +131,7 @@ extension FilterPostsDataSource: UITableViewDataSource {
         cell.control.addTarget(self, action: isReadStatus
             ? #selector(readStatusSelectionChanged(_:))
             : #selector(offlineStatusSelectionChanged(_:)), for: .valueChanged)
+        cell.control.isEnabled = isReadStatus || reachability.isOnline
         let last = filters.enumerated().filter { selected.filter.contains($1.value) }.last
         if let (index, _) = last {
             cell.control.selectedSegmentIndex = index
@@ -102,6 +144,7 @@ extension FilterPostsDataSource: UITableViewDataSource {
         cell.canExpand = sort.includesTimePeriods
         cell.isChecked = sort == selected.sort
         cell.control?.discreteValues = sortPeriods
+        cell.control?.selectedDiscreteValue = selected.period
         if cell.control?.allTargets.contains(self) == false {
             cell.control?.addTarget(self, action: #selector(sortPeriodSelectionChanged(_:)), for: .valueChanged)
         }
@@ -142,6 +185,10 @@ extension FilterPostsDataSource: UITableViewDelegate {
         case .offlineStatus: return SharedText.offlineStatus
         case .sort: return SharedText.sortPostsTitle
         }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        return section != Section.offlineStatus.rawValue || reachability.isOnline ? nil : SharedText.onlineFilterDisabledReason
     }
 }
 

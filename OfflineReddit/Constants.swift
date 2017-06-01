@@ -29,7 +29,7 @@ var isTesting: Bool {
 }
 
 struct Defaults {
-    static let postsSortFilter = Post.SortFilter(sort: .hot, period: nil, filter: [.notRead, .online, .offline])
+    static let postsSortFilter = Post.SortFilter(sort: .top, period: .month, filter: [.notRead, .online, .offline])
     static let commentsSort: Comment.Sort = .top
 }
 
@@ -66,6 +66,7 @@ struct SharedText {
     static let onlineOnly = NSLocalizedString("online", value: "Online only", comment: "Online option")
     static let readStatus = NSLocalizedString("read_status", value: "Read status", comment: "Read status")
     static let offlineStatus = NSLocalizedString("offline_status", value: "Offline status", comment: "Offline status")
+    static let onlineFilterDisabledReason = NSLocalizedString("online_filter_disabled_reason", value: "Only saved posts are available until you are back online.", comment: "Offline status")
 }
 
 extension UIColor {
