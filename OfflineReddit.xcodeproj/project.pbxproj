@@ -10,6 +10,7 @@
 		233756291EC0DDD10051ED2C /* Offline Development in Resources */ = {isa = PBXBuildFile; fileRef = 233756281EC0DDD10051ED2C /* Offline Development */; };
 		233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756321EC650A40051ED2C /* MoreCommentsBatching.swift */; };
 		234094CE1EDEA3B700359C84 /* TableViewDiffing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094CD1EDEA3B700359C84 /* TableViewDiffing.swift */; };
+		234094D01EE012F000359C84 /* WebsiteCaching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094CF1EE012F000359C84 /* WebsiteCaching.swift */; };
 		2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */; };
@@ -106,6 +107,7 @@
 		233756381EC6794F0051ED2C /* RedditOfflineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RedditOfflineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2337563C1EC6794F0051ED2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		234094CD1EDEA3B700359C84 /* TableViewDiffing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDiffing.swift; sourceTree = "<group>"; };
+		234094CF1EE012F000359C84 /* WebsiteCaching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteCaching.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Fetching.swift"; sourceTree = "<group>"; };
 		235E07D21E7F47CF00D83D16 /* example.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = example.json; sourceTree = "<group>"; };
@@ -343,6 +345,7 @@
 				2379B0A01ED1D63100925F9A /* SettableReachability.swift */,
 				23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */,
 				233756321EC650A40051ED2C /* MoreCommentsBatching.swift */,
+				234094CF1EE012F000359C84 /* WebsiteCaching.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -627,6 +630,7 @@
 				23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */,
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,
 				23A395F61E7DDF9800030DEF /* CoreDataController.swift in Sources */,
+				234094D01EE012F000359C84 /* WebsiteCaching.swift in Sources */,
 				235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */,
 				235E07C71E7E92E600D83D16 /* Constants.swift in Sources */,
 				2379B0791ECF787900925F9A /* CommentsViewController.swift in Sources */,
