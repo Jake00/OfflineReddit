@@ -12,8 +12,6 @@ final class APIClient: NSObject {
     
     static let shared = APIClient()
     
-    static var loggingLevel: LoggingLevel = isDebugBuild ? .verbose : .off
-    
     var base: Base = .production
     
     var mapper = Mapper()

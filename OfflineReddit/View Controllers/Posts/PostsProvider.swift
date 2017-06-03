@@ -19,12 +19,14 @@ final class PostsProvider {
         self.local = provider.local
     }
     
-    func getAllOfflinePosts(for subreddits: [Subreddit], sortedBy sort: Post.Sort, period: Post.SortPeriod?) -> Task<[Post]> {
-        let request = Post.fetchRequest(predicate: NSPredicate(format: "isAvailableOffline == YES AND isRead == NO AND subredditName IN %@", subreddits.map { $0.name }))
+    func getAllOfflinePosts(for subreddits: [Subreddit], sortedBy sortFilter: Post.Sort, period: Post.SortPeriod?) -> Task<[Post]> {
+        print("Getting all offline posts")
+        let request = Post.fetchRequest(predicate: NSPredicate(format: "isAvailableOffline == YES AND subredditName IN %@", subreddits.map { $0.name }))
         return local.fetch(request)
     }
     
     func getPosts(for subreddits: [Subreddit], after post: Post?, sortedBy sort: Post.Sort, period: Post.SortPeriod?) -> Task<[Post]> {
+        print("Fetching next page of posts")
         return remote.getPosts(for: subreddits, after: post, sortedBy: sort, period: period)
     }
 }

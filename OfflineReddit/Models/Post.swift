@@ -29,6 +29,15 @@ class Post: NSManagedObject {
     @NSManaged var subreddit: Subreddit?
     @NSManaged var comments: Set<Comment>
     @NSManaged var more: MoreComments?
+    
+    @NSManaged private var primitiveIsAvailableOffline: NSNumber
+    @NSManaged private var primitiveIsRead: NSNumber
+    
+    override func awakeFromInsert() {
+        super.awakeFromInsert()
+        primitiveIsAvailableOffline = false as NSNumber
+        primitiveIsRead = false as NSNumber
+    }
 }
 
 extension Post {

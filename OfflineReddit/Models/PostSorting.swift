@@ -154,6 +154,20 @@ extension Post: Comparable {
                 && lhs.filter == rhs.filter
         }
     }
+    
+    struct SortFilterChange {
+        let didSelectOffline: Bool
+        let didSelectOnline: Bool
+        
+        var didChangeOfflineFilter: Bool {
+            return didSelectOffline || didSelectOnline
+        }
+        
+        init(old: SortFilter, new: SortFilter) {
+            self.didSelectOffline = !old.filter.contains(.online)  && new.filter.contains(.online)
+            self.didSelectOnline  = !old.filter.contains(.offline) && new.filter.contains(.offline)
+        }
+    }
 }
 
 extension Collection where Iterator.Element == Post {

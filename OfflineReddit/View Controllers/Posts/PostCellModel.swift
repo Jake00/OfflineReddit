@@ -45,6 +45,15 @@ extension PostCellModel: Comparable {
     }
 }
 
+// MARK: - Hashable
+
+extension PostCellModel: Hashable {
+    
+    var hashValue: Int {
+        return post.hashValue
+    }
+}
+
 extension Collection where Iterator.Element == PostCellModel {
     
     func sortFiltered(using sortFilter: Post.SortFilter) -> [PostCellModel] {

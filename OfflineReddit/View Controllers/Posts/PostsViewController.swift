@@ -96,7 +96,6 @@ class PostsViewController: UIViewController, Loadable {
         let subredditsViewController = SubredditsViewController(provider: provider)
         subredditsViewController.didSelectSubreddits = { [weak self] in
             self?.dataSource.subreddits = $0
-            self?.tableView.reloadData()
             self?.updateFooterView()
             self?.fetchNextPageOrReloadIfOffline()
         }
@@ -107,8 +106,12 @@ class PostsViewController: UIViewController, Loadable {
     func showFilterPostsViewController() {
         let filterPostsViewController = FilterPostsViewController(reachability: reachability)
         filterPostsViewController.dataSource.selected = dataSource.sort
-        filterPostsViewController.didUpdate = { [weak self] sort in
-            self?.dataSource.sort = sort
+        filterPostsViewController.didUpdate = { [unowned self] sort in
+            let change = Post.SortFilterChange(old: self.dataSource.sort, new: sort)
+            self.dataSource.sort = sort
+            if change.didChangeOfflineFilter {
+                self.fetchNextPageOrReloadIfOffline()
+            }
         }
         navigationController?.pushViewController(filterPostsViewController, animated: true)
         navigationController?.setToolbarHidden(true, animated: true)
@@ -141,8 +144,10 @@ class PostsViewController: UIViewController, Loadable {
     
     @discardableResult
     func fetchNextPageOrReloadIfOffline() -> Task<Void> {
-        return fetch((reachability.isOnline ? dataSource.fetchNextPage : dataSource.reloadWithOfflinePosts)())
-            .continueOnSuccessWith(.immediate) { _ in }
+        let task = reachability.isOnline && dataSource.sort.filter.contains(.online)
+            ? dataSource.fetchNextPage()
+            : dataSource.reloadWithOfflinePosts()
+        return fetch(task).continueOnSuccessWith(.immediate) { _ in }
     }
     
     // MARK: - UI Updating
@@ -213,6 +218,8 @@ class PostsViewController: UIViewController, Loadable {
                 setEditing(false, animated: true)
             }
             dataSource.sort.filter.remove(.online)
+        } else {
+            dataSource.sort.filter.insert(.online)
         }
         fetchNextPageOrReloadIfOffline()
     }

@@ -15,10 +15,14 @@ class PostsDataSource: NSObject {
     weak var tableView: UITableView?
     
     var subreddits: [Subreddit] = [] {
-        didSet { allRows.removeAll() }
+        didSet {
+            allRows.removeAll()
+            rows.removeAll()
+            tableView?.reloadData()
+        }
     }
     
-    var commentsSort = Defaults.commentsSort
+    var downloadingCommentsSort = Defaults.commentsSort
     
     // MARK: - Init
     
@@ -33,7 +37,7 @@ class PostsDataSource: NSObject {
     // MARK: - Rows
     
     /// Master list of all posts available to display, before filtering.
-    var allRows: [PostCellModel] = []
+    var allRows: Set<PostCellModel> = []
     
     /// List of posts which drives the table view. Is a subset of `rows` when `sort.shouldFilter == true`, otherwise equals `allRows`.
     private(set) var rows: [PostCellModel] = []
@@ -53,7 +57,7 @@ class PostsDataSource: NSObject {
     }
     
     private func animateRowsUpdate() {
-        tableView?.reload(get: { self.rows }, update: updateRows)
+        tableView?.reload(get: { rows }, update: updateRows)
     }
     
     private func updateRows() {
@@ -145,7 +149,7 @@ class PostsDataSource: NSObject {
         return postsProvider.getPosts(for: subreddits, after: rows.last?.post, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 if !posts.isEmpty {
-                    self.allRows += posts.map(PostCellModel.init)
+                    self.allRows.formUnion(posts.map(PostCellModel.init))
                     self.animateRowsUpdate()
                 }
                 return posts
@@ -155,7 +159,7 @@ class PostsDataSource: NSObject {
     func reloadWithOfflinePosts() -> Task<[Post]> {
         return postsProvider.getAllOfflinePosts(for: subreddits, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
-                self.allRows = posts.map(PostCellModel.init)
+                self.allRows = Set(posts.map(PostCellModel.init))
                 self.animateRowsUpdate()
                 self.tableView?.reloadData()
                 return posts
@@ -168,7 +172,7 @@ class PostsDataSource: NSObject {
     
     @discardableResult
     func startDownload(for indexPaths: [IndexPath]) -> Task<[Post]> {
-        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: postsProvider.remote, commentsSort: commentsSort)
+        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: postsProvider.remote, commentsSort: downloadingCommentsSort)
         downloader.completionForPost = { post in
             self.setState(.checked, for: post)
         }
