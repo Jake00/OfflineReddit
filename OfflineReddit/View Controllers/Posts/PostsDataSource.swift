@@ -230,7 +230,7 @@ class PostsDataSource: NSObject {
         self.downloader = downloader
         setAllStates(to: .indented)
         setState(.loading, at: indexPaths)
-        return downloader.start()
+        return fetch(downloader.start()
             .continueWithTask(.mainThread) { task -> Task<[Post]> in
                 self.downloader = nil
                 if let posts = task.result {
@@ -239,7 +239,7 @@ class PostsDataSource: NSObject {
                 self.setAllStates(to: .normal)
                 self.postsProvider.local.trySave()
                 return task
-        }
+        })
     }
     
     // MARK: - Reachability

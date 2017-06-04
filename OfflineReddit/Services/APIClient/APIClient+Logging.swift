@@ -10,7 +10,7 @@ import Foundation
 
 extension APIClient {
     
-    static var loggingLevel: LoggingLevel = isDebugBuild ? .off : .off
+    static var loggingLevel: LoggingLevel = isDebugBuild ? .simple : .off
     
     enum LoggingLevel {
         case off, simple, verbose

@@ -20,9 +20,15 @@ class PostsViewController: UIViewController, Loadable {
     @IBOutlet var footerView: UIView!
     @IBOutlet var subredditsButton: UIBarButtonItem!
     @IBOutlet var chooseDownloadsButton: UIBarButtonItem!
-    @IBOutlet var startDownloadsButton: UIBarButtonItem!
-    @IBOutlet var cancelDownloadsButton: UIBarButtonItem!
     @IBOutlet var filterButton: UIBarButtonItem!
+    @IBOutlet weak var downloadPostsHeader: UIView!
+    @IBOutlet weak var downloadPostsBackgroundView: UIToolbar!
+    @IBOutlet weak var downloadPostsSlider: UISlider!
+    @IBOutlet weak var downloadPostsTitleLabel: UILabel!
+    @IBOutlet weak var downloadPostsCancelButton: UIButton!
+    @IBOutlet weak var downloadPostsSaveButton: UIButton!
+    @IBOutlet weak var downloadPostsHeaderShowing: NSLayoutConstraint!
+    @IBOutlet weak var downloadPostsHeaderHiding: NSLayoutConstraint!
     
     var isLoading = false {
         didSet {
@@ -74,10 +80,12 @@ class PostsViewController: UIViewController, Loadable {
             UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
             filterButton
         ]
+        navigationItem.leftBarButtonItem = chooseDownloadsButton
+        navigationItem.rightBarButtonItem = subredditsButton
+        automaticallyAdjustsScrollViewInsets = false
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
         
-        updateNavigationItemButtons()
         dataSource.fetchInitial().continueWith(.mainThread) { _ in
             self.updateFooterView()
         }
@@ -91,13 +99,23 @@ class PostsViewController: UIViewController, Loadable {
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.contentInset = UIEdgeInsets(
+            top: isEditing ? downloadPostsHeader.frame.height : topLayoutGuide.length,
+            left: 0,
+            bottom: bottomLayoutGuide.length,
+            right: 0)
+        tableView.scrollIndicatorInsets = tableView.contentInset
+    }
+    
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         tableView.setEditing(editing, animated: true)
         tableView.beginUpdates()
         tableView.endUpdates()
         updateStartDownloadsButtonEnabled()
-        updateNavigationItemButtons(animated: animated)
+        setDownloadPostsHeaderVisible(editing, animated: animated)
     }
     
     // MARK: - Navigation
@@ -142,13 +160,8 @@ class PostsViewController: UIViewController, Loadable {
         activityIndicator.setAnimating(hideHints && isLoading && reachability.isOnline)
     }
     
-    func updateNavigationItemButtons(animated: Bool = false) {
-        navigationItem.setRightBarButtonItems(isEditing ? [cancelDownloadsButton, startDownloadsButton] : [subredditsButton], animated: animated)
-        navigationItem.setLeftBarButtonItems(isEditing ? nil : [chooseDownloadsButton], animated: animated)
-    }
-    
     func updateStartDownloadsButtonEnabled() {
-        startDownloadsButton.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
+        downloadPostsSaveButton.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
     }
     
     func updateChooseDownloadsButtonEnabled() {
@@ -159,6 +172,38 @@ class PostsViewController: UIViewController, Loadable {
         guard let selectedIndexPath = tableView.indexPathForSelectedRow else { return }
         dataSource.processPostChanges(at: selectedIndexPath)
         tableView.deselectRow(at: selectedIndexPath, animated: true)
+    }
+    
+    func updateSelectedRowsToDownload(updateSlider: Bool) {
+        let numberOfSelectedPosts = tableView.indexPathsForSelectedRows?.count ?? 0
+        if updateSlider {
+            downloadPostsSlider.value = Float(numberOfSelectedPosts)
+        }
+        downloadPostsTitleLabel.text = String.localizedStringWithFormat(SharedText.savePostsFormat, numberOfSelectedPosts)
+        updateStartDownloadsButtonEnabled()
+    }
+    
+    func setDownloadPostsHeaderVisible(_ visible: Bool, animated: Bool) {
+        // Stop unsatisfiable constraints by ensuring both aren't active at once
+        downloadPostsHeaderHiding.isActive = false
+        downloadPostsHeaderShowing.isActive = false
+        (visible ? downloadPostsHeaderShowing : downloadPostsHeaderHiding)?.isActive = true
+        
+        if visible {
+            updateSelectedRowsToDownload(updateSlider: true)
+        }
+        
+        let offsetAdjustment = visible ? max(0, downloadPostsHeader.frame.height - topLayoutGuide.length) : 0
+        navigationController?.setNavigationBarHidden(visible, animated: animated)
+        
+        guard animated else { return }
+        
+        UIView.animate(withDuration: TimeInterval(UINavigationControllerHideShowBarDuration)) {
+            self.view.layoutIfNeeded()
+            if offsetAdjustment > 0 {
+                self.tableView.contentOffset.y -= offsetAdjustment
+            }
+        }
     }
     
     // MARK: - Posts downloading
@@ -202,7 +247,7 @@ class PostsViewController: UIViewController, Loadable {
         setEditing(true, animated: true)
     }
     
-    @IBAction func startDownloadsButtonPressed(_ sender: UIBarButtonItem) {
+    @IBAction func startDownloadsButtonPressed(_ sender: UIButton) {
         if isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {
             startPostsDownload(for: indexPaths)
         } else {
@@ -210,7 +255,7 @@ class PostsViewController: UIViewController, Loadable {
         }
     }
 
-    @IBAction func cancelDownloadsButtonPressed(_ sender: UIBarButtonItem) {
+    @IBAction func cancelDownloadsButtonPressed(_ sender: UIButton) {
         setEditing(false, animated: true)
     }
     
@@ -227,6 +272,24 @@ class PostsViewController: UIViewController, Loadable {
     @IBAction func filterButtonPressed(_ sender: UIBarButtonItem) {
         showFilterPostsViewController()
     }
+    
+    @IBAction func downloadPostsSliderValueChanged(_ sender: UISlider) {
+        var selectedIndexPaths = tableView.indexPathsForSelectedRows?.sorted() ?? []
+        let desiredNumberOfSelectedPosts = Int(sender.value.rounded())
+        let numberOfSelectionsToChange = desiredNumberOfSelectedPosts - selectedIndexPaths.count
+        if numberOfSelectionsToChange > 0 { // Selection
+            for _ in 0..<numberOfSelectionsToChange {
+                let selecting = (0..<dataSource.rows.count).first { row in !selectedIndexPaths.contains { $0.row == row }}
+                guard let row = selecting else { break }
+                tableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .none)
+            }
+        } else if numberOfSelectionsToChange < 0 { // Deselection
+            for _ in numberOfSelectionsToChange..<0 where !selectedIndexPaths.isEmpty {
+                tableView.deselectRow(at: selectedIndexPaths.removeLast(), animated: true)
+            }
+        }
+        updateSelectedRowsToDownload(updateSlider: false)
+    }
 }
 
 // MARK: - Table view delegate
@@ -239,7 +302,7 @@ extension PostsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isEditing {
-            updateStartDownloadsButtonEnabled()
+            updateSelectedRowsToDownload(updateSlider: true)
         } else {
             showCommentsViewController(post: dataSource.post(at: indexPath))
         }
@@ -247,7 +310,7 @@ extension PostsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if isEditing {
-            updateStartDownloadsButtonEnabled()
+            updateSelectedRowsToDownload(updateSlider: true)
         }
     }
 }

@@ -67,6 +67,7 @@ struct SharedText {
     static let readStatus = NSLocalizedString("read_status", value: "Read status", comment: "Read status")
     static let offlineStatus = NSLocalizedString("offline_status", value: "Offline status", comment: "Offline status")
     static let onlineFilterDisabledReason = NSLocalizedString("online_filter_disabled_reason", value: "Only saved posts are available until you are back online.", comment: "Offline status")
+    static let savePostsFormat = NSLocalizedString("save_x_posts_format", comment: "Format for number of posts selected to download")
 }
 
 extension UIColor {
