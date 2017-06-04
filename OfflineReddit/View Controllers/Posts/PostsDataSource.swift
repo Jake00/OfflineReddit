@@ -240,7 +240,7 @@ class PostsDataSource: NSObject {
             }
             return fetchNextPage(addingModelsWithState: .indented)
                 .continueOnSuccessWithTask { page in
-                    let newPosts = self.rows.filter { $0.state == .indented }
+                    let newPosts = self.rows.filter { row in page.contains { row.post == $0 }}
                         .prefix(additional).map { $0.post }
                     downloader.posts += newPosts
                     additional -= newPosts.count

@@ -120,13 +120,13 @@ class PostsViewController: UIViewController, Loadable {
         tableView.setEditing(editing, animated: true)
         tableView.beginUpdates()
         tableView.endUpdates()
+        futurePostsToDownload = 0
         updateStartDownloadsButtonEnabled()
         navigationController?.setToolbarHidden(editing, animated: animated)
         setDownloadPostsHeaderVisible(editing, animated: animated)
         if !editing {
             updateSelectedRowsToDownload(updateSlider: true)
         }
-        futurePostsToDownload = 0
     }
     
     // MARK: - Navigation
@@ -172,7 +172,7 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     func updateStartDownloadsButtonEnabled() {
-        downloadPostsSaveButton.isEnabled = tableView.indexPathsForSelectedRows?.isEmpty == false
+        downloadPostsSaveButton.isEnabled = futurePostsToDownload > 0 || tableView.indexPathsForSelectedRows?.isEmpty == false
     }
     
     func updateChooseDownloadsButtonEnabled() {
@@ -186,7 +186,7 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     func updateSelectedRowsToDownload(updateSlider: Bool) {
-        let numberOfSelectedPosts = tableView.indexPathsForSelectedRows.map { $0.count + futurePostsToDownload } ?? 0
+        let numberOfSelectedPosts = (tableView.indexPathsForSelectedRows?.count ?? 0) + futurePostsToDownload
         if updateSlider {
             downloadPostsSlider.value = Float(numberOfSelectedPosts)
         }
@@ -261,10 +261,11 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     @IBAction func startDownloadsButtonPressed(_ sender: UIButton) {
-        if isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {
+        let indexPaths = tableView.indexPathsForSelectedRows ?? []
+        if isEditing, indexPaths.count + futurePostsToDownload > 0 {
             startPostsDownload(for: indexPaths, additional: futurePostsToDownload)
         } else {
-            setEditing(!isEditing, animated: true); return
+            setEditing(!isEditing, animated: true)
         }
     }
 
@@ -292,7 +293,9 @@ class PostsViewController: UIViewController, Loadable {
         let numberOfSelectionsToChange = desiredNumberOfSelectedPosts - selectedIndexPaths.count - futurePostsToDownload
         if numberOfSelectionsToChange > 0 { // Selection
             for _ in 0..<numberOfSelectionsToChange {
-                let selecting = (0..<dataSource.rows.count).first { row in !selectedIndexPaths.contains { $0.row == row }}
+                let selecting = (0..<dataSource.rows.count).first { row in
+                    !dataSource.rows[row].post.isAvailableOffline && !selectedIndexPaths.contains { $0.row == row }
+                }
                 if let row = selecting {
                     tableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .none)
                 } else {
@@ -300,10 +303,10 @@ class PostsViewController: UIViewController, Loadable {
                 }
             }
         } else if numberOfSelectionsToChange < 0 { // Deselection
-            for _ in numberOfSelectionsToChange..<0 where !selectedIndexPaths.isEmpty {
+            for _ in numberOfSelectionsToChange..<0 {
                 if futurePostsToDownload > 0 {
                     futurePostsToDownload -= 1
-                } else {
+                } else if !selectedIndexPaths.isEmpty {
                     tableView.deselectRow(at: selectedIndexPaths.removeLast(), animated: true)
                 }
             }
