@@ -116,8 +116,8 @@ class PostsViewController: UIViewController, Loadable {
         tableView.beginUpdates()
         tableView.endUpdates()
         updateStartDownloadsButtonEnabled()
-        setDownloadPostsHeaderVisible(editing, animated: animated)
         navigationController?.setToolbarHidden(editing, animated: animated)
+        setDownloadPostsHeaderVisible(editing, animated: animated)
         if !editing {
             updateSelectedRowsToDownload(updateSlider: true)
         }
@@ -287,8 +287,9 @@ class PostsViewController: UIViewController, Loadable {
         if numberOfSelectionsToChange > 0 { // Selection
             for _ in 0..<numberOfSelectionsToChange {
                 let selecting = (0..<dataSource.rows.count).first { row in !selectedIndexPaths.contains { $0.row == row }}
-                guard let row = selecting else { break }
-                tableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .none)
+                if let row = selecting {
+                    tableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .none)
+                }
             }
         } else if numberOfSelectionsToChange < 0 { // Deselection
             for _ in numberOfSelectionsToChange..<0 where !selectedIndexPaths.isEmpty {
