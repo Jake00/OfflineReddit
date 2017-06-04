@@ -86,6 +86,7 @@ class PostsViewController: UIViewController, Loadable {
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
         
+        updateSelectedRowsToDownload(updateSlider: true)
         dataSource.fetchInitial().continueWith(.mainThread) { _ in
             self.updateFooterView()
         }
@@ -116,6 +117,10 @@ class PostsViewController: UIViewController, Loadable {
         tableView.endUpdates()
         updateStartDownloadsButtonEnabled()
         setDownloadPostsHeaderVisible(editing, animated: animated)
+        navigationController?.setToolbarHidden(editing, animated: animated)
+        if !editing {
+            updateSelectedRowsToDownload(updateSlider: true)
+        }
     }
     
     // MARK: - Navigation
@@ -189,22 +194,23 @@ class PostsViewController: UIViewController, Loadable {
         downloadPostsHeaderShowing.isActive = false
         (visible ? downloadPostsHeaderShowing : downloadPostsHeaderHiding)?.isActive = true
         
-        if visible {
-            updateSelectedRowsToDownload(updateSlider: true)
-            downloadPostsSlider.layoutIfNeeded()
+        guard animated else {
+            navigationController?.setNavigationBarHidden(visible, animated: animated)
+            return
         }
         
         let offsetAdjustment = visible ? max(0, downloadPostsHeader.frame.height - topLayoutGuide.length) : 0
-        navigationController?.setNavigationBarHidden(visible, animated: animated)
         
-        guard animated else { return }
-        
-        UIView.animate(withDuration: TimeInterval(UINavigationControllerHideShowBarDuration)) {
+        downloadPostsBackgroundView.isHidden = true
+        (navigationController as? NavigationController)?.setNavigationBarHidden(visible, transitioningWith: downloadPostsHeader, additionalAnimations: {
+            self.view.setNeedsLayout()
             self.view.layoutIfNeeded()
             if offsetAdjustment > 0 {
                 self.tableView.contentOffset.y -= offsetAdjustment
             }
-        }
+        }, completion: {
+            self.downloadPostsBackgroundView.isHidden = false
+        })
     }
     
     // MARK: - Posts downloading
