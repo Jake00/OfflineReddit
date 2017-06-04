@@ -11,34 +11,42 @@ import CoreData
 import BoltsSwift
 @testable import OfflineReddit
 
-class TestingPostsViewController: PostsViewController {
+private class TestingPostsViewController: PostsViewController {
     
     var didCallReachabilityChanged = false
-    var didCallFetchNextPageOrReloadIfOffline = false
-    var allowFetchingPosts = true
-    
-    override func fetchInitial() -> Task<Void> {
-        return Task<Void>()
-    }
     
     override func reachabilityChanged(_ notification: Notification) {
         didCallReachabilityChanged = true
         super.reachabilityChanged(notification)
     }
+}
+
+private class TestingPostsDataSource: PostsDataSource {
     
-    override func fetchNextPageOrReloadIfOffline() -> Task<Void> {
+    var allowFetchingPosts = true
+    var didCallFetchNextPageOrReloadIfOffline = false
+    
+    override func fetchNextPageOrReloadIfOffline() -> Task<[Post]> {
         didCallFetchNextPageOrReloadIfOffline = true
-        return allowFetchingPosts ? super.fetchNextPageOrReloadIfOffline() : Task<Void>(())
+        return allowFetchingPosts
+            ? super.fetchNextPageOrReloadIfOffline()
+            : Task<[Post]>([])
+    }
+    
+    override func fetchInitial() -> Task<Void> {
+        return Task(()) // Stubbed out, we manually fill the data source for greater testing control
     }
 }
 
 class PostsViewControllerTests: BaseTestCase {
     
-    var postsViewController: TestingPostsViewController!
+    fileprivate var postsViewController: TestingPostsViewController!
+    fileprivate var dataSource: TestingPostsDataSource!
     
     override func setUp() {
         super.setUp()
-        postsViewController = TestingPostsViewController(provider: provider)
+        dataSource = TestingPostsDataSource(provider: provider)
+        postsViewController = TestingPostsViewController(dataSource: dataSource)
         _ = postsViewController.view // load view
     }
     
@@ -50,7 +58,8 @@ class PostsViewControllerTests: BaseTestCase {
     func fillDataSource() {
         let fetch = NSFetchRequest<Post>(entityName: String(describing: Post.self))
         let posts: [Post]? = try? controller.context.fetch(fetch)
-        postsViewController.dataSource.rows = posts?.map(PostCellModel.init) ?? []
+        postsViewController.dataSource.allRows = Set(posts?.map(PostCellModel.init) ?? [])
+        postsViewController.dataSource.updateRows()
         postsViewController.tableView.reloadData()
     }
     
@@ -130,18 +139,17 @@ class PostsViewControllerTests: BaseTestCase {
     }
     
     func testThatItReactsToReachabilityChanges() {
-        postsViewController.allowFetchingPosts = false
-        postsViewController.didCallFetchNextPageOrReloadIfOffline = false
+        dataSource.allowFetchingPosts = false
+        dataSource.didCallFetchNextPageOrReloadIfOffline = false
         
         fillDataSource()
         reachability.isOnline = true
         NotificationCenter.default.post(name: .ReachabilityChanged, object: nil)
         
         XCTAssertTrue(postsViewController.loadMoreButton.isEnabled, "Can load more when online")
-        XCTAssertTrue(postsViewController.dataSource.rows.isEmpty, "Rows were emptied when going online")
-        XCTAssertTrue(postsViewController.didCallFetchNextPageOrReloadIfOffline, "New posts are automatically fetched when going online")
+        XCTAssertTrue(dataSource.didCallFetchNextPageOrReloadIfOffline, "New posts are automatically fetched when going online")
         
-        postsViewController.didCallFetchNextPageOrReloadIfOffline = false
+        dataSource.didCallFetchNextPageOrReloadIfOffline = false
         postsViewController.setEditing(true, animated: false)
         fillDataSource()
         reachability.isOnline = false
@@ -150,7 +158,7 @@ class PostsViewControllerTests: BaseTestCase {
         XCTAssertFalse(postsViewController.isEditing, "Editing disabled when going offline")
         XCTAssertFalse(postsViewController.loadMoreButton.isEnabled, "Cannot load more when offline")
         XCTAssertTrue(postsViewController.dataSource.rows.isEmpty, "Rows were emptied when going offline")
-        XCTAssertTrue(postsViewController.didCallFetchNextPageOrReloadIfOffline, "Offline posts are automatically fetched when going online")
+        XCTAssertTrue(dataSource.didCallFetchNextPageOrReloadIfOffline, "Offline posts are automatically fetched when going online")
     }
     
     func testThatItDownloadsPosts() {

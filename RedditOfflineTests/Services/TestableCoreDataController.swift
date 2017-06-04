@@ -117,7 +117,7 @@ class TestableCoreDataController {
         
         guard `import`.contains(.moreComments) else { return }
         
-        let moresBatched = batch(comments: post.displayComments(sortedBy: .best), maximum: moreCommentsBatchSize)
+        let moresBatched = batch(comments: post.displayComments(sortedBy: .top), maximum: moreCommentsBatchSize)
         for moreComments in moresBatched {
             if let moresFilename = OfflineRemoteProvider.moreCommentsFilename(post: post, mores: moreComments),
                 let moresJSON = TestableCoreDataController.fileJSON[moresFilename] {

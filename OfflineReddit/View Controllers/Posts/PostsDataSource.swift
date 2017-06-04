@@ -83,7 +83,7 @@ class PostsDataSource: NSObject {
         tableView?.reload(get: { rows }, update: updateRows)
     }
     
-    private func updateRows() {
+    func updateRows() {
         rows = allRows.sortFiltered(using: sort)
     }
     
@@ -250,6 +250,7 @@ class PostsDataSource: NSObject {
         } else {
             sort.filter.insert(.online)
         }
+        animateRowsUpdate()
         fetchNextPageOrReloadIfOffline()
     }
 }

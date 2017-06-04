@@ -39,10 +39,14 @@ class PostsViewController: UIViewController, Loadable {
     
     // MARK: - Init
     
-    init(provider: DataProvider) {
-        self.dataSource = PostsDataSource(provider: provider)
-        self.reachability = provider.reachability
+    init(dataSource: PostsDataSource) {
+        self.dataSource = dataSource
+        self.reachability = dataSource.reachability
         super.init(nibName: String(describing: PostsViewController.self), bundle: nil)
+    }
+    
+    convenience init(provider: DataProvider) {
+        self.init(dataSource: PostsDataSource(provider: provider))
     }
     
     @available(*, unavailable, message: "init(coder:) is not available. Use init(provider:) instead.")
@@ -165,11 +169,10 @@ class PostsViewController: UIViewController, Loadable {
     
     @discardableResult
     func startPostsDownload(for indexPaths: [IndexPath]) -> Task<Void> {
-        let task = fetch(dataSource.startDownload(for: indexPaths))
+        let task = dataSource.startDownload(for: indexPaths)
             .continueWith(.mainThread) { _ in
                 self.navigationBarProgressView?.observedProgress = nil
                 self.navigationBarProgressView?.isHidden = true
-                self.updateChooseDownloadsButtonEnabled()
                 UIView.animate(withDuration: 0.4) {
                     self.tableView.layoutIfNeeded()
                     self.tableView.beginUpdates()
@@ -177,11 +180,10 @@ class PostsViewController: UIViewController, Loadable {
                 }
         }
         setEditing(false, animated: true)
-        updateChooseDownloadsButtonEnabled()
         navigationBarProgressView?.isHidden = false
         navigationBarProgressView?.setProgress(0, animated: false)
         navigationBarProgressView?.observedProgress = dataSource.downloader?.progress
-        return task
+        return fetch(task)
     }
     
     // MARK: - Reachablity
