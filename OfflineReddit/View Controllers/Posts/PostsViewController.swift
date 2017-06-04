@@ -24,6 +24,16 @@ class PostsViewController: UIViewController, Loadable {
     @IBOutlet var cancelDownloadsButton: UIBarButtonItem!
     @IBOutlet var filterButton: UIBarButtonItem!
     
+    var isLoading = false {
+        didSet {
+            updateChooseDownloadsButtonEnabled()
+            guard reachability.isOnline else { return }
+            loadMoreButton.isEnabled = !isLoading
+            loadMoreButton.titleEdgeInsets.left = isLoading ? -activityIndicatorCenterX.constant : 0
+            activityIndicator.setAnimating(isLoading)
+        }
+    }
+    
     let dataSource: PostsDataSource
     let reachability: Reachability
     
@@ -50,6 +60,7 @@ class PostsViewController: UIViewController, Loadable {
         super.viewDidLoad()
         
         dataSource.tableView = tableView
+        dataSource.delegate = self
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
         tableView.dataSource = dataSource
@@ -63,7 +74,9 @@ class PostsViewController: UIViewController, Loadable {
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
         
         updateNavigationItemButtons()
-        fetchInitial()
+        dataSource.fetchInitial().continueWith(.mainThread) { _ in
+            self.updateFooterView()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -97,7 +110,7 @@ class PostsViewController: UIViewController, Loadable {
         subredditsViewController.didSelectSubreddits = { [weak self] in
             self?.dataSource.subreddits = $0
             self?.updateFooterView()
-            self?.fetchNextPageOrReloadIfOffline()
+            self?.dataSource.fetchNextPageOrReloadIfOffline()
         }
         navigationController?.pushViewController(subredditsViewController, animated: true)
         navigationController?.setToolbarHidden(true, animated: true)
@@ -106,48 +119,11 @@ class PostsViewController: UIViewController, Loadable {
     func showFilterPostsViewController() {
         let filterPostsViewController = FilterPostsViewController(reachability: reachability)
         filterPostsViewController.dataSource.selected = dataSource.sort
-        filterPostsViewController.didUpdate = { [unowned self] sort in
-            let change = Post.SortFilterChange(old: self.dataSource.sort, new: sort)
-            self.dataSource.sort = sort
-            if change.didChangeOfflineFilter {
-                self.fetchNextPageOrReloadIfOffline()
-            }
+        filterPostsViewController.didUpdate = { [weak self] sort in
+            self?.dataSource.sort = sort
         }
         navigationController?.pushViewController(filterPostsViewController, animated: true)
         navigationController?.setToolbarHidden(true, animated: true)
-    }
-    
-    // MARK: - Fetching
-    
-    var isLoading = false {
-        didSet {
-            updateChooseDownloadsButtonEnabled()
-            guard reachability.isOnline else { return }
-            loadMoreButton.isEnabled = !isLoading
-            loadMoreButton.titleEdgeInsets.left = isLoading ? -activityIndicatorCenterX.constant : 0
-            activityIndicator.setAnimating(isLoading)
-        }
-    }
-    
-    @discardableResult
-    func fetchInitial() -> Task<Void> {
-        return fetch(dataSource.subredditsProvider.getAllSelectedSubreddits())
-            .continueOnSuccessWithTask { subreddits -> Task<Void> in
-                self.dataSource.subreddits = subreddits
-                self.updateFooterView()
-                if self.reachability.isOffline {
-                    self.dataSource.sort.filter.remove(.online)
-                }
-                return self.fetchNextPageOrReloadIfOffline()
-        }
-    }
-    
-    @discardableResult
-    func fetchNextPageOrReloadIfOffline() -> Task<Void> {
-        let task = reachability.isOnline && dataSource.sort.filter.contains(.online)
-            ? dataSource.fetchNextPage()
-            : dataSource.reloadWithOfflinePosts()
-        return fetch(task).continueOnSuccessWith(.immediate) { _ in }
     }
     
     // MARK: - UI Updating
@@ -159,7 +135,7 @@ class PostsViewController: UIViewController, Loadable {
         loadMoreButton.isHidden = !hideHints
         loadMoreButton.isEnabled = reachability.isOnline
         loadMoreButton.setTitle(reachability.isOnline ? SharedText.loadingLowercase : SharedText.offline, for: .disabled)
-        activityIndicator.setAnimating(hideHints && isLoading)
+        activityIndicator.setAnimating(hideHints && isLoading && reachability.isOnline)
     }
     
     func updateNavigationItemButtons(animated: Bool = false) {
@@ -213,15 +189,9 @@ class PostsViewController: UIViewController, Loadable {
     func reachabilityChanged(_ notification: Notification) {
         updateFooterView()
         updateChooseDownloadsButtonEnabled()
-        if reachability.isOffline {
-            if isEditing {
-                setEditing(false, animated: true)
-            }
-            dataSource.sort.filter.remove(.online)
-        } else {
-            dataSource.sort.filter.insert(.online)
+        if reachability.isOffline, isEditing {
+            setEditing(false, animated: true)
         }
-        fetchNextPageOrReloadIfOffline()
     }
     
     // MARK: - UI Actions
@@ -244,7 +214,7 @@ class PostsViewController: UIViewController, Loadable {
     
     @IBAction func loadMoreButtonPressed(_ sender: UIButton) {
         if !isLoading && !isSavingOffline {
-            fetchNextPageOrReloadIfOffline()
+            dataSource.fetchNextPageOrReloadIfOffline()
         }
     }
     
@@ -277,5 +247,14 @@ extension PostsViewController: UITableViewDelegate {
         if isEditing {
             updateStartDownloadsButtonEnabled()
         }
+    }
+}
+
+// MARK: - Data source delegate
+
+extension PostsViewController: PostsDataSourceDelegate {
+    
+    func postsDataSource(_ dataSource: PostsDataSource, isFetchingWith task: Task<Void>) {
+        fetch(task)
     }
 }

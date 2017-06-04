@@ -10,9 +10,14 @@ import UIKit
 import BoltsSwift
 import Dwifft
 
+protocol PostsDataSourceDelegate: class {
+    func postsDataSource(_ dataSource: PostsDataSource, isFetchingWith task: Task<Void>)
+}
+
 class PostsDataSource: NSObject {
     
     weak var tableView: UITableView?
+    weak var delegate: PostsDataSourceDelegate?
     
     var subreddits: [Subreddit] = [] {
         didSet {
@@ -22,16 +27,22 @@ class PostsDataSource: NSObject {
         }
     }
     
-    var downloadingCommentsSort = Defaults.commentsSort
-    
     // MARK: - Init
     
     let postsProvider: PostsProvider
     let subredditsProvider: SubredditsProvider
+    let reachability: Reachability
     
     init(provider: DataProvider) {
         self.postsProvider = PostsProvider(provider: provider)
         self.subredditsProvider = SubredditsProvider(provider: provider)
+        self.reachability = provider.reachability
+        super.init()
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - Rows
@@ -43,7 +54,7 @@ class PostsDataSource: NSObject {
     private(set) var rows: [PostCellModel] = []
     
     var sort = Defaults.postsSortFilter {
-        didSet { animateRowsUpdate() }
+        didSet { updateSort(old: oldValue) }
     }
     
     func post(at indexPath: IndexPath) -> Post {
@@ -54,6 +65,18 @@ class PostsDataSource: NSObject {
         return rows
             .index { $0.post == post }
             .map { IndexPath(row: $0, section: 0) }
+    }
+    
+    private func updateSort(old: Post.SortFilter) {
+        let change = Post.SortFilterChange(old: old, new: sort)
+        
+        if change.didSelectOffline {
+            reloadWithOfflinePosts()
+        } else if change.didSelectOnline, allRows.contains(where: { !$0.post.isAvailableOffline }) {
+            fetchNextPage()
+        } else {
+            animateRowsUpdate()
+        }
     }
     
     private func animateRowsUpdate() {
@@ -144,31 +167,59 @@ class PostsDataSource: NSObject {
     
     // MARK: - Fetching
     
+    func fetch<T>(_ task: Task<T>) -> Task<T> {
+        delegate?.postsDataSource(self, isFetchingWith: task.asVoid())
+        return task
+    }
+    
+    @discardableResult
+    func fetchInitial() -> Task<Void> {
+        return fetch(subredditsProvider.getAllSelectedSubreddits())
+            .continueOnSuccessWithTask { subreddits -> Task<Void> in
+                self.subreddits = subreddits
+                if self.reachability.isOffline {
+                    self.sort.filter.remove(.online)
+                }
+                return self.fetchNextPageOrReloadIfOffline().asVoid()
+        }
+    }
+    
+    @discardableResult
+    func fetchNextPageOrReloadIfOffline() -> Task<[Post]> {
+        let task = reachability.isOnline && sort.filter.contains(.online)
+            ? fetchNextPage()
+            : reloadWithOfflinePosts()
+        return fetch(task)
+    }
+    
+    @discardableResult
     func fetchNextPage() -> Task<[Post]> {
         guard !subreddits.isEmpty else { return Task<[Post]>([]) }
-        return postsProvider.getPosts(for: subreddits, after: rows.last?.post, sortedBy: sort.sort, period: sort.period)
+        return fetch(postsProvider.getPosts(for: subreddits, after: rows.last?.post, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 if !posts.isEmpty {
                     self.allRows.formUnion(posts.map(PostCellModel.init))
                     self.animateRowsUpdate()
                 }
                 return posts
-        }
+        })
     }
     
+    @discardableResult
     func reloadWithOfflinePosts() -> Task<[Post]> {
-        return postsProvider.getAllOfflinePosts(for: subreddits, sortedBy: sort.sort, period: sort.period)
+        return fetch(postsProvider.getAllOfflinePosts(for: subreddits, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 self.allRows = Set(posts.map(PostCellModel.init))
                 self.animateRowsUpdate()
                 self.tableView?.reloadData()
                 return posts
-        }
+        })
     }
     
-    // MARK: Offline saving
+    // MARK: - Offline saving
     
     private(set) var downloader: PostsDownloader?
+    var downloadingCommentsSort = Defaults.commentsSort
     
     @discardableResult
     func startDownload(for indexPaths: [IndexPath]) -> Task<[Post]> {
@@ -191,6 +242,16 @@ class PostsDataSource: NSObject {
         }
     }
     
+    // MARK: - Reachability
+    
+    func reachabilityChanged(_ notification: Notification) {
+        if reachability.isOffline {
+            sort.filter.remove(.online)
+        } else {
+            sort.filter.insert(.online)
+        }
+        fetchNextPageOrReloadIfOffline()
+    }
 }
 
 // MARK: - Table view data source
