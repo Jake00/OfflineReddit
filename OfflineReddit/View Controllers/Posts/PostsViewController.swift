@@ -191,6 +191,7 @@ class PostsViewController: UIViewController, Loadable {
         
         if visible {
             updateSelectedRowsToDownload(updateSlider: true)
+            downloadPostsSlider.layoutIfNeeded()
         }
         
         let offsetAdjustment = visible ? max(0, downloadPostsHeader.frame.height - topLayoutGuide.length) : 0
