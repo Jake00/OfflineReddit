@@ -12,13 +12,13 @@ import CoreData
 
 final class PostsDownloader: NSObject, ProgressReporting {
     
+    var posts: [Post] = []
     let progress: Progress
     let numberOfCommentBatches: Int
     let remote: RemoteDataProviding
-    let posts: [Post]
     let commentsSort: Comment.Sort
     var completionForPost: ((Post) -> Void)?
-    private var remainingPosts: [Post]
+    private var remainingPosts: [Post] = []
     private var comments: [CommentsTask] = []
     
     private class CommentsTask {
@@ -33,13 +33,11 @@ final class PostsDownloader: NSObject, ProgressReporting {
         }
     }
     
-    init(posts: [Post], remote: RemoteDataProviding, commentsSort: Comment.Sort, numberOfCommentBatches: Int = 3) {
-        self.posts = posts
-        self.remainingPosts = posts
+    init(remote: RemoteDataProviding, commentsSort: Comment.Sort, numberOfCommentBatches: Int = 3) {
         self.remote = remote
         self.commentsSort = commentsSort
         self.numberOfCommentBatches = numberOfCommentBatches
-        self.progress = Progress(totalUnitCount: Int64((1 + numberOfCommentBatches) * posts.count))
+        self.progress = Progress()
         super.init()
     }
     
@@ -49,6 +47,8 @@ final class PostsDownloader: NSObject, ProgressReporting {
          1. Download each posts top level comments, marking the 'more comments' ids for step 2. The top level `progress.totalUnitCount` is updated during this step.
          2. For each post downloaded, fetch 'more comments'. Once all comments have been fetched then that post is considered completed.
          */
+        remainingPosts = posts
+        progress.totalUnitCount = Int64((1 + numberOfCommentBatches) * posts.count)
         return downloadNextPost()
             .continueOnSuccessWithTask(.immediate, continuation: downloadNextPostsComments)
             .continueOnSuccessWithTask(.immediate) { Task<Void>.withDelay(1) }

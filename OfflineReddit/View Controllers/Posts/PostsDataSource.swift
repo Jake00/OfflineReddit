@@ -193,12 +193,12 @@ class PostsDataSource: NSObject {
     }
     
     @discardableResult
-    func fetchNextPage() -> Task<[Post]> {
+    func fetchNextPage(addingModelsWithState state: PostCellModel.State = .normal) -> Task<[Post]> {
         guard !subreddits.isEmpty else { return Task<[Post]>([]) }
         return fetch(postsProvider.getPosts(for: subreddits, after: rows.last?.post, sortedBy: sort.sort, period: sort.period)
             .continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 if !posts.isEmpty {
-                    self.allRows.formUnion(posts.map(PostCellModel.init))
+                    self.allRows.formUnion(posts.map { PostCellModel(post: $0, state: state) })
                     self.animateRowsUpdate()
                 }
                 return posts
@@ -222,16 +222,34 @@ class PostsDataSource: NSObject {
     var downloadingCommentsSort = Defaults.commentsSort
     
     @discardableResult
-    func startDownload(for indexPaths: [IndexPath]) -> Task<[Post]> {
-        let downloader = PostsDownloader(posts: indexPaths.map(post(at:)), remote: postsProvider.remote, commentsSort: downloadingCommentsSort)
+    func startDownload(for indexPaths: [IndexPath], additional: Int) -> Task<[Post]> {
+        var additional = additional
+        setAllStates(to: .indented)
+        setState(.loading, at: indexPaths)
+        
+        let downloader = PostsDownloader(remote: postsProvider.remote, commentsSort: downloadingCommentsSort)
         downloader.completionForPost = { post in
             self.setState(.checked, for: post)
         }
+        downloader.posts = indexPaths.map(post(at:))
         self.downloader = downloader
-        setAllStates(to: .indented)
-        setState(.loading, at: indexPaths)
-        return fetch(downloader.start()
-            .continueWithTask(.mainThread) { task -> Task<[Post]> in
+        
+        func fetchNextPageOrStartDownload() -> Task<[Post]> {
+            guard additional > 0 else {
+                return downloader.start()
+            }
+            return fetchNextPage(addingModelsWithState: .indented)
+                .continueOnSuccessWithTask { page in
+                    let newPosts = self.rows.filter { $0.state == .indented }
+                        .prefix(additional).map { $0.post }
+                    downloader.posts += newPosts
+                    additional -= newPosts.count
+                    self.setState(.loading, at: newPosts.flatMap(self.indexPath(for:)))
+                    return fetchNextPageOrStartDownload()
+            }
+        }
+        return fetch(fetchNextPageOrStartDownload()
+            .continueWithTask(.mainThread) { task in
                 self.downloader = nil
                 if let posts = task.result {
                     self.updateIsAvailableOffline(for: posts)

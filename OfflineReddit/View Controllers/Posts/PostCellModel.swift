@@ -18,10 +18,15 @@ final class PostCellModel {
     }
     
     let post: Post
-    var state: State = .normal
+    var state: State
     
-    init(post: Post) {
+    init(post: Post, state: State) {
         self.post = post
+        self.state = state
+    }
+    
+    convenience init(post: Post) {
+        self.init(post: post, state: .normal)
     }
     
     static let indentedWidth: CGFloat = 38

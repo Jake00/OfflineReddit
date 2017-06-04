@@ -27,8 +27,8 @@ class PostsViewController: UIViewController, Loadable {
     @IBOutlet weak var downloadPostsTitleLabel: UILabel!
     @IBOutlet weak var downloadPostsCancelButton: UIButton!
     @IBOutlet weak var downloadPostsSaveButton: UIButton!
-    @IBOutlet weak var downloadPostsHeaderShowing: NSLayoutConstraint!
-    @IBOutlet weak var downloadPostsHeaderHiding: NSLayoutConstraint!
+    @IBOutlet var downloadPostsHeaderShowing: NSLayoutConstraint!
+    @IBOutlet var downloadPostsHeaderHiding: NSLayoutConstraint!
     
     var isLoading = false {
         didSet {
@@ -39,6 +39,11 @@ class PostsViewController: UIViewController, Loadable {
             activityIndicator.setAnimating(isLoading)
         }
     }
+    
+    /// When using the slider to select posts to download, its maximum value intentionally
+    /// includes more rows than is displayed in the table view. This value keeps track of 
+    /// the overflow in order to download the additional posts on the next pages.
+    var futurePostsToDownload = 0
     
     let dataSource: PostsDataSource
     let reachability: Reachability
@@ -121,6 +126,7 @@ class PostsViewController: UIViewController, Loadable {
         if !editing {
             updateSelectedRowsToDownload(updateSlider: true)
         }
+        futurePostsToDownload = 0
     }
     
     // MARK: - Navigation
@@ -180,7 +186,7 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     func updateSelectedRowsToDownload(updateSlider: Bool) {
-        let numberOfSelectedPosts = tableView.indexPathsForSelectedRows?.count ?? 0
+        let numberOfSelectedPosts = tableView.indexPathsForSelectedRows.map { $0.count + futurePostsToDownload } ?? 0
         if updateSlider {
             downloadPostsSlider.value = Float(numberOfSelectedPosts)
         }
@@ -220,8 +226,8 @@ class PostsViewController: UIViewController, Loadable {
     }
     
     @discardableResult
-    func startPostsDownload(for indexPaths: [IndexPath]) -> Task<Void> {
-        let task = dataSource.startDownload(for: indexPaths)
+    func startPostsDownload(for indexPaths: [IndexPath], additional: Int) -> Task<Void> {
+        let task = dataSource.startDownload(for: indexPaths, additional: additional)
             .continueWith(.mainThread) { _ in
                 self.navigationBarProgressView?.observedProgress = nil
                 self.navigationBarProgressView?.isHidden = true
@@ -256,7 +262,7 @@ class PostsViewController: UIViewController, Loadable {
     
     @IBAction func startDownloadsButtonPressed(_ sender: UIButton) {
         if isEditing, let indexPaths = tableView.indexPathsForSelectedRows, !indexPaths.isEmpty {
-            startPostsDownload(for: indexPaths)
+            startPostsDownload(for: indexPaths, additional: futurePostsToDownload)
         } else {
             setEditing(!isEditing, animated: true); return
         }
@@ -283,17 +289,23 @@ class PostsViewController: UIViewController, Loadable {
     @IBAction func downloadPostsSliderValueChanged(_ sender: UISlider) {
         var selectedIndexPaths = tableView.indexPathsForSelectedRows?.sorted() ?? []
         let desiredNumberOfSelectedPosts = Int(sender.value.rounded())
-        let numberOfSelectionsToChange = desiredNumberOfSelectedPosts - selectedIndexPaths.count
+        let numberOfSelectionsToChange = desiredNumberOfSelectedPosts - selectedIndexPaths.count - futurePostsToDownload
         if numberOfSelectionsToChange > 0 { // Selection
             for _ in 0..<numberOfSelectionsToChange {
                 let selecting = (0..<dataSource.rows.count).first { row in !selectedIndexPaths.contains { $0.row == row }}
                 if let row = selecting {
                     tableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .none)
+                } else {
+                    futurePostsToDownload += 1
                 }
             }
         } else if numberOfSelectionsToChange < 0 { // Deselection
             for _ in numberOfSelectionsToChange..<0 where !selectedIndexPaths.isEmpty {
-                tableView.deselectRow(at: selectedIndexPaths.removeLast(), animated: true)
+                if futurePostsToDownload > 0 {
+                    futurePostsToDownload -= 1
+                } else {
+                    tableView.deselectRow(at: selectedIndexPaths.removeLast(), animated: true)
+                }
             }
         }
         updateSelectedRowsToDownload(updateSlider: false)
