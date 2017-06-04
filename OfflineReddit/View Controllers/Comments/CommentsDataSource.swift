@@ -8,13 +8,11 @@
 
 import UIKit
 import BoltsSwift
-import Dwifft
 
 protocol CommentsDataSourceDelegate: class {
-    var viewHorizontalMargins: CGFloat { get }
-    var viewFrameWidth: CGFloat { get }
-    func isFetchingMoreComments(with task: Task<[Comment]>)
-    func didUpdateAllComments(saved: Int64, toExpand: Int64)
+    func viewDimensionsForCommentsDataSource(_ dataSource: CommentsDataSource) -> (horizontalMargins: CGFloat, frameWidth: CGFloat)
+    func commentsDataSource(_ dataSource: CommentsDataSource, isFetchingWith task: Task<Void>)
+    func commentsDataSource(_ dataSource: CommentsDataSource, didUpdateAllCommentsWith saved: Int64, _ toExpand: Int64)
 }
 
 class CommentsDataSource: NSObject {
@@ -82,7 +80,7 @@ class CommentsDataSource: NSObject {
                 case .other(let b): return ($0.0, $0.1 + b.count)
                 }
             }
-            delegate.didUpdateAllComments(saved: saved, toExpand: toExpand)
+            delegate.commentsDataSource(self, didUpdateAllCommentsWith: saved, toExpand)
         }
     }
     
@@ -165,7 +163,7 @@ class CommentsDataSource: NSObject {
         let task = provider.getMoreComments(using: [more], post: post, sortedBy: sort).continueWithTask(.mainThread) {
             self.didFetchMoreComments(more, task: $0)
         }
-        delegate?.isFetchingMoreComments(with: task)
+        delegate?.commentsDataSource(self, isFetchingWith: task.asVoid())
         return task
     }
     
@@ -251,8 +249,8 @@ extension CommentsDataSource: UITableViewDelegate {
         guard indexPath.row < comments.endIndex else { return 40 }
         guard let comment = comments[indexPath.row].first else { /* 'More comments' */ return 36 }
         guard comment.isExpanded else { return CommentsCell.verticalMargins }
-        guard let delegate = delegate else { return 0 }
-        let textWidth = delegate.viewFrameWidth - delegate.viewHorizontalMargins - CommentsCell.indentationWidth * CGFloat(comment.depth)
+        guard let (margin, frameWidth) = delegate?.viewDimensionsForCommentsDataSource(self) else { return 0 }
+        let textWidth = frameWidth - margin - CommentsCell.indentationWidth * CGFloat(comment.depth)
         let numberOfCharacters: Int = Int(comment.body?.characters.count ?? 0)
         let averageCharacterWidth = 1.98026 / CommentsCell.bodyLabelFont.pointSize
         let charactersPerLine = textWidth * averageCharacterWidth

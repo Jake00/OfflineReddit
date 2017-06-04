@@ -148,22 +148,18 @@ class CommentsViewController: UIViewController, Loadable {
 
 extension CommentsViewController: CommentsDataSourceDelegate {
     
-    var viewHorizontalMargins: CGFloat {
-        return headerView.layoutMargins.left * 2
-    }
-    
-    var viewFrameWidth: CGFloat {
-        return view.frame.width
-    }
-    
-    func isFetchingMoreComments(with task: Task<[Comment]>) {
+    func commentsDataSource(_ dataSource: CommentsDataSource, isFetchingWith task: Task<Void>) {
         fetch(task)
     }
     
-    func didUpdateAllComments(saved: Int64, toExpand: Int64) {
+    func commentsDataSource(_ dataSource: CommentsDataSource, didUpdateAllCommentsWith saved: Int64, _ toExpand: Int64) {
         expandCommentsButton.isEnabled = toExpand > 0 && reachability.isOnline
         commentsLabel.text = String.localizedStringWithFormat(
             NSLocalizedString("comments_saved_format", value: "%ld comments\n%ld / %ld saved", comment: "Format for number of comments and amount saved. eg. '50 comments\n30 / 40 saved'"),
             dataSource.post.commentsCount, saved, saved + toExpand)
+    }
+    
+    func viewDimensionsForCommentsDataSource(_ dataSource: CommentsDataSource) -> (horizontalMargins: CGFloat, frameWidth: CGFloat) {
+        return (headerView.layoutMargins.left * 2, view.frame.width)
     }
 }
