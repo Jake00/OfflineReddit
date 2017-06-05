@@ -219,6 +219,30 @@ class PostsViewController: UIViewController, Loadable {
         })
     }
     
+    func select(numberOfRows: Int, selectedIndexPaths: [IndexPath]) {
+        for _ in 0..<numberOfRows {
+            let selecting = (0..<dataSource.rows.count).first { row in
+                !dataSource.rows[row].post.isAvailableOffline
+                    && !selectedIndexPaths.contains { $0.row == row }
+            }
+            if let row = selecting {
+                tableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .none)
+            } else {
+                futurePostsToDownload += 1
+            }
+        }
+    }
+    
+    func deselect(numberOfRows: Int, selectedIndexPaths: inout [IndexPath]) {
+        for _ in 0..<numberOfRows {
+            if futurePostsToDownload > 0 {
+                futurePostsToDownload -= 1
+            } else if !selectedIndexPaths.isEmpty {
+                tableView.deselectRow(at: selectedIndexPaths.removeLast(), animated: true)
+            }
+        }
+    }
+    
     // MARK: - Posts downloading
     
     var isSavingOffline: Bool {
@@ -292,24 +316,11 @@ class PostsViewController: UIViewController, Loadable {
         let desiredNumberOfSelectedPosts = Int(sender.value.rounded())
         let numberOfSelectionsToChange = desiredNumberOfSelectedPosts - selectedIndexPaths.count - futurePostsToDownload
         if numberOfSelectionsToChange > 0 { // Selection
-            for _ in 0..<numberOfSelectionsToChange {
-                let selecting = (0..<dataSource.rows.count).first { row in
-                    !dataSource.rows[row].post.isAvailableOffline && !selectedIndexPaths.contains { $0.row == row }
-                }
-                if let row = selecting {
-                    tableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .none)
-                } else {
-                    futurePostsToDownload += 1
-                }
-            }
+            select(numberOfRows: (0..<numberOfSelectionsToChange).count,
+                   selectedIndexPaths: selectedIndexPaths)
         } else if numberOfSelectionsToChange < 0 { // Deselection
-            for _ in numberOfSelectionsToChange..<0 {
-                if futurePostsToDownload > 0 {
-                    futurePostsToDownload -= 1
-                } else if !selectedIndexPaths.isEmpty {
-                    tableView.deselectRow(at: selectedIndexPaths.removeLast(), animated: true)
-                }
-            }
+            deselect(numberOfRows: (numberOfSelectionsToChange..<0).count,
+                     selectedIndexPaths: &selectedIndexPaths)
         }
         updateSelectedRowsToDownload(updateSlider: false)
     }
