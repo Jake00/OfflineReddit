@@ -83,8 +83,8 @@ extension Post {
         return displayComments
     }
     
-    func allMoreComments(sortedBy sort: Comment.Sort) -> [MoreComments] {
-        var allMoreComments = comments.sorted(by: sort).flatMap { $0.more }
+    var allMoreComments: [MoreComments] {
+        var allMoreComments = comments.flatMap { $0.allMoreComments }
         if let more = more {
             allMoreComments.append(more)
         }

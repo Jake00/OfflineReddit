@@ -67,7 +67,7 @@ final class PostsDownloader: NSObject, ProgressReporting {
     private func nextPostDidDownload(_ post: Post) -> Task<Void> {
         self.progress.completedUnitCount += 1
         post.isAvailableOffline = true
-        let more = batch(comments: post.displayComments(sortedBy: commentsSort), maximum: numberOfCommentBatches)
+        let more = batch(moreComments: post.allMoreComments, sort: commentsSort, maximum: numberOfCommentBatches)
         let commentsProgress: Progress? = more.isEmpty ? nil : Progress(
             totalUnitCount: Int64(more.count),
             parent: self.progress,

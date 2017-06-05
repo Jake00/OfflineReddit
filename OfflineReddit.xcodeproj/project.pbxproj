@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		233756291EC0DDD10051ED2C /* Offline Development in Resources */ = {isa = PBXBuildFile; fileRef = 233756281EC0DDD10051ED2C /* Offline Development */; };
-		233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233756321EC650A40051ED2C /* MoreCommentsBatching.swift */; };
 		234094CE1EDEA3B700359C84 /* TableViewDiffing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094CD1EDEA3B700359C84 /* TableViewDiffing.swift */; };
 		234094D01EE012F000359C84 /* WebsiteCaching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094CF1EE012F000359C84 /* WebsiteCaching.swift */; };
 		234094D21EE2D07700359C84 /* Task+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094D11EE2D07700359C84 /* Task+Void.swift */; };
 		234094D41EE4273600359C84 /* TopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094D31EE4273600359C84 /* TopToolbar.swift */; };
+		234094D61EE545D700359C84 /* MoreCommentsBatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094D51EE545D700359C84 /* MoreCommentsBatching.swift */; };
 		2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */; };
@@ -105,13 +105,13 @@
 
 /* Begin PBXFileReference section */
 		233756281EC0DDD10051ED2C /* Offline Development */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Offline Development"; sourceTree = "<group>"; };
-		233756321EC650A40051ED2C /* MoreCommentsBatching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreCommentsBatching.swift; sourceTree = "<group>"; };
 		233756381EC6794F0051ED2C /* RedditOfflineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RedditOfflineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2337563C1EC6794F0051ED2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		234094CD1EDEA3B700359C84 /* TableViewDiffing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDiffing.swift; sourceTree = "<group>"; };
 		234094CF1EE012F000359C84 /* WebsiteCaching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebsiteCaching.swift; sourceTree = "<group>"; };
 		234094D11EE2D07700359C84 /* Task+Void.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+Void.swift"; sourceTree = "<group>"; };
 		234094D31EE4273600359C84 /* TopToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopToolbar.swift; sourceTree = "<group>"; };
+		234094D51EE545D700359C84 /* MoreCommentsBatching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreCommentsBatching.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Fetching.swift"; sourceTree = "<group>"; };
 		235E07D21E7F47CF00D83D16 /* example.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = example.json; sourceTree = "<group>"; };
@@ -329,6 +329,7 @@
 				2379B0AA1ED5671500925F9A /* CommentSorting.swift */,
 				2379B0AC1ED5CFA100925F9A /* Sorts.swift */,
 				235E07D41E7F492600D83D16 /* MoreComments.swift */,
+				234094D51EE545D700359C84 /* MoreCommentsBatching.swift */,
 				23A396041E7E021500030DEF /* Identifiable.swift */,
 				235E07D61E7F525100D83D16 /* NSManagedObject+Create.swift */,
 				235E07DC1E7F637000D83D16 /* Either.swift */,
@@ -348,7 +349,6 @@
 				23F9F3441EC0592A005A0606 /* DataProvider.swift */,
 				2379B0A01ED1D63100925F9A /* SettableReachability.swift */,
 				23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */,
-				233756321EC650A40051ED2C /* MoreCommentsBatching.swift */,
 				234094CF1EE012F000359C84 /* WebsiteCaching.swift */,
 				234094D11EE2D07700359C84 /* Task+Void.swift */,
 			);
@@ -620,6 +620,7 @@
 				2379B0771ECF787900925F9A /* CommentsDataSource.swift in Sources */,
 				23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */,
 				23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */,
+				234094D61EE545D700359C84 /* MoreCommentsBatching.swift in Sources */,
 				2379B0E81ED9D64B00925F9A /* FilterPostsSegmentedControlCell.swift in Sources */,
 				235E07D71E7F525100D83D16 /* NSManagedObject+Create.swift in Sources */,
 				235E08031E80E4BF00D83D16 /* NavigationController.swift in Sources */,
@@ -632,7 +633,6 @@
 				2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */,
 				2379B0D71ED884C300925F9A /* InfoToolbar.swift in Sources */,
 				2379B0EC1ED9E0C000925F9A /* UISegmentedControl+Items.swift in Sources */,
-				233756331EC650A40051ED2C /* MoreCommentsBatching.swift in Sources */,
 				2379B0AF1ED6D03800925F9A /* PostSorting.swift in Sources */,
 				23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */,
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,

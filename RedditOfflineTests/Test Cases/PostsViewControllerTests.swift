@@ -90,7 +90,7 @@ class PostsViewControllerTests: BaseTestCase {
         
         let finishedPostsDownload = expectation(description: "Finished posts download")
         let indexPath = IndexPath(row: 0, section: 0)
-        postsViewController.startPostsDownload(for: [indexPath]).continueWith { _ in
+        postsViewController.startPostsDownload(for: [indexPath], additional: 0).continueWith { _ in
             // Enabled once downloading completes
             finishedPostsDownload.fulfill()
             XCTAssertTrue(isEnabled(), "Should allow downloading posts when previous download has completed.")
@@ -102,7 +102,7 @@ class PostsViewControllerTests: BaseTestCase {
     }
     
     func testThatItUpdatesStartDownloadsButtonIsEnabled() {
-        let isEnabled = { self.postsViewController.startDownloadsButton.isEnabled }
+        let isEnabled = { self.postsViewController.downloadPostsSaveButton.isEnabled }
         
         fillDataSource()
         
@@ -121,7 +121,7 @@ class PostsViewControllerTests: BaseTestCase {
         XCTAssertTrue(isEnabled(), "Can start downloads once item has been selected")
         
         let finishedPostsDownload = expectation(description: "Finished posts download")
-        postsViewController.startPostsDownload(for: [indexPath]).continueWith { _ in
+        postsViewController.startPostsDownload(for: [indexPath], additional: 0).continueWith { _ in
             // Disabled once downloading completes
             finishedPostsDownload.fulfill()
             XCTAssertFalse(isEnabled(), "Cannot start downloads as table view is no longer editing.")
@@ -176,7 +176,7 @@ class PostsViewControllerTests: BaseTestCase {
         XCTAssertFalse(post.isAvailableOffline, "Post starts not available offline")
         
         let finishedPostsDownload = expectation(description: "Finished posts download")
-        postsViewController.startPostsDownload(for: [indexPath]).continueWith { _ in
+        postsViewController.startPostsDownload(for: [indexPath], additional: 0).continueWith { _ in
             finishedPostsDownload.fulfill()
             // `isSavingOffline` == false
             XCTAssertFalse(postsViewController.isSavingOffline, "Stops downloading on completion")

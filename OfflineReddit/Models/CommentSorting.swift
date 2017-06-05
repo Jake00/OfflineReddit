@@ -73,6 +73,20 @@ private func compare(_ lhs: Comment, _ rhs: Comment, _ comparison: (Comment, Com
     return rhsHierarchy.contains(lhs) || !lhsHierarchy.contains(rhs)
 }
 
+fileprivate extension Comment {
+    
+    var hierarchy: [Comment] {
+        var hierarchy: [Comment] = []
+        buildHierarchy(accumulator: &hierarchy)
+        return hierarchy
+    }
+    
+    private func buildHierarchy(accumulator: inout [Comment]) {
+        accumulator.insert(self, at: 0)
+        parent?.buildHierarchy(accumulator: &accumulator)
+    }
+}
+
 /// We can't get the total upvotes and downvotes (Reddit only exposes a single 'score', with upvotes=score and downvotes=0)
 /// https://github.com/reddit/reddit/blob/dbcf37afe2c5f5dd19f99b8a3484fc69eb27fcd5/r2/r2/lib/jsontemplates.py#L817
 /// So this estimates by putting the score closest to 0 at the top (equal number of upvotes and downvotes).
@@ -86,6 +100,7 @@ private func controversyEstimate(lhs: Comment, rhs: Comment) -> Bool {
 
 extension Collection where Iterator.Element == Comment {
     
+    // Allows the syntax `comments.sorted(by: .top)`
     func sorted(by sorting: Comment.Sort) -> [Comment] {
         return sorted(by: sorting.comparitor)
     }

@@ -15,6 +15,8 @@ class MoreComments: NSManagedObject {
     @NSManaged var depth: Int64
     @NSManaged var count: Int64
     @NSManaged var children: [String]
+    
+    // The parent is either a comment or a post so only one of these will be non-nil.
     @NSManaged var parentComment: Comment?
     @NSManaged var parentPost: Post?
 }

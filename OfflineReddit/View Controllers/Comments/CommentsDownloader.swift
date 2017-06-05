@@ -22,7 +22,7 @@ final class CommentsDownloader: NSObject, ProgressReporting {
         self.post = post
         self.remote = remote
         self.sort = sort
-        let batches = batch(comments: comments, maximum: numberOfCommentBatches)
+        let batches = batch(comments: comments, sort: sort, maximum: numberOfCommentBatches)
         self.comments = batches
         self.remaining = batches
         self.progress = Progress(totalUnitCount: Int64(batches.count))

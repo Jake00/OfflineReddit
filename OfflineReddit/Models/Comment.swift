@@ -22,10 +22,12 @@ class Comment: NSManagedObject {
     @NSManaged var isScoreHidden: Bool
     @NSManaged var isControversial: Bool
     @NSManaged var depth: Int64
-    @NSManaged var parent: Comment?
     @NSManaged var children: Set<Comment>
-    @NSManaged var post: Post?
     @NSManaged var more: MoreComments?
+    
+    // The parent is either a comment or a post so only one of these will be non-nil.
+    @NSManaged var parent: Comment?
+    @NSManaged var post: Post?
     
     var isExpanded = true
 }
@@ -62,7 +64,7 @@ extension Comment {
     
     private func buildDisplayComments(accumulator: inout [Either<Comment, MoreComments>]) {
         accumulator.append(.first(self))
-        for child in children.sorted() {
+        for child in children {
             child.buildDisplayComments(accumulator: &accumulator)
         }
         if let more = more {
@@ -70,28 +72,19 @@ extension Comment {
         }
     }
     
-    var all: Set<Comment> {
-        var all: Set<Comment> = []
-        buildAll(accumulator: &all)
-        return all
+    var allMoreComments: [MoreComments] {
+        var allMoreComments: [MoreComments] = []
+        buildAllMoreComments(accumulator: &allMoreComments)
+        return allMoreComments
     }
     
-    private func buildAll(accumulator: inout Set<Comment>) {
-        accumulator.insert(self)
+    private func buildAllMoreComments(accumulator: inout [MoreComments]) {
         for child in children {
-            child.buildAll(accumulator: &accumulator)
+            child.buildAllMoreComments(accumulator: &accumulator)
         }
-    }
-    
-    var hierarchy: [Comment] {
-        var hierarchy: [Comment] = []
-        buildHierarchy(accumulator: &hierarchy)
-        return hierarchy
-    }
-    
-    private func buildHierarchy(accumulator: inout [Comment]) {
-        accumulator.insert(self, at: 0)
-        parent?.buildHierarchy(accumulator: &accumulator)
+        if let more = more {
+            accumulator.append(more)
+        }
     }
     
     var authorScoreTimeText: String {
@@ -104,14 +97,3 @@ extension Comment {
 }
 
 extension Comment: Identifiable { }
-
-extension Collection where Iterator.Element == Comment {
-    
-    var allNested: Set<Comment> {
-        var comments: Set<Comment> = []
-        for comment in self {
-            comments.formUnion(comment.all)
-        }
-        return comments
-    }
-}
