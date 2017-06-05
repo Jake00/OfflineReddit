@@ -26,6 +26,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreText/CoreText.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSUInteger, MDHTMLLabelVerticalAlignment) {
     MDHTMLLabelVerticalAlignmentCenter   = 0,
     MDHTMLLabelVerticalAlignmentTop      = 1,
@@ -84,7 +86,7 @@ For the most part, `MDHTMLLabel` behaves the same as `UILabel`. The following ar
  @discussion A `MDHTMLLabelDelegate` delegate responds to messages sent by tapping on links in the label. You can use the delegate to respond to links referencing a URL, address, phone number, date, or date with a specified time zone and duration.
  */
 
-@property (nonatomic, weak) IBOutlet NSObject <MDHTMLLabelDelegate> *delegate;
+@property (nonatomic, weak) IBOutlet id <MDHTMLLabelDelegate> delegate;
 
 ///----------------------------------
 /// @name Setting the Text Attributes
@@ -94,7 +96,7 @@ For the most part, `MDHTMLLabel` behaves the same as `UILabel`. The following ar
  The text that HTML tags will be parsed for and rendered by the label.
  */
 
-@property (nonatomic, copy) NSString *htmlText;
+@property (nonatomic, copy, nullable) NSString *htmlText;
 
 ///--------------------------------------------
 /// @name Detecting, Accessing, & Styling Links
@@ -103,17 +105,17 @@ For the most part, `MDHTMLLabel` behaves the same as `UILabel`. The following ar
 /**
  A dictionary containing the `NSAttributedString` attributes to be applied to links detected or manually added to the label text. The default link style is the label's tintColor on iOS 7 and blue below iOS 7.
  */
-@property (nonatomic, strong) NSDictionary *linkAttributes;
+@property (nonatomic, copy) NSDictionary<NSString *, id> *linkAttributes;
 
 /**
  A dictionary containing the `NSAttributedString` attributes to be applied to links when they are in the active state. Supply `nil` or an empty dictionary to opt out of active link styling. The default active link style is red.
  */
-@property (nonatomic, strong) NSDictionary *activeLinkAttributes;
+@property (nonatomic, copy) NSDictionary<NSString *, id> *activeLinkAttributes;
 
 /**
  A dictionary containing the `NSAttributedString` attributes to be applied to links when they are in the inactive state, which is triggered a change in `tintColor` in iOS 7. Supply `nil` or an empty dictionary to opt out of inactive link styling. The default inactive link style is gray.
  */
-@property (nonatomic, strong) NSDictionary *inactiveLinkAttributes;
+@property (nonatomic, copy) NSDictionary<NSString *, id> *inactiveLinkAttributes;
 
 /**
  The length of time the user most hold a link to trigger the 'HTMLLabel:didHoldLinkWithURL' delegate method. The value is 0.5 by default.
@@ -141,23 +143,23 @@ For the most part, `MDHTMLLabel` behaves the same as `UILabel`. The following ar
 /**
  The shadow color for the label when the label's `highlighted` property is `YES`. The default value is `nil` (no shadow color).
  */
-@property (nonatomic, strong) UIColor *highlightedShadowColor;
+@property (nonatomic, strong, nullable) UIColor *highlightedShadowColor;
 
 
 /**
  The font name of the custom font which should be used for bold text. If not set the system bold font will be used.
 */
-@property(nonatomic, copy) NSString *customBoldFontName;
+@property(nonatomic, copy, nullable) NSString *customBoldFontName;
 
 /**
  The font name of the custom font which should be used for italic text. If not set the system italic font will be used.
 */
-@property(nonatomic, copy) NSString *customItalicFontName;
+@property(nonatomic, copy, nullable) NSString *customItalicFontName;
 
 /**
  The font name of the custom font which should be used for bold italic text. If not set the system font with style BoldOblique will be used.
 */
-@property(nonatomic, copy) NSString *customBoldItalicFontName;
+@property(nonatomic, copy, nullable) NSString *customBoldItalicFontName;
 
 
 ///--------------------------------------------
@@ -208,14 +210,14 @@ For the most part, `MDHTMLLabel` behaves the same as `UILabel`. The following ar
 
  @discussion When truncation is enabled for the label, by setting `lineBreakMode` to either `NSLineBreakByTruncatingHead`, `NSLineBreakByTruncatingTail`, or `NSLineBreakByTruncatingMiddle`, the token used to terminate the truncated line will be `truncationTokenString` if defined, otherwise the Unicode Character 'HORIZONTAL ELLIPSIS' (U+2026).
  */
-@property (nonatomic, strong) NSString *truncationTokenString;
+@property (nonatomic, copy, nullable) NSString *truncationTokenString;
 
 /**
  The attributes to apply to the truncation token at the end of a truncated line. If unspecified, attributes will be inherited from the preceding character.
  */
-@property (nonatomic, strong) NSDictionary *truncationTokenStringAttributes;
+@property (nonatomic, copy, nullable) NSDictionary<NSString *, id> *truncationTokenStringAttributes;
 
-@property (nonatomic) BOOL autoDetectUrls;
+@property (nonatomic, assign) BOOL autoDetectUrls;
 
 ///--------------------------------------------
 /// @name Calculating Size of HTML String
@@ -241,3 +243,5 @@ For the most part, `MDHTMLLabel` behaves the same as `UILabel`. The following ar
                    autoDetectUrls:(BOOL)autoDetectUrls;
 
 @end
+
+NS_ASSUME_NONNULL_END
