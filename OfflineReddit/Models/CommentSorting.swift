@@ -11,7 +11,7 @@ import Foundation
 extension Comment: Comparable {
     
     static func < (lhs: Comment, rhs: Comment) -> Bool {
-        return Sort.top.comparitor(lhs, rhs)
+        return Sort.top.comparitor(lhs, rhs, [])
     }
     
     enum Sort {
@@ -43,34 +43,51 @@ extension Comment: Comparable {
             }
         }
         
-        var comparitor: ((Comment, Comment) -> Bool) {
+        var comparitor: ((Comment, Comment, MoreCommentsSide) -> Bool) {
             switch self {
-            case .top:   return { compare($0, $1) { $0.score > $1.score }}
-            case .worst: return { compare($0, $1) { $0.score < $1.score }}
-            case .new:   return { compare($0, $1) { $0.created > $1.created }}
-            case .old:   return { compare($0, $1) { $0.created < $1.created }}
+            case .top:   return { compare($0, $1, $2) { $0.score > $1.score }}
+            case .worst: return { compare($0, $1, $2) { $0.score < $1.score }}
+            case .new:   return { compare($0, $1, $2) { $0.created > $1.created }}
+            case .old:   return { compare($0, $1, $2) { $0.created < $1.created }}
             case .controversial: return controversyEstimate
             }
         }
     }
 }
 
+struct MoreCommentsSide: OptionSet {
+    let rawValue: Int
+    static let left = MoreCommentsSide(rawValue: 1 << 0)
+    static let right = MoreCommentsSide(rawValue: 1 << 1)
+}
+
 /// Compares two comments which may have different parent comments ie. they may not be in the same tree.
 /// This allows sorting an arbitrary list of comments where ordering will be preserved from parents to children.
-private func compare(_ lhs: Comment, _ rhs: Comment, _ comparison: (Comment, Comment) -> Bool) -> Bool {
+private func compare(
+    _ lhs: Comment,
+    _ rhs: Comment,
+    _ moreComments: MoreCommentsSide,
+    _ comparison: (Comment, Comment) -> Bool
+    ) -> Bool {
+    
     if lhs.parent == rhs.parent {
         return comparison(lhs, rhs)
     }
     let lhsHierarchy = lhs.hierarchy
     let rhsHierarchy = rhs.hierarchy
     
-    for (index, lhsComment) in lhsHierarchy.enumerated() where index < rhsHierarchy.endIndex {
-        let rhsComment = rhsHierarchy[index]
-        if lhsComment != rhsComment {
-            return comparison(lhsComment, rhsComment)
-        }
+    for (index, lhsComment) in lhsHierarchy.enumerated()
+        where index < rhsHierarchy.endIndex {
+            let rhsComment = rhsHierarchy[index]
+            if lhsComment != rhsComment {
+                return comparison(lhsComment, rhsComment)
+            }
     }
-    return rhsHierarchy.contains(lhs) || !lhsHierarchy.contains(rhs)
+    return moreComments.isEmpty
+        ? rhsHierarchy.contains(lhs) || !lhsHierarchy.contains(rhs)
+        : moreComments == [.left, .right]
+        ? lhs.depth > rhs.depth
+        : moreComments == .right
 }
 
 fileprivate extension Comment {
@@ -90,10 +107,10 @@ fileprivate extension Comment {
 /// We can't get the total upvotes and downvotes (Reddit only exposes a single 'score', with upvotes=score and downvotes=0)
 /// https://github.com/reddit/reddit/blob/dbcf37afe2c5f5dd19f99b8a3484fc69eb27fcd5/r2/r2/lib/jsontemplates.py#L817
 /// So this estimates by putting the score closest to 0 at the top (equal number of upvotes and downvotes).
-private func controversyEstimate(lhs: Comment, rhs: Comment) -> Bool {
+private func controversyEstimate(lhs: Comment, rhs: Comment, moreComments: MoreCommentsSide) -> Bool {
     switch (lhs.isControversial, rhs.isControversial) {
-    case (false, false): return compare(lhs, rhs) { $0.score < $1.score }
-    case (true, true): return compare(lhs, rhs) { abs($0.score) < abs($1.score) }
+    case (false, false): return compare(lhs, rhs, moreComments) { $0.score < $1.score }
+    case (true, true): return compare(lhs, rhs, moreComments) { abs($0.score) < abs($1.score) }
     default: return lhs.isControversial
     }
 }
@@ -102,6 +119,7 @@ extension Collection where Iterator.Element == Comment {
     
     // Allows the syntax `comments.sorted(by: .top)`
     func sorted(by sorting: Comment.Sort) -> [Comment] {
-        return sorted(by: sorting.comparitor)
+        let comparitor = sorting.comparitor
+        return sorted { comparitor($0, $1, []) }
     }
 }

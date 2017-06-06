@@ -1,2 +1,3 @@
 github "BoltsFramework/Bolts-Swift"
 github "jflinter/Dwifft"
+github "indragiek/CocoaMarkdown" "HEAD"

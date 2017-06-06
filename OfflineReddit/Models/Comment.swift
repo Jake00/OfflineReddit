@@ -28,8 +28,6 @@ class Comment: NSManagedObject {
     // The parent is either a comment or a post so only one of these will be non-nil.
     @NSManaged var parent: Comment?
     @NSManaged var post: Post?
-    
-    var isExpanded = true
 }
 
 extension Comment {

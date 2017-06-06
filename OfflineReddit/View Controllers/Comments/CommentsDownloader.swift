@@ -18,11 +18,11 @@ final class CommentsDownloader: NSObject, ProgressReporting {
     let sort: Comment.Sort
     private(set) var remaining: [[MoreComments]]
     
-    init(post: Post, comments: [Either<Comment, MoreComments>], remote: RemoteDataProviding, sort: Comment.Sort, numberOfCommentBatches: Int = 5) {
+    init(post: Post, comments: [MoreComments], remote: RemoteDataProviding, sort: Comment.Sort, numberOfCommentBatches: Int = 5) {
         self.post = post
         self.remote = remote
         self.sort = sort
-        let batches = batch(comments: comments, sort: sort, maximum: numberOfCommentBatches)
+        let batches = batch(moreComments: comments, sort: sort, maximum: numberOfCommentBatches)
         self.comments = batches
         self.remaining = batches
         self.progress = Progress(totalUnitCount: Int64(batches.count))

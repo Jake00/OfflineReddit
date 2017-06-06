@@ -17,7 +17,6 @@ class CommentsCell: UITableViewCell, ReusableNibCell {
     
     static var bodyLabelFont: UIFont = .systemFont(ofSize: 14)
     static let indentationWidth: CGFloat = 15
-    static let verticalMargins: CGFloat = 30.5
     
     override var indentationLevel: Int {
         didSet {

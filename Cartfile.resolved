@@ -1,2 +1,3 @@
 github "BoltsFramework/Bolts-Swift" "1.3.0"
+github "indragiek/CocoaMarkdown" "c2f3dae49ac640d3be407ef9f97a45b5af2a415f"
 github "jflinter/Dwifft" "0.6.2"

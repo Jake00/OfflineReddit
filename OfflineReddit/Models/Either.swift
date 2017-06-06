@@ -25,6 +25,18 @@ enum Either<A, B> {
     }
 }
 
+extension Either: CustomDebugStringConvertible {
+    
+    var debugDescription: String {
+        switch self {
+        case .first(let a):
+            return "\(type(of: self)).first: \(a)"
+        case .other(let b):
+            return "\(type(of: self)).other: \(b)"
+        }
+    }
+}
+
 // MARK: - Equality
 
 /// Since Swift does not yet support conditional protocol conformance

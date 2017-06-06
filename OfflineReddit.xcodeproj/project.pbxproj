@@ -13,7 +13,9 @@
 		234094D21EE2D07700359C84 /* Task+Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094D11EE2D07700359C84 /* Task+Void.swift */; };
 		234094D41EE4273600359C84 /* TopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094D31EE4273600359C84 /* TopToolbar.swift */; };
 		234094D61EE545D700359C84 /* MoreCommentsBatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094D51EE545D700359C84 /* MoreCommentsBatching.swift */; };
-		234DEB891EE61B37001A79A1 /* MDHTMLLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB881EE61B37001A79A1 /* MDHTMLLabel.m */; };
+		234DEB911EE63AF4001A79A1 /* CocoaMarkdown.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 234DEB901EE63AF4001A79A1 /* CocoaMarkdown.framework */; };
+		234DEB951EE6A4C9001A79A1 /* CommentCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB941EE6A4C9001A79A1 /* CommentCellModel.swift */; };
+		234DEB971EE7008B001A79A1 /* UIView+Xib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB961EE7008B001A79A1 /* UIView+Xib.swift */; };
 		2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */; };
@@ -113,8 +115,9 @@
 		234094D11EE2D07700359C84 /* Task+Void.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+Void.swift"; sourceTree = "<group>"; };
 		234094D31EE4273600359C84 /* TopToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopToolbar.swift; sourceTree = "<group>"; };
 		234094D51EE545D700359C84 /* MoreCommentsBatching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreCommentsBatching.swift; sourceTree = "<group>"; };
-		234DEB871EE61B37001A79A1 /* MDHTMLLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDHTMLLabel.h; sourceTree = "<group>"; };
-		234DEB881EE61B37001A79A1 /* MDHTMLLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDHTMLLabel.m; sourceTree = "<group>"; };
+		234DEB901EE63AF4001A79A1 /* CocoaMarkdown.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaMarkdown.framework; path = Carthage/Build/iOS/CocoaMarkdown.framework; sourceTree = "<group>"; };
+		234DEB941EE6A4C9001A79A1 /* CommentCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellModel.swift; sourceTree = "<group>"; };
+		234DEB961EE7008B001A79A1 /* UIView+Xib.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Xib.swift"; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Fetching.swift"; sourceTree = "<group>"; };
 		235E07D21E7F47CF00D83D16 /* example.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = example.json; sourceTree = "<group>"; };
@@ -214,6 +217,7 @@
 				235E08081E81431D00D83D16 /* SystemConfiguration.framework in Frameworks */,
 				2379B0A81ED22EE700925F9A /* Dwifft.framework in Frameworks */,
 				23A395FE1E7DE0A000030DEF /* BoltsSwift.framework in Frameworks */,
+				234DEB911EE63AF4001A79A1 /* CocoaMarkdown.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +244,7 @@
 				2379B06A1ECF787900925F9A /* CommentsDownloader.swift */,
 				2379B0681ECF787900925F9A /* CommentsCell.swift */,
 				2379B0881ECF7DE600925F9A /* CommentsCell.xib */,
+				234DEB941EE6A4C9001A79A1 /* CommentCellModel.swift */,
 				2379B08C1ECF7E0A00925F9A /* MoreCommentsCell.swift */,
 				2379B08A1ECF7DFB00925F9A /* MoreCommentsCell.xib */,
 				2379B06C1ECF787900925F9A /* EitherMoreComments.swift */,
@@ -410,8 +415,7 @@
 				2379B0EB1ED9E0C000925F9A /* UISegmentedControl+Items.swift */,
 				2383200A1EDB66DE009B8C24 /* LabelSliderControl.swift */,
 				234094CD1EDEA3B700359C84 /* TableViewDiffing.swift */,
-				234DEB871EE61B37001A79A1 /* MDHTMLLabel.h */,
-				234DEB881EE61B37001A79A1 /* MDHTMLLabel.m */,
+				234DEB961EE7008B001A79A1 /* UIView+Xib.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -419,6 +423,7 @@
 		23A395FC1E7DE08A00030DEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				234DEB901EE63AF4001A79A1 /* CocoaMarkdown.framework */,
 				235E08071E81431D00D83D16 /* SystemConfiguration.framework */,
 				2379B0A71ED22EE700925F9A /* Dwifft.framework */,
 				23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */,
@@ -584,6 +589,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/BoltsSwift.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Dwifft.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CocoaMarkdown.framework",
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (
@@ -611,6 +617,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				234DEB971EE7008B001A79A1 /* UIView+Xib.swift in Sources */,
 				2379B07E1ECF787900925F9A /* PostsDownloader.swift in Sources */,
 				234094CE1EDEA3B700359C84 /* TableViewDiffing.swift in Sources */,
 				234094D41EE4273600359C84 /* TopToolbar.swift in Sources */,
@@ -633,11 +640,11 @@
 				235E07D51E7F492600D83D16 /* MoreComments.swift in Sources */,
 				235E08061E81430C00D83D16 /* NetworkReachability.m in Sources */,
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,
-				234DEB891EE61B37001A79A1 /* MDHTMLLabel.m in Sources */,
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
 				2379B0951ED1B3E700925F9A /* ReusableCell.swift in Sources */,
 				2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */,
 				2379B0D71ED884C300925F9A /* InfoToolbar.swift in Sources */,
+				234DEB951EE6A4C9001A79A1 /* CommentCellModel.swift in Sources */,
 				2379B0EC1ED9E0C000925F9A /* UISegmentedControl+Items.swift in Sources */,
 				2379B0AF1ED6D03800925F9A /* PostSorting.swift in Sources */,
 				23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */,

@@ -8,6 +8,7 @@
 
 import UIKit
 import BoltsSwift
+import CocoaMarkdown
 
 protocol CommentsDataSourceDelegate: class {
     func viewDimensionsForCommentsDataSource(_ dataSource: CommentsDataSource) -> (horizontalMargins: CGFloat, frameWidth: CGFloat)
@@ -32,10 +33,10 @@ class CommentsDataSource: NSObject {
     // MARK: -
     
     /// Master list of all the comments available to display, before filtering.
-    var allComments: [Either<Comment, MoreComments>] = []
+    var allComments: [CommentsCellModel] = []
     
     /// List of comments which drives the table view. Is a subset of `allComments` when a comment is condensed and its children hidden.
-    private(set) var comments: [Either<Comment, MoreComments>] = []
+    private(set) var comments: [CommentsCellModel] = []
     
     /// The 'more comments' cells which are loading their children.
     var loadingCells: Set<MoreComments> = []
@@ -46,20 +47,27 @@ class CommentsDataSource: NSObject {
     
     weak var delegate: CommentsDataSourceDelegate?
     
+    static let commentSizingCell = CommentsCell.instantiateFromNib()
+    
     func indexPath(of more: MoreComments) -> IndexPath? {
-        let v = Either<Comment, MoreComments>.other(more)
-        return comments.index(where: { $0 == v })
+        return comments.index(where: { $0.comment == more })
             .map { IndexPath(row: $0, section: 0) }
     }
     
     private func animateCommentsUpdate() {
         tableView?.reload(
-            get: { self.comments.map(EitherEquatable.init) },
+            get: { comments },
             update: updateComments)
     }
     
     private func updateComments() {
-        allComments = post.displayComments(sortedBy: sort)
+        allComments = {
+            var updating = Set(allComments)
+            let new = Set(post.displayComments.map(CommentsCellModel.init))
+            updating.formUnion(new)
+            updating.formIntersection(new)
+            return updating.sorted(by: sort)
+        }()
         var condensed: Comment?
         comments = allComments.filter { next in
             if let comment = condensed {
@@ -69,13 +77,13 @@ class CommentsDataSource: NSObject {
                 }
                 return !isSibling
             } else if !next.isExpanded {
-                condensed = next.first
+                condensed = next.comment.first
             }
             return true
         }
         if let delegate = delegate {
             let (saved, toExpand) = allComments.reduce((0, 0) as (Int64, Int64)) {
-                switch $1 {
+                switch $1.comment {
                 case .first: return ($0.0 + 1, $0.1)
                 case .other(let b): return ($0.0, $0.1 + b.count)
                 }
@@ -92,7 +100,7 @@ class CommentsDataSource: NSObject {
         cell?.activityIndicator.setAnimating(isLoading)
     }
     
-    func flipCommentExpanded(for comment: Comment, at indexPath: IndexPath) {
+    func flipCommentExpanded(for comment: CommentsCellModel, at indexPath: IndexPath) {
         comment.isExpanded = !comment.isExpanded
         let cell = tableView?.cellForRow(at: indexPath) as? CommentsCell
         cell?.isExpanded = comment.isExpanded
@@ -102,7 +110,7 @@ class CommentsDataSource: NSObject {
         tableView?.scrollToRow(at: indexPath, at: .none, animated: true)
     }
     
-    func updateExpanded(for comment: Comment, at indexPath: IndexPath) {
+    func updateExpanded(for comment: CommentsCellModel, at indexPath: IndexPath) {
         tableView?.beginUpdates()
         var delta = 0
         let makeIndexPaths: () -> [IndexPath] = {
@@ -113,7 +121,7 @@ class CommentsDataSource: NSObject {
         if comment.isExpanded {
             /* Row is expanding, add the children for this comment. */
             var row = indexPath.row + 1
-            if var index = allComments.index(where: { $0.first == comment }) {
+            if var index = allComments.index(of: comment) {
                 while index + 1 < allComments.endIndex,
                     comment.depth < allComments[index + 1].depth,
                     allComments[index].isExpanded {
@@ -186,7 +194,7 @@ class CommentsDataSource: NSObject {
     
     @discardableResult
     func startDownload(updating tableView: UITableView) -> Task<Void> {
-        let downloader = CommentsDownloader(post: post, comments: allComments, remote: provider.remote, sort: sort)
+        let downloader = CommentsDownloader(post: post, comments: allComments.flatMap { $0.comment.other }, remote: provider.remote, sort: sort)
         self.downloader = downloader
         
         return downloader.start().continueWithTask(.mainThread) {
@@ -209,27 +217,47 @@ extension CommentsDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard !comments.isEmpty else {
-            let cell: MoreCommentsCell = tableView.dequeueReusableCell(for: indexPath)
-            updateMoreCell(cell, forceLoad: true)
-            cell.indentationLevel = 0
-            return cell
+            return configureMoreCommentsCell(tableView.dequeueReusableCell(for: indexPath), model: nil)
         }
-        switch comments[indexPath.row] {
-        case .first(let comment):
-            let cell: CommentsCell = tableView.dequeueReusableCell(for: indexPath)
-            cell.topLabel.text = comment.authorScoreTimeText
-            cell.bodyLabel.text = comment.body
-            cell.indentationLevel = Int(comment.depth)
-            cell.isExpanded = comment.isExpanded
-            cell.setNeedsLayout()
-            cell.layoutIfNeeded()
-            return cell
-        case .other(let more):
-            let cell: MoreCommentsCell = tableView.dequeueReusableCell(for: indexPath)
-            updateMoreCell(cell, more)
-            cell.indentationLevel = Int(more.depth)
-            return cell
-        }
+        
+        let model = comments[indexPath.row]
+        return model.isMoreComments
+            ? configureMoreCommentsCell(tableView.dequeueReusableCell(for: indexPath), model: model)
+            : configureCommentCell(tableView.dequeueReusableCell(for: indexPath), model: model)
+    }
+    
+    func configureCommentCell(_ cell: CommentsCell, model: CommentsCellModel) -> CommentsCell {
+        let comment = model.comment.first
+        cell.topLabel.text = comment?.authorScoreTimeText
+        cell.bodyLabel.attributedText = model.attributedText ?? {
+            let data = comment?.body?.data(using: .utf8)
+            let attributedText = CMDocument(data: data, options: [])
+                .attributedString(with: CMTextAttributes())
+            model.attributedText = attributedText
+            return attributedText
+        }()
+        cell.indentationLevel = Int(model.depth)
+        cell.isExpanded = model.isExpanded
+        return cell
+    }
+    
+    func configureMoreCommentsCell(_ cell: MoreCommentsCell, model: CommentsCellModel?) -> MoreCommentsCell {
+        updateMoreCell(cell, model?.comment.other, forceLoad: model == nil)
+        cell.indentationLevel = Int(model?.depth ?? 0)
+        return cell
+    }
+    
+    func configureExpandedHeight(for model: CommentsCellModel) -> CGFloat {
+        guard let width = tableView?.superview?.frame.width else { return 0 }
+        let cell = configureCommentCell(CommentsDataSource.commentSizingCell, model: model)
+        cell.setNeedsLayout()
+        cell.layoutIfNeeded()
+        let height = cell.systemLayoutSizeFitting(
+            CGSize(width: width, height: UILayoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: UILayoutPriorityRequired,
+            verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
+        model.expandedHeight = height
+        return height
     }
 }
 
@@ -238,17 +266,16 @@ extension CommentsDataSource: UITableViewDataSource {
 extension CommentsDataSource: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard !comments.isEmpty else { return 36 }
-        switch comments[indexPath.row] {
-        case .first: return UITableViewAutomaticDimension
-        case .other: return 36
-        }
+        guard !comments.isEmpty else { return CommentsCellModel.moreCommentsHeight }
+        let model = comments[indexPath.row]
+        return model.height ?? configureExpandedHeight(for: model)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         guard indexPath.row < comments.endIndex else { return 40 }
-        guard let comment = comments[indexPath.row].first else { /* 'More comments' */ return 36 }
-        guard comment.isExpanded else { return CommentsCell.verticalMargins }
+        let model = comments[indexPath.row]
+        guard let comment = model.comment.first else { /* 'More comments' */ return CommentsCellModel.moreCommentsHeight }
+        guard model.isExpanded else { return CommentsCellModel.condensedHeight }
         guard let (margin, frameWidth) = delegate?.viewDimensionsForCommentsDataSource(self) else { return 0 }
         let textWidth = frameWidth - margin - CommentsCell.indentationWidth * CGFloat(comment.depth)
         let numberOfCharacters: Int = Int(comment.body?.characters.count ?? 0)
@@ -256,17 +283,18 @@ extension CommentsDataSource: UITableViewDelegate {
         let charactersPerLine = textWidth * averageCharacterWidth
         let numberOfNewlineCharacters = (comment.body?.components(separatedBy: .newlines).count ?? 1) - 1
         let numberOfLines = CGFloat(numberOfCharacters) / charactersPerLine
-        return (ceil(numberOfLines) + CGFloat(numberOfNewlineCharacters)) * CommentsCell.bodyLabelFont.lineHeight + CommentsCell.verticalMargins
+        return (ceil(numberOfLines) + CGFloat(numberOfNewlineCharacters)) * CommentsCell.bodyLabelFont.lineHeight + CommentsCellModel.condensedHeight
     }
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return !comments.isEmpty && !(comments[indexPath.row].other.map(loadingCells.contains) ?? false)
+        return !comments.isEmpty && !(comments[indexPath.row].comment.other.map(loadingCells.contains) ?? false)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch comments[indexPath.row] {
-        case .first(let comment):
-            flipCommentExpanded(for: comment, at: indexPath)
+        let model = comments[indexPath.row]
+        switch model.comment {
+        case .first:
+            flipCommentExpanded(for: model, at: indexPath)
         case .other(let more):
             loadingCells.insert(more)
             updateMoreCell(tableView.cellForRow(at: indexPath) as? MoreCommentsCell, more)

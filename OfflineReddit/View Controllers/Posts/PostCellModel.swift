@@ -41,15 +41,6 @@ extension PostCellModel: Equatable {
     }
 }
 
-// MARK: - Comparable
-
-extension PostCellModel: Comparable {
-    
-    static func < (lhs: PostCellModel, rhs: PostCellModel) -> Bool {
-        return lhs.post < rhs.post
-    }
-}
-
 // MARK: - Hashable
 
 extension PostCellModel: Hashable {
@@ -59,22 +50,37 @@ extension PostCellModel: Hashable {
     }
 }
 
+// MARK: - Comparable
+
+extension PostCellModel: Comparable {
+    
+    static func < (lhs: PostCellModel, rhs: PostCellModel) -> Bool {
+        return lhs.post < rhs.post
+    }
+}
+
 extension Collection where Iterator.Element == PostCellModel {
     
     func sortFiltered(using sortFilter: Post.SortFilter) -> [PostCellModel] {
-        return sortFilter.shouldFilter
-            ? filter { sortFilter.filterer($0.post) }
-                .sorted { sortFilter.comparitor($0.post, $1.post) }
-            : sorted { sortFilter.comparitor($0.post, $1.post) }
+        let comparitor = sortFilter.comparitor
+        if sortFilter.shouldFilter {
+            let filterer = sortFilter.filterer
+            return filter { filterer($0.post) }
+                .sorted { comparitor($0.post, $1.post) }
+        } else {
+            return sorted { comparitor($0.post, $1.post) }
+        }
     }
 }
 
 extension Array where Iterator.Element == PostCellModel {
     
     mutating func sortFilter(using sortFilter: Post.SortFilter) {
+        let comparitor = sortFilter.comparitor
         if sortFilter.shouldFilter {
-            self = filter { sortFilter.filterer($0.post) }
+            let filterer = sortFilter.filterer
+            self = filter { filterer($0.post) }
         }
-        sort { sortFilter.comparitor($0.post, $1.post) }
+        sort { comparitor($0.post, $1.post) }
     }
 }

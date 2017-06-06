@@ -75,8 +75,8 @@ extension Post {
         return author + " • " + time
     }
     
-    func displayComments(sortedBy sort: Comment.Sort) -> [Either<Comment, MoreComments>] {
-        var displayComments = comments.sorted(by: sort).flatMap { $0.displayComments }
+    var displayComments: [Either<Comment, MoreComments>] {
+        var displayComments = comments.flatMap { $0.displayComments }
         if let more = more {
             displayComments.append(.other(more))
         }
