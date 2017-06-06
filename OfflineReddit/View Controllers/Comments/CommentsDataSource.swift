@@ -24,10 +24,18 @@ class CommentsDataSource: NSObject {
     
     let post: Post
     let provider: CommentsProvider
+    let reachability: Reachability
     
     init(post: Post, provider: DataProvider) {
         self.post = post
         self.provider = CommentsProvider(provider: provider)
+        self.reachability = provider.reachability
+        super.init()
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: -
@@ -63,7 +71,10 @@ class CommentsDataSource: NSObject {
     private func updateComments() {
         allComments = {
             var updating = Set(allComments)
-            let new = Set(post.displayComments.map(CommentsCellModel.init))
+            let new = Set({ () -> [CommentsCellModel] in 
+                let models = post.displayComments.map(CommentsCellModel.init)
+                return reachability.isOnline ? models : models.filter { !$0.isMoreComments }
+                }())
             updating.formUnion(new)
             updating.formIntersection(new)
             return updating.sorted(by: sort)
@@ -204,6 +215,12 @@ class CommentsDataSource: NSObject {
             self.provider.local.trySave()
             return $0
         }
+    }
+    
+    // MARK: - Reachability
+    
+    func reachabilityChanged(_ notification: Notification) {
+        animateCommentsUpdate()
     }
 }
 
