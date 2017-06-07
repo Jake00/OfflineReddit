@@ -31,13 +31,16 @@ final class CommentsCellModel {
         return comment.first != nil
     }
     
-    var expandedHeight: CGFloat?
-    static let moreCommentsHeight: CGFloat = 36
-    static let condensedHeight: CGFloat = 30.5
+    typealias Width = CGFloat
+    typealias Height = CGFloat
     
-    var height: CGFloat? {
+    var expandedHeight: [Width: Height] = [:]
+    static let moreCommentsHeight: Height = 36
+    static let condensedHeight: Height = 30.5
+    
+    func height(for width: Width) -> Height? {
         return isMoreComments ? CommentsCellModel.moreCommentsHeight
-            : isExpanded ? expandedHeight : CommentsCellModel.condensedHeight
+            : isExpanded ? expandedHeight[width] : CommentsCellModel.condensedHeight
     }
     
     var depth: Int64 {

@@ -264,8 +264,7 @@ extension CommentsDataSource: UITableViewDataSource {
         return cell
     }
     
-    func configureExpandedHeight(for model: CommentsCellModel) -> CGFloat {
-        guard let width = tableView?.superview?.frame.width else { return 0 }
+    func configureExpandedHeight(for model: CommentsCellModel, width: CGFloat) -> CGFloat {
         let cell = configureCommentCell(CommentsDataSource.commentSizingCell, model: model)
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
@@ -273,7 +272,7 @@ extension CommentsDataSource: UITableViewDataSource {
             CGSize(width: width, height: UILayoutFittingCompressedSize.height),
             withHorizontalFittingPriority: UILayoutPriorityRequired,
             verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
-        model.expandedHeight = height
+        model.expandedHeight[width] = height
         return height
     }
 }
@@ -284,8 +283,9 @@ extension CommentsDataSource: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard !comments.isEmpty else { return CommentsCellModel.moreCommentsHeight }
+        guard let width = tableView.superview?.frame.width else { return 0 }
         let model = comments[indexPath.row]
-        return model.height ?? configureExpandedHeight(for: model)
+        return model.height(for: width) ?? configureExpandedHeight(for: model, width: width)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {

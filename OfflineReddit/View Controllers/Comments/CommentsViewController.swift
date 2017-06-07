@@ -79,6 +79,14 @@ class CommentsViewController: UIViewController, Loadable {
         headerView.frame.size.height = headerView.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: { _ in
+            self.tableView.beginUpdates()
+            self.tableView.endUpdates()
+        }, completion: nil)
+    }
+    
     // MARK: - Loadable
     
     var isLoading = false {
