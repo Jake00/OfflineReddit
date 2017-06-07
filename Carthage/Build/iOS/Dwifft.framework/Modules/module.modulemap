@@ -1,0 +1,10 @@
+framework module Dwifft {
+  umbrella header "Dwifft.h"
+
+  export *
+  module * { export * }
+}
+
+module Dwifft.Swift {
+    header "Dwifft-Swift.h"
+}

@@ -4,10 +4,10 @@
 
 .DS_Store
 Carthage/Checkouts/
+Carthage/Build/iOS/*
 !Carthage/Build/iOS/*.framework/
 
 ## Build generated
-build/
 DerivedData/
 
 ## Various settings
