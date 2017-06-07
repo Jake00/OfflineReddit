@@ -157,6 +157,41 @@ class CommentsDataSource: NSObject {
         tableView?.endUpdates()
     }
     
+    // MARK: - Cell configuration
+    
+    func configureCommentCell(_ cell: CommentsCell, model: CommentsCellModel) -> CommentsCell {
+        let comment = model.comment.first
+        cell.topLabel.text = comment?.authorScoreTimeText
+        cell.bodyLabel.attributedText = model.attributedText ?? {
+            let data = comment?.body?.data(using: .utf8)
+            let attributedText = CMDocument(data: data, options: [])
+                .attributedString(with: CMTextAttributes())
+            model.attributedText = attributedText
+            return attributedText
+            }()
+        cell.indentationLevel = Int(model.depth)
+        cell.isExpanded = model.isExpanded
+        return cell
+    }
+    
+    func configureMoreCommentsCell(_ cell: MoreCommentsCell, model: CommentsCellModel?) -> MoreCommentsCell {
+        updateMoreCell(cell, model?.comment.other, forceLoad: model == nil)
+        cell.indentationLevel = Int(model?.depth ?? 0)
+        return cell
+    }
+    
+    func configureExpandedHeight(for model: CommentsCellModel, width: CGFloat) -> CGFloat {
+        let cell = configureCommentCell(CommentsDataSource.commentSizingCell, model: model)
+        cell.setNeedsLayout()
+        cell.layoutIfNeeded()
+        let height = cell.systemLayoutSizeFitting(
+            CGSize(width: width, height: UILayoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: UILayoutPriorityRequired,
+            verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
+        model.expandedHeight[width] = height
+        return height
+    }
+    
     // MARK: - Fetching
     
     @discardableResult
@@ -199,7 +234,7 @@ class CommentsDataSource: NSObject {
         return task
     }
     
-    // MARK: Offline saving
+    // MARK: - Offline saving
     
     private(set) var downloader: CommentsDownloader?
     
@@ -241,39 +276,6 @@ extension CommentsDataSource: UITableViewDataSource {
         return model.isMoreComments
             ? configureMoreCommentsCell(tableView.dequeueReusableCell(for: indexPath), model: model)
             : configureCommentCell(tableView.dequeueReusableCell(for: indexPath), model: model)
-    }
-    
-    func configureCommentCell(_ cell: CommentsCell, model: CommentsCellModel) -> CommentsCell {
-        let comment = model.comment.first
-        cell.topLabel.text = comment?.authorScoreTimeText
-        cell.bodyLabel.attributedText = model.attributedText ?? {
-            let data = comment?.body?.data(using: .utf8)
-            let attributedText = CMDocument(data: data, options: [])
-                .attributedString(with: CMTextAttributes())
-            model.attributedText = attributedText
-            return attributedText
-        }()
-        cell.indentationLevel = Int(model.depth)
-        cell.isExpanded = model.isExpanded
-        return cell
-    }
-    
-    func configureMoreCommentsCell(_ cell: MoreCommentsCell, model: CommentsCellModel?) -> MoreCommentsCell {
-        updateMoreCell(cell, model?.comment.other, forceLoad: model == nil)
-        cell.indentationLevel = Int(model?.depth ?? 0)
-        return cell
-    }
-    
-    func configureExpandedHeight(for model: CommentsCellModel, width: CGFloat) -> CGFloat {
-        let cell = configureCommentCell(CommentsDataSource.commentSizingCell, model: model)
-        cell.setNeedsLayout()
-        cell.layoutIfNeeded()
-        let height = cell.systemLayoutSizeFitting(
-            CGSize(width: width, height: UILayoutFittingCompressedSize.height),
-            withHorizontalFittingPriority: UILayoutPriorityRequired,
-            verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
-        model.expandedHeight[width] = height
-        return height
     }
 }
 
