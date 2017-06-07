@@ -30,8 +30,6 @@ class PostCell: UITableViewCell, ReusableNibCell {
     }
     
     private func setup() {
-        let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = .selectedGray
-        self.selectedBackgroundView = selectedBackgroundView
+        selectedBackgroundView = UIView(backgroundColor: .selectedGray)
     }
 }

@@ -25,6 +25,7 @@ class FilterPostsSegmentedControlCell: UITableViewCell, ReusableCell {
     }
     
     private func setup() {
+        selectedBackgroundView = UIView(backgroundColor: .selectedGray)
         control.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(control)
         NSLayoutConstraint.activate([

@@ -35,9 +35,7 @@ class MoreCommentsCell: UITableViewCell, ReusableNibCell {
     }
     
     private func setup() {
-        let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = .selectedGray
-        self.selectedBackgroundView = selectedBackgroundView
+        selectedBackgroundView = UIView(backgroundColor: .selectedGray)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

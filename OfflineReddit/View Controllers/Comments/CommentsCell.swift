@@ -46,9 +46,7 @@ class CommentsCell: UITableViewCell, ReusableNibCell {
     }
     
     private func setup() {
-        let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = .selectedGray
-        self.selectedBackgroundView = selectedBackgroundView
+        selectedBackgroundView = UIView(backgroundColor: .selectedGray)
     }
     
     override func layoutSubviews() {

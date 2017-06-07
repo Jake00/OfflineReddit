@@ -22,4 +22,9 @@ extension UIView {
         }
         return cast(view)
     }
+    
+    convenience init(backgroundColor: UIColor) {
+        self.init(frame: .zero)
+        self.backgroundColor = backgroundColor
+    }
 }
