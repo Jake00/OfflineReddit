@@ -4,6 +4,7 @@
 
 .DS_Store
 Carthage/Checkouts/
+!Carthage/Build/iOS/*.framework/
 
 ## Build generated
 build/
