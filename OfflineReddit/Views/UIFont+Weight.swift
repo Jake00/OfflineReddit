@@ -38,7 +38,6 @@ extension UIFont {
     
     class func preferredFont(forTextStyle style: UIFontTextStyle, weight: Weight) -> UIFont {
         let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style)
-            .addingAttributes([UIFontWeightTrait: weight.value])
-        return UIFont(descriptor: descriptor, size: descriptor.pointSize)
+        return .systemFont(ofSize: descriptor.pointSize, weight: weight.value)
     }
 }
