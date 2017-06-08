@@ -39,6 +39,10 @@ class CommentsViewController: UIViewController, Loadable {
         fatalError("init(coder:) is not available. Use init(post:provider:) instead.")
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     // MARK: - View controller
     
     override func viewDidLoad() {
@@ -63,6 +67,7 @@ class CommentsViewController: UIViewController, Loadable {
         ]
         markAsReadButton.isEnabled = !dataSource.post.isRead
         updateSortButtonTitle()
+        enableDynamicType()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -149,6 +154,14 @@ class CommentsViewController: UIViewController, Loadable {
     
     func updateSortButtonTitle() {
         sortButton.title = String.localizedStringWithFormat(SharedText.sortFormat, dataSource.sort.displayName)
+    }
+    
+    func enableDynamicType() {
+        subredditLabel.enableDynamicType(style: .footnote, weight: .semibold)
+        authorTimeLabel.enableDynamicType(style: .footnote)
+        commentsLabel.enableDynamicType(style: .footnote)
+        titleLabel.enableDynamicType(style: .headline)
+        selfLabel.enableDynamicType(style: .subheadline)
     }
 }
 

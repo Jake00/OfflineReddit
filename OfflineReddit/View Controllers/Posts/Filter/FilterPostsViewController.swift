@@ -40,6 +40,7 @@ class FilterPostsViewController: UIViewController {
         tableView.registerReusableCell(FilterPostsSegmentedControlCell.self)
         tableView.registerReusableCell(FilterPostsSortCell.self)
         dataSource.tableView = tableView
+        tableView.enableDynamicTypeReloading()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

@@ -88,6 +88,7 @@ class PostsViewController: UIViewController, Loadable {
         navigationItem.leftBarButtonItem = chooseDownloadsButton
         navigationItem.rightBarButtonItem = subredditsButton
         automaticallyAdjustsScrollViewInsets = false
+        enableDynamicType()
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
         
@@ -169,6 +170,15 @@ class PostsViewController: UIViewController, Loadable {
         loadMoreButton.isEnabled = reachability.isOnline
         loadMoreButton.setTitle(reachability.isOnline ? SharedText.loadingLowercase : SharedText.offline, for: .disabled)
         activityIndicator.setAnimating(hideHints && isLoading && reachability.isOnline)
+    }
+    
+    func enableDynamicType() {
+        tableView.enableDynamicTypeReloading()
+        downloadPostsTitleLabel.enableDynamicType(style: .callout)
+        downloadPostsSaveButton.enableDynamicType(style: .callout, weight: .semibold)
+        downloadPostsCancelButton.enableDynamicType(style: .callout)
+        loadMoreButton.enableDynamicType(style: .subheadline)
+        hintLabel.enableDynamicType(style: .body)
     }
     
     func updateStartDownloadsButtonEnabled() {

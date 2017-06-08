@@ -16,6 +16,8 @@
 		234DEB911EE63AF4001A79A1 /* CocoaMarkdown.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 234DEB901EE63AF4001A79A1 /* CocoaMarkdown.framework */; };
 		234DEB951EE6A4C9001A79A1 /* CommentCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB941EE6A4C9001A79A1 /* CommentCellModel.swift */; };
 		234DEB971EE7008B001A79A1 /* UIView+Xib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB961EE7008B001A79A1 /* UIView+Xib.swift */; };
+		234DEB9D1EE8BEBF001A79A1 /* UIFont+Weight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB9C1EE8BEBF001A79A1 /* UIFont+Weight.swift */; };
+		234DEB9F1EE8C73C001A79A1 /* DynamicTypeResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB9E1EE8C73C001A79A1 /* DynamicTypeResponder.swift */; };
 		2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */; };
@@ -118,6 +120,8 @@
 		234DEB901EE63AF4001A79A1 /* CocoaMarkdown.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaMarkdown.framework; path = Carthage/Build/iOS/CocoaMarkdown.framework; sourceTree = "<group>"; };
 		234DEB941EE6A4C9001A79A1 /* CommentCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellModel.swift; sourceTree = "<group>"; };
 		234DEB961EE7008B001A79A1 /* UIView+Xib.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Xib.swift"; sourceTree = "<group>"; };
+		234DEB9C1EE8BEBF001A79A1 /* UIFont+Weight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Weight.swift"; sourceTree = "<group>"; };
+		234DEB9E1EE8C73C001A79A1 /* DynamicTypeResponder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicTypeResponder.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Fetching.swift"; sourceTree = "<group>"; };
 		235E07D21E7F47CF00D83D16 /* example.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = example.json; sourceTree = "<group>"; };
@@ -359,6 +363,7 @@
 				23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */,
 				234094CF1EE012F000359C84 /* WebsiteCaching.swift */,
 				234094D11EE2D07700359C84 /* Task+Void.swift */,
+				234DEB9E1EE8C73C001A79A1 /* DynamicTypeResponder.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -416,6 +421,7 @@
 				2383200A1EDB66DE009B8C24 /* LabelSliderControl.swift */,
 				234094CD1EDEA3B700359C84 /* TableViewDiffing.swift */,
 				234DEB961EE7008B001A79A1 /* UIView+Xib.swift */,
+				234DEB9C1EE8BEBF001A79A1 /* UIFont+Weight.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -630,6 +636,8 @@
 				2379B0AB1ED5671600925F9A /* CommentSorting.swift in Sources */,
 				23A396051E7E021500030DEF /* Identifiable.swift in Sources */,
 				2379B0771ECF787900925F9A /* CommentsDataSource.swift in Sources */,
+				234DEB9D1EE8BEBF001A79A1 /* UIFont+Weight.swift in Sources */,
+				234DEB9F1EE8C73C001A79A1 /* DynamicTypeResponder.swift in Sources */,
 				23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */,
 				23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */,
 				234094D61EE545D700359C84 /* MoreCommentsBatching.swift in Sources */,

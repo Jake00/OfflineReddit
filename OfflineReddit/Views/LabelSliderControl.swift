@@ -77,7 +77,7 @@ class LabelSliderControl: UIControl {
         isOpaque = false
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .offBlack
-        label.font = .systemFont(ofSize: 14)
+        label.enableDynamicType(style: .footnote)
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderTouchUp(_:)), for: [.touchUpInside, .touchUpOutside])

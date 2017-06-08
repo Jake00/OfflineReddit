@@ -32,6 +32,7 @@ class CommentsDataSource: NSObject {
         self.reachability = provider.reachability
         super.init()
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(preferredTextSizeChanged(_:)), name: .UIContentSizeCategoryDidChange, object: nil)
     }
     
     deinit {
@@ -162,10 +163,12 @@ class CommentsDataSource: NSObject {
     func configureCommentCell(_ cell: CommentsCell, model: CommentsCellModel) -> CommentsCell {
         let comment = model.comment.first
         cell.topLabel.text = comment?.authorScoreTimeText
+        cell.topLabel.font = .preferredFont(forTextStyle: .footnote)
         cell.bodyLabel.attributedText = model.attributedText ?? {
             let data = comment?.body?.data(using: .utf8)
+            let attributes = CMTextAttributes()
             let attributedText = CMDocument(data: data, options: [])
-                .attributedString(with: CMTextAttributes())
+                .attributedString(with: attributes)
             model.attributedText = attributedText
             return attributedText
             }()
@@ -176,6 +179,7 @@ class CommentsDataSource: NSObject {
     
     func configureMoreCommentsCell(_ cell: MoreCommentsCell, model: CommentsCellModel?) -> MoreCommentsCell {
         updateMoreCell(cell, model?.comment.other, forceLoad: model == nil)
+        cell.titleLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
         cell.indentationLevel = Int(model?.depth ?? 0)
         return cell
     }
@@ -256,6 +260,16 @@ class CommentsDataSource: NSObject {
     
     func reachabilityChanged(_ notification: Notification) {
         animateCommentsUpdate()
+    }
+    
+    // MARK: - Dynamic type 
+    
+    func preferredTextSizeChanged(_ notification: Notification) {
+        for model in allComments {
+            model.attributedText = nil
+            model.expandedHeight.removeAll()
+        }
+        tableView?.reloadData()
     }
 }
 

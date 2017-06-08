@@ -60,6 +60,7 @@ extension SubredditsDataSource: UITableViewDataSource {
         let cell: SubredditCell = tableView.dequeueReusableCell(for: indexPath)
         let subreddit = subreddits[indexPath.row]
         cell.textLabel?.text = subreddit.name
+        cell.textLabel?.font = .preferredFont(forTextStyle: .body)
         cell.isChecked = subreddit.isSelected
         return cell
     }

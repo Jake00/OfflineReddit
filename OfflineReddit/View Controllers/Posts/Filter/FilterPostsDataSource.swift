@@ -127,6 +127,7 @@ extension FilterPostsDataSource: UITableViewDataSource {
     func configureFilterCell(_ cell: FilterPostsSegmentedControlCell, isReadStatus: Bool) -> FilterPostsSegmentedControlCell {
         let filters = isReadStatus ? readStatusFilters : offlineStatusFilters
         cell.control.items = filters.map { $0.displayName }
+        cell.control.setTitleTextAttributes([NSFontAttributeName: UIFont.preferredFont(forTextStyle: .caption1)], for: .normal)
         cell.control.removeTarget(self, action: nil, for: .touchUpInside)
         cell.control.addTarget(self, action: isReadStatus
             ? #selector(readStatusSelectionChanged(_:))
@@ -140,6 +141,7 @@ extension FilterPostsDataSource: UITableViewDataSource {
     }
     
     func configureSortCell(_ cell: FilterPostsSortCell, sort: Post.Sort) -> FilterPostsSortCell {
+        cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
         cell.titleLabel.text = sort.displayName
         cell.canExpand = sort.includesTimePeriods
         cell.isChecked = sort == selected.sort

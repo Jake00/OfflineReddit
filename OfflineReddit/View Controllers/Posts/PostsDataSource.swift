@@ -284,6 +284,9 @@ extension PostsDataSource: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: PostCell = tableView.dequeueReusableCell(for: indexPath)
         updateAll(cell: cell, row: rows[indexPath.row])
+        cell.titleLabel.font = .preferredFont(forTextStyle: .subheadline)
+        cell.topLabel.font = .preferredFont(forTextStyle: .caption1)
+        cell.bottomLabel.font = .preferredFont(forTextStyle: .caption1)
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
         return cell

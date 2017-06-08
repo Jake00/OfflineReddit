@@ -45,7 +45,9 @@ class SubredditsViewController: UIViewController {
         tableView.delegate = dataSource
         tableView.tableFooterView = footerView
         tableView.registerReusableNibCell(SubredditCell.self)
+        tableView.enableDynamicTypeReloading()
         newTextField.inputAccessoryView = inputToolbar
+        newTextField.enableDynamicType(style: .subheadline)
         navigationItem.rightBarButtonItem = editButtonItem
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(_:)), name: .UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear(_:)), name: .UIKeyboardWillHide, object: nil)
