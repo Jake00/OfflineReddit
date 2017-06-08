@@ -18,6 +18,7 @@
 		234DEB971EE7008B001A79A1 /* UIView+Xib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB961EE7008B001A79A1 /* UIView+Xib.swift */; };
 		234DEB9D1EE8BEBF001A79A1 /* UIFont+Weight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB9C1EE8BEBF001A79A1 /* UIFont+Weight.swift */; };
 		234DEB9F1EE8C73C001A79A1 /* DynamicTypeResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEB9E1EE8C73C001A79A1 /* DynamicTypeResponder.swift */; };
+		234DEBA11EE95F19001A79A1 /* WeakKeyDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234DEBA01EE95F19001A79A1 /* WeakKeyDictionary.swift */; };
 		2358C7A71EC7967E007F7B82 /* BoltsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */; };
 		235E07C71E7E92E600D83D16 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07C61E7E92E600D83D16 /* Constants.swift */; };
 		235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */; };
@@ -122,6 +123,7 @@
 		234DEB961EE7008B001A79A1 /* UIView+Xib.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Xib.swift"; sourceTree = "<group>"; };
 		234DEB9C1EE8BEBF001A79A1 /* UIFont+Weight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Weight.swift"; sourceTree = "<group>"; };
 		234DEB9E1EE8C73C001A79A1 /* DynamicTypeResponder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicTypeResponder.swift; sourceTree = "<group>"; };
+		234DEBA01EE95F19001A79A1 /* WeakKeyDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeakKeyDictionary.swift; sourceTree = "<group>"; };
 		235E07C61E7E92E600D83D16 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Fetching.swift"; sourceTree = "<group>"; };
 		235E07D21E7F47CF00D83D16 /* example.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = example.json; sourceTree = "<group>"; };
@@ -364,6 +366,7 @@
 				234094CF1EE012F000359C84 /* WebsiteCaching.swift */,
 				234094D11EE2D07700359C84 /* Task+Void.swift */,
 				234DEB9E1EE8C73C001A79A1 /* DynamicTypeResponder.swift */,
+				234DEBA01EE95F19001A79A1 /* WeakKeyDictionary.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -645,6 +648,7 @@
 				235E07D71E7F525100D83D16 /* NSManagedObject+Create.swift in Sources */,
 				235E08031E80E4BF00D83D16 /* NavigationController.swift in Sources */,
 				2379B07D1ECF787900925F9A /* PostsDataSource.swift in Sources */,
+				234DEBA11EE95F19001A79A1 /* WeakKeyDictionary.swift in Sources */,
 				235E07D51E7F492600D83D16 /* MoreComments.swift in Sources */,
 				235E08061E81430C00D83D16 /* NetworkReachability.m in Sources */,
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,

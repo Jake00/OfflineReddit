@@ -10,7 +10,7 @@ import UIKit
 
 final class DynamicTypeResponder: NSObject {
     
-    private var table: [Weak<NSObject>: Style] = [:]
+    private var table = WeakKeyDictionary<NSObject, Style>()
     private var tableViews: [Weak<UITableView>] = []
     private let styles = UIFontTextStyle.all
     
@@ -25,20 +25,6 @@ final class DynamicTypeResponder: NSObject {
         
         init(keyPath: String, style: UIFontTextStyle, weight: UIFont.Weight?) {
             self.keyPath = keyPath; self.style = style; self.weight = weight
-        }
-    }
-    
-    private class Weak<T: AnyObject>: Hashable where T: Hashable {
-        private(set) weak var value: T?
-        let hashValue: Int
-        
-        init(_ value: T) {
-            self.value = value
-            self.hashValue = value.hashValue
-        }
-        
-        static func == <T: Hashable>(lhs: Weak<T>, rhs: Weak<T>) -> Bool {
-            return lhs.value == rhs.value
         }
     }
     
@@ -88,7 +74,7 @@ final class DynamicTypeResponder: NSObject {
         
         let container = Style(keyPath: view.fontKeyPath, style: style, weight: weight)
         setFont(from: container, on: view)
-        table[Weak(view)] = container
+        table[view] = container
     }
     
     func watch(_ tableView: UITableView) {
