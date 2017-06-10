@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		231520E21EEC05A100552647 /* CommentSortingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231520E11EEC05A100552647 /* CommentSortingTests.swift */; };
 		233756291EC0DDD10051ED2C /* Offline Development in Resources */ = {isa = PBXBuildFile; fileRef = 233756281EC0DDD10051ED2C /* Offline Development */; };
 		234094CE1EDEA3B700359C84 /* TableViewDiffing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094CD1EDEA3B700359C84 /* TableViewDiffing.swift */; };
 		234094D01EE012F000359C84 /* WebsiteCaching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234094CF1EE012F000359C84 /* WebsiteCaching.swift */; };
@@ -110,6 +111,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		231520E11EEC05A100552647 /* CommentSortingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentSortingTests.swift; sourceTree = "<group>"; };
 		233756281EC0DDD10051ED2C /* Offline Development */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Offline Development"; sourceTree = "<group>"; };
 		233756381EC6794F0051ED2C /* RedditOfflineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RedditOfflineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2337563C1EC6794F0051ED2C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -455,6 +457,7 @@
 				23B3322E1ECF464100480122 /* PostsViewControllerTests.swift */,
 				2379B0921ECF984000925F9A /* CommentsViewControllerTests.swift */,
 				23B332331ECF465300480122 /* TestableCoreDataControllerTests.swift */,
+				231520E11EEC05A100552647 /* CommentSortingTests.swift */,
 			);
 			path = "Test Cases";
 			sourceTree = "<group>";
@@ -618,6 +621,7 @@
 				23B332321ECF464100480122 /* PostsViewControllerTests.swift in Sources */,
 				23B332301ECF464100480122 /* TestableCoreDataController.swift in Sources */,
 				23B332311ECF464100480122 /* BaseTestCase.swift in Sources */,
+				231520E21EEC05A100552647 /* CommentSortingTests.swift in Sources */,
 				2379B0931ECF984000925F9A /* CommentsViewControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -38,7 +38,7 @@ func compare(
     
     switch (lhs, rhs) {
     case let (.first(lhs), .first(rhs)):
-        return comparison(lhs, rhs, [])
+        return comparison(lhs, rhs, .none)
         
     case let (.first(lhs), .other(more)):
         guard let rhs = more.parentComment else { return true }
@@ -52,7 +52,7 @@ func compare(
         guard let lhs = lhsMore.parentComment, let rhs = rhsMore.parentComment else {
             return lhsMore.parentComment != nil
         }
-        return lhs != rhs && comparison(lhs, rhs, [.left, .right])
+        return lhs != rhs && comparison(lhs, rhs, .both)
     }
 }
 

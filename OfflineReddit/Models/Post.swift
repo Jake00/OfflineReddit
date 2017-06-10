@@ -107,3 +107,17 @@ extension Post {
 }
 
 extension Post: Identifiable { }
+
+extension Post {
+    
+    override var debugDescription: String {
+        let maximumCharacters = 40
+        var selfText = self.selfText ?? ""
+        if selfText.characters.count > maximumCharacters {
+            let index = selfText.index(selfText.startIndex, offsetBy: maximumCharacters - 3)
+            selfText = selfText.substring(to: index) + "..."
+        }
+        selfText = selfText.replacingOccurrences(of: "\n", with: "\\n", options: .literal)
+        return "\nPost \(id) by \(author ?? "") with \(comments.count) replies: \(selfText)"
+    }
+}

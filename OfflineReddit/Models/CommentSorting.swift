@@ -11,7 +11,7 @@ import Foundation
 extension Comment: Comparable {
     
     static func < (lhs: Comment, rhs: Comment) -> Bool {
-        return Sort.top.comparitor(lhs, rhs, [])
+        return Sort.top.comparitor(lhs, rhs, .none)
     }
     
     enum Sort {
@@ -44,21 +44,44 @@ extension Comment: Comparable {
         }
         
         var comparitor: ((Comment, Comment, MoreCommentsSide) -> Bool) {
-            switch self {
-            case .top:   return { compare($0, $1, $2) { $0.score > $1.score }}
-            case .worst: return { compare($0, $1, $2) { $0.score < $1.score }}
-            case .new:   return { compare($0, $1, $2) { $0.created > $1.created }}
-            case .old:   return { compare($0, $1, $2) { $0.created < $1.created }}
-            case .controversial: return controversyEstimate
+            return { compare($0, $1, $2, { Sort._compare(self, $0, $1) }) }
+        }
+        
+        private static func _compare(_ sort: Sort?, _ lhs: Comment, _ rhs: Comment) -> Bool {
+            switch sort {
+            case .top?:
+                return lhs.score != rhs.score
+                    ? lhs.score > rhs.score
+                    : _compare(.old, lhs, rhs)
+            case .worst?:
+                return lhs.score != rhs.score
+                    ? lhs.score < rhs.score
+                    : _compare(.old, lhs, rhs)
+            case .new?:
+                return lhs.created != rhs.created
+                    ? lhs.created > rhs.created
+                    : _compare(nil, lhs, rhs)
+            case .old?:
+                return lhs.created != rhs.created
+                    ? lhs.created < rhs.created
+                    : _compare(nil, lhs, rhs)
+            case .controversial?:
+                return controversyEstimate(lhs, rhs)
+                    ?? _compare(nil, lhs, rhs)
+            case nil:
+                if let lhsAuthor = lhs.author, let rhsAuthor = rhs.author, lhsAuthor != rhsAuthor {
+                    return lhsAuthor < rhsAuthor
+                } else if let lhsBody = lhs.body, let rhsBody = rhs.body, lhsBody != rhsBody {
+                    return lhsBody < rhsBody
+                }
+                return false
             }
         }
     }
 }
 
-struct MoreCommentsSide: OptionSet {
-    let rawValue: Int
-    static let left = MoreCommentsSide(rawValue: 1 << 0)
-    static let right = MoreCommentsSide(rawValue: 1 << 1)
+enum MoreCommentsSide {
+    case none, left, right, both
 }
 
 /// Compares two comments which may have different parent comments ie. they may not be in the same tree.
@@ -66,7 +89,7 @@ struct MoreCommentsSide: OptionSet {
 private func compare(
     _ lhs: Comment,
     _ rhs: Comment,
-    _ moreComments: MoreCommentsSide,
+    _ moreCommentsSide: MoreCommentsSide,
     _ comparison: (Comment, Comment) -> Bool
     ) -> Bool {
     
@@ -83,11 +106,12 @@ private func compare(
                 return comparison(lhsComment, rhsComment)
             }
     }
-    return moreComments.isEmpty
-        ? rhsHierarchy.contains(lhs) || !lhsHierarchy.contains(rhs)
-        : moreComments == [.left, .right]
-        ? lhs.depth > rhs.depth
-        : moreComments == .right
+    switch moreCommentsSide {
+    case .none:  return rhsHierarchy.contains(lhs) || !lhsHierarchy.contains(rhs)
+    case .both:  return lhs.depth > rhs.depth
+    case .left:  return false
+    case .right: return true
+    }
 }
 
 fileprivate extension Comment {
@@ -107,11 +131,18 @@ fileprivate extension Comment {
 /// We can't get the total upvotes and downvotes (Reddit only exposes a single 'score', with upvotes=score and downvotes=0)
 /// https://github.com/reddit/reddit/blob/dbcf37afe2c5f5dd19f99b8a3484fc69eb27fcd5/r2/r2/lib/jsontemplates.py#L817
 /// So this estimates by putting the score closest to 0 at the top (equal number of upvotes and downvotes).
-private func controversyEstimate(lhs: Comment, rhs: Comment, moreComments: MoreCommentsSide) -> Bool {
+private func controversyEstimate(_ lhs: Comment, _ rhs: Comment) -> Bool? {
     switch (lhs.isControversial, rhs.isControversial) {
-    case (false, false): return compare(lhs, rhs, moreComments) { $0.score < $1.score }
-    case (true, true): return compare(lhs, rhs, moreComments) { abs($0.score) < abs($1.score) }
-    default: return lhs.isControversial
+    case (false, false):
+        return lhs.score != rhs.score
+            ? lhs.score < rhs.score
+            : nil
+    case (true, true):
+        return lhs.score != rhs.score
+            ? abs(lhs.score) < abs(rhs.score)
+            : nil
+    default:
+        return lhs.isControversial
     }
 }
 
@@ -120,6 +151,6 @@ extension Collection where Iterator.Element == Comment {
     // Allows the syntax `comments.sorted(by: .top)`
     func sorted(by sorting: Comment.Sort) -> [Comment] {
         let comparitor = sorting.comparitor
-        return sorted { comparitor($0, $1, []) }
+        return sorted { comparitor($0, $1, .none) }
     }
 }

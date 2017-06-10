@@ -95,3 +95,17 @@ extension Comment {
 }
 
 extension Comment: Identifiable { }
+
+extension Comment {
+    
+    override var debugDescription: String {
+        let maximumCharacters = 40
+        var body = self.body ?? ""
+        if body.characters.count > maximumCharacters {
+            let index = body.index(body.startIndex, offsetBy: maximumCharacters - 3)
+            body = body.substring(to: index) + "..."
+        }
+        body = body.replacingOccurrences(of: "\n", with: "\\n", options: .literal)
+        return "\nComment \(id) depth \(depth) score \(score) by \(author ?? "") with \(children.count) replies: \(body)"
+    }
+}

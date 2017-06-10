@@ -21,9 +21,8 @@ class CommentsViewControllerTests: BaseTestCase {
         remote.context = context
         remote.mapper.context = context
         controller.importPosts(to: context, including: .comments)
-
         
-        let fetch = NSFetchRequest<Post>(entityName: String(describing: Post.self))
+        let fetch = Post.fetchRequest() as NSFetchRequest<Post>
         fetch.sortDescriptors = [NSSortDescriptor(key: "commentsCount", ascending: false)]
         guard let post = (try? context.fetch(fetch))?.first else {
             fatalError("No post available for testing CommentsViewController")
