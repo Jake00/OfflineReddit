@@ -8,6 +8,7 @@
 
 import UIKit
 import BoltsSwift
+import CocoaMarkdown
 
 class CommentsViewController: UIViewController, Loadable {
     
@@ -58,7 +59,12 @@ class CommentsViewController: UIViewController, Loadable {
         subredditLabel.text = dataSource.post.subredditNamePrefixed
         authorTimeLabel.text = dataSource.post.authorTimeText
         titleLabel.text = dataSource.post.title
-        selfLabel.text = dataSource.post.selfText
+        selfLabel.attributedText = {
+            let data = dataSource.post.selfText?.data(using: .utf8)
+            let attributes = CMTextAttributes()
+            return CMDocument(data: data, options: [])
+                .attributedString(with: attributes)
+            }()
         isLoading = false
         toolbarItems = [
             markAsReadButton,
@@ -161,7 +167,6 @@ class CommentsViewController: UIViewController, Loadable {
         authorTimeLabel.enableDynamicType(style: .footnote)
         commentsLabel.enableDynamicType(style: .footnote)
         titleLabel.enableDynamicType(style: .headline)
-        selfLabel.enableDynamicType(style: .subheadline)
     }
 }
 
