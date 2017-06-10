@@ -13,6 +13,7 @@ class Subreddit: NSManagedObject {
     @NSManaged var name: String
     @NSManaged var isSelected: Bool
     @NSManaged var posts: Set<Post>
+    @NSManaged var rawContentType: Int64
 }
 
 extension Subreddit {
@@ -28,10 +29,27 @@ extension Subreddit {
     }
     
     static func insertDefaults(into context: NSManagedObjectContext) -> [Subreddit] {
-        return defaults.map { create(in: context, name: $0) }
+        return Defaults.subreddits.map { name, contentType in
+            let subreddit = create(in: context, name: name)
+            subreddit.contentType = contentType
+            return subreddit
+        }
     }
     
-    static var defaults: [String] {
-        return ["announcements", "Art", "AskReddit", "askscience", "aww", "blog", "books", "creepy", "dataisbeautiful", "DIY", "Documentaries", "EarthPorn", "explainlikeimfive", "food", "funny", "Futurology", "gadgets", "gaming", "GetMotivated", "gifs", "history", "IAmA", "InternetIsBeautiful", "Jokes", "LifeProTips", "listentothis", "mildlyinteresting", "movies", "Music", "news", "nosleep", "nottheonion", "OldSchoolCool", "personalfinance", "philosophy", "photoshopbattles", "pics", "science", "Showerthoughts", "space", "sports", "television", "tifu", "todayilearned", "TwoXChromosomes", "UpliftingNews", "videos", "worldnews", "WritingPrompts"]
+    enum ContentType: Int64 {
+        case unknown, text, multimedia
+        
+        var displayName: String {
+            switch self {
+            case .unknown:    return SharedText.subredditContentTypeUnknown
+            case .text:       return SharedText.subredditContentTypeText
+            case .multimedia: return SharedText.subredditContentTypeMultimedia
+            }
+        }
+    }
+    
+    var contentType: ContentType {
+        get { return ContentType(rawValue: rawContentType) ?? .unknown }
+        set { rawContentType = newValue.rawValue }
     }
 }

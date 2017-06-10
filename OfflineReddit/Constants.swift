@@ -31,6 +31,71 @@ var isTesting: Bool {
 struct Defaults {
     static let postsSortFilter = Post.SortFilter(sort: .top, period: .month, filter: [.notRead, .online, .offline])
     static let commentsSort: Comment.Sort = .top
+    
+    static var subreddits: [(name: String, contentType: Subreddit.ContentType)] {
+        return [
+            ("AskReddit",               .text),
+            ("askscience",              .text),
+            ("explainlikeimfive",       .text),
+            ("IAmA",                    .text),
+            ("Jokes",                   .text),
+            ("LifeProTips",             .text),
+            ("nosleep",                 .text),
+            ("personalfinance",         .text),
+            ("Showerthoughts",          .text),
+            ("tifu",                    .text),
+            ("todayilearned",           .text),
+            ("WritingPrompts",          .text),
+            ("PettyRevenge",            .text),
+            ("ProRevenge",              .text),
+            ("TalesfromRetail",         .text),
+            ("TalesfromTechSupport",    .text),
+            ("TalesfromTheFrontDesk",   .text),
+            ("talesfromyourserver",     .text),
+            ("relationships",           .text),
+            ("changemyview",            .text),
+            ("bestof",                  .text),
+            ("bestoflegaladvice",       .text),
+            ("subredditdrama",          .text),
+            ("threadkillers",           .text),
+            ("Glitch_in_the_Matrix",    .text),
+            ("unresolvedmysteries",     .text),
+            ("legaladvice",             .text),
+            ("no_sob_storyez",          .text),
+            ("ExplainlikeIAMA",         .text),
+            ("fatpeoplestories",        .text),
+            ("wouldyourather",          .text),
+            ("Art",                     .multimedia),
+            ("aww",                     .multimedia),
+            ("dataisbeautiful",         .multimedia),
+            ("DIY",                     .multimedia),
+            ("EarthPorn",               .multimedia),
+            ("food",                    .multimedia),
+            ("funny",                   .multimedia),
+            ("Futurology",              .multimedia),
+            ("gadgets",                 .multimedia),
+            ("gaming",                  .multimedia),
+            ("GetMotivated",            .multimedia),
+            ("gifs",                    .multimedia),
+            ("InternetIsBeautiful",     .multimedia),
+            ("listentothis",            .multimedia),
+            ("mildlyinteresting",       .multimedia),
+            ("movies",                  .multimedia),
+            ("Music",                   .multimedia),
+            ("news",                    .multimedia),
+            ("worldnews",               .multimedia),
+            ("nottheonion",             .multimedia),
+            ("OldSchoolCool",           .multimedia),
+            ("photoshopbattles",        .multimedia),
+            ("pics",                    .multimedia),
+            ("science",                 .multimedia),
+            ("space",                   .multimedia),
+            ("sports",                  .multimedia),
+            ("television",              .multimedia),
+            ("TwoXChromosomes",         .multimedia),
+            ("technology",              .multimedia)
+        ]
+    }
 }
 
 struct SharedText {
@@ -68,6 +133,9 @@ struct SharedText {
     static let offlineStatus = NSLocalizedString("offline_status", value: "Offline status", comment: "Offline status")
     static let onlineFilterDisabledReason = NSLocalizedString("online_filter_disabled_reason", value: "Only saved posts are available until you are back online.", comment: "Offline status")
     static let savePostsFormat = NSLocalizedString("save_x_posts_format", comment: "Format for number of posts selected to download")
+    static let subredditContentTypeUnknown = NSLocalizedString("subreddit_content_type.unknown", value: "Unknown", comment: "Section header for unknown content type of subreddits")
+    static let subredditContentTypeText = NSLocalizedString("subreddit_content_type.text", value: "Text based", comment: "Section header for text based subreddits")
+    static let subredditContentTypeMultimedia = NSLocalizedString("subreddit_content_type.multimedia", value: "Pictures and websites", comment: "Section header for multimedia based subreddits (eg. pictures and websites)")
 }
 
 extension UIColor {
