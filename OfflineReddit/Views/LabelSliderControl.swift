@@ -55,6 +55,7 @@ class LabelSliderControl: UIControl {
                 else { slider.value = 0; return }
             currentTitleIndex = index
             slider.value = Float(index) / Float(steps)
+            label.text = discreteValues[index].displayName
             updateLabelPosition()
         }
     }

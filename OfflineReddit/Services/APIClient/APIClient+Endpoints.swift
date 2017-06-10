@@ -13,14 +13,14 @@ import BoltsSwift
 extension APIClient: RemoteDataProviding {
     
     func getPosts(for subreddits: [Subreddit], after post: Post?, sortedBy sort: Post.Sort, period: Post.SortPeriod?) -> Task<[Post]> {
-        let path: String = "r/" + subreddits.map { $0.name }.joined(separator: "+") + ".json"
-        var parameters: Parameters = [
-            "raw_json": "1",
-            "sort": sort.apiKey
-        ]
+        let path: String = "r/\(subreddits.map { $0.name }.joined(separator: "+"))/\(sort.apiKey).json"
+        var parameters: Parameters = ["raw_json": "1"]
         if let post = post {
             parameters["after"] = post.id
             parameters["limit"] = "25"
+        }
+        if sort.includesTimePeriods, let period = period {
+            parameters["t"] = period.apiKey
         }
         let request = Request(.get, path, parameters: parameters)
         return sendJSONRequest(request)
@@ -61,6 +61,19 @@ private extension Post.Sort {
         case .top: return "top"
         case .worst, .controversial: return "controversial"
         case .new: return "new"
+        }
+    }
+}
+
+private extension Post.SortPeriod {
+    var apiKey: String {
+        switch self {
+        case .allTime: return "all"
+        case .year:    return "year"
+        case .month:   return "month"
+        case .week:    return "week"
+        case .day:     return "day"
+        case .hour:    return "hour"
         }
     }
 }

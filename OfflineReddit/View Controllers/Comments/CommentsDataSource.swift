@@ -63,14 +63,16 @@ class CommentsDataSource: NSObject {
             .map { IndexPath(row: $0, section: 0) }
     }
     
-    private func animateCommentsUpdate() {
+    private func animateCommentsUpdate(fromSuccessfulFetch: Bool = false) {
         tableView?.reload(
             get: { comments },
-            update: updateComments)
+            update: { updateComments(fromSuccessfulFetch: fromSuccessfulFetch) })
     }
     
-    private func updateComments() {
+    private func updateComments(fromSuccessfulFetch: Bool = false) {
         allComments = {
+            // These set mutations keep the old models and therefore their states, in
+            // order for previously condensed comment cells to not reexpand by the update.
             var updating = Set(allComments)
             let new = Set({ () -> [CommentsCellModel] in 
                 let models = post.displayComments.map(CommentsCellModel.init)
@@ -92,6 +94,9 @@ class CommentsDataSource: NSObject {
                 condensed = next.comment.first
             }
             return true
+        }
+        if fromSuccessfulFetch {
+            hasFetchedOnceSuccessfully = true
         }
         if let delegate = delegate {
             let (saved, toExpand) = allComments.reduce((0, 0) as (Int64, Int64)) {
@@ -198,6 +203,8 @@ class CommentsDataSource: NSObject {
     
     // MARK: - Fetching
     
+    fileprivate var hasFetchedOnceSuccessfully = false
+    
     @discardableResult
     func fetchCommentsIfNeeded() -> Task<Void>? {
         if allComments.isEmpty {
@@ -211,7 +218,7 @@ class CommentsDataSource: NSObject {
     
     func fetchComments() -> Task<Void> {
         return provider.getComments(for: post, sortedBy: sort).continueOnSuccessWith(.mainThread) { _ in
-            self.animateCommentsUpdate()
+            self.animateCommentsUpdate(fromSuccessfulFetch: true)
             self.provider.local.trySave()
         }
     }
@@ -278,7 +285,7 @@ class CommentsDataSource: NSObject {
 extension CommentsDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return max(1, comments.count)
+        return max(hasFetchedOnceSuccessfully ? 0 : 1, comments.count)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

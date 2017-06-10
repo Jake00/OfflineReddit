@@ -11,7 +11,12 @@ import Dwifft
 
 extension UITableView {
     
-    func reload<T: Equatable>(old: [T], new: [T], numberOfEmptyCells: Int = 0) {
+    func reload<T: Equatable>(
+        old: [T],
+        new: [T],
+        section: Int = 0,
+        numberOfEmptyCells: Int = 0
+        ) {
         var deleting: [Int] = []
         var inserting: [Int] = []
         if old.isEmpty, numberOfEmptyCells > 0 {
@@ -24,14 +29,18 @@ extension UITableView {
             }
         }
         beginUpdates()
-        deleteRows(at: deleting.map { IndexPath(row: $0, section: 0) }, with: .fade)
-        insertRows(at: inserting.map { IndexPath(row: $0, section: 0) }, with: .fade)
+        deleteRows(at: deleting.map { IndexPath(row: $0, section: section) }, with: .fade)
+        insertRows(at: inserting.map { IndexPath(row: $0, section: section) }, with: .fade)
         endUpdates()
     }
     
-    func reload<T: Equatable>(get: () -> [T], update: () -> Void) {
+    func reload<T: Equatable>(
+        section: Int = 0,
+        get: () -> [T],
+        update: () -> Void
+        ) {
         let old = get()
-        let numberOfEmptyCells = dataSource?.tableView(self, numberOfRowsInSection: 0) ?? 0
+        let numberOfEmptyCells = dataSource?.tableView(self, numberOfRowsInSection: section) ?? 0
         update()
         let new = get()
         reload(old: old, new: new, numberOfEmptyCells: numberOfEmptyCells)

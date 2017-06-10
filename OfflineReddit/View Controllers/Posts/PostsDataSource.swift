@@ -74,6 +74,10 @@ class PostsDataSource: NSObject {
             reloadWithOfflinePosts()
         } else if change.didSelectOnline, allRows.contains(where: { !$0.post.isAvailableOffline }) {
             fetchNextPage()
+        } else if allRows.count == rows.count {
+            allRows.removeAll()
+            animateRowsUpdate()
+            fetchNextPage()
         } else {
             animateRowsUpdate()
         }
