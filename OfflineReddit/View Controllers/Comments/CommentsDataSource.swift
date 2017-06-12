@@ -162,12 +162,13 @@ class CommentsDataSource: NSObject {
                 tableView?.deleteRows(at: makeIndexPaths(), with: .fade)
             }
         }
+        updateDrawable(tableView?.cellForRow(at: indexPath) as? CommentsCellDrawable, at: indexPath, model: comment)
         tableView?.endUpdates()
     }
     
     // MARK: - Cell configuration
     
-    func configureCommentCell(_ cell: CommentsCell, model: CommentsCellModel) -> CommentsCell {
+    func configureCommentCell(_ cell: CommentsCell, at indexPath: IndexPath, model: CommentsCellModel) -> CommentsCell {
         let comment = model.comment.first
         cell.topLabel.text = comment?.authorScoreTimeText
         cell.topLabel.font = .preferredFont(forTextStyle: .footnote)
@@ -178,20 +179,31 @@ class CommentsDataSource: NSObject {
             model.attributedText = attributedText
             return attributedText
             }()
-        cell.indentationLevel = Int(model.depth)
         cell.isExpanded = model.isExpanded
+        updateDrawable(cell, at: indexPath, model: model)
         return cell
     }
     
-    func configureMoreCommentsCell(_ cell: MoreCommentsCell, model: CommentsCellModel?) -> MoreCommentsCell {
+    func configureMoreCommentsCell(_ cell: MoreCommentsCell, at indexPath: IndexPath?, model: CommentsCellModel?) -> MoreCommentsCell {
         updateMoreCell(cell, model?.comment.other, forceLoad: model == nil)
+        updateDrawable(cell, at: indexPath, model: model)
         cell.titleLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
-        cell.indentationLevel = Int(model?.depth ?? 0)
         return cell
     }
     
-    func configureHeight(for model: CommentsCellModel, width: CGFloat) -> CGFloat {
-        let cell = configureCommentCell(CommentsDataSource.commentSizingCell, model: model)
+    func updateDrawable(_ cell: CommentsCellDrawable?, at indexPath: IndexPath?, model: CommentsCellModel?) {
+        let level = Int(model?.depth ?? 0)
+        cell?.indentationLevel = level
+        cell?.drawingContext.previousIndentation = indexPath.flatMap {
+            $0.row > comments.startIndex ? Int(comments[$0.row - 1].depth) : nil
+            } ?? level
+        cell?.drawingContext.nextIndentation = indexPath.flatMap {
+            $0.row < comments.endIndex ? Int(comments[$0.row + 1].depth) : nil
+            } ?? level
+    }
+    
+    func configureHeight(for model: CommentsCellModel, at indexPath: IndexPath, width: CGFloat) -> CGFloat {
+        let cell = configureCommentCell(CommentsDataSource.commentSizingCell, at: indexPath, model: model)
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
         let height = cell.systemLayoutSizeFitting(
@@ -297,13 +309,13 @@ extension CommentsDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard !comments.isEmpty else {
-            return configureMoreCommentsCell(tableView.dequeueReusableCell(for: indexPath), model: nil)
+            return configureMoreCommentsCell(tableView.dequeueReusableCell(for: indexPath), at: indexPath, model: nil)
         }
         
         let model = comments[indexPath.row]
         return model.isMoreComments
-            ? configureMoreCommentsCell(tableView.dequeueReusableCell(for: indexPath), model: model)
-            : configureCommentCell(tableView.dequeueReusableCell(for: indexPath), model: model)
+            ? configureMoreCommentsCell(tableView.dequeueReusableCell(for: indexPath), at: indexPath, model: model)
+            : configureCommentCell(tableView.dequeueReusableCell(for: indexPath), at: indexPath, model: model)
     }
 }
 
@@ -315,7 +327,7 @@ extension CommentsDataSource: UITableViewDelegate {
         guard !comments.isEmpty else { return CommentsCellModel.moreCommentsHeight }
         guard let width = tableView.superview?.frame.width else { return 0 }
         let model = comments[indexPath.row]
-        return model.height(for: width) ?? configureHeight(for: model, width: width)
+        return model.height(for: width) ?? configureHeight(for: model, at: indexPath, width: width)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -324,7 +336,7 @@ extension CommentsDataSource: UITableViewDelegate {
         let model = comments[indexPath.row]
         if let height = model.height(for: width) { return height }
         guard let comment = model.comment.first else { return CommentsCellModel.moreCommentsHeight }
-        guard model.isExpanded else { return CommentsCellModel.condensedHeight ?? configureHeight(for: model, width: width) }
+        guard model.isExpanded else { return CommentsCellModel.condensedHeight ?? configureHeight(for: model, at: indexPath, width: width) }
         guard let (margin, frameWidth) = delegate?.viewDimensionsForCommentsDataSource(self) else { return 0 }
         let textWidth = frameWidth - margin - CommentsCell.indentationWidth * CGFloat(comment.depth)
         let numberOfCharacters: Int = Int(comment.body?.characters.count ?? 0)
@@ -339,7 +351,7 @@ extension CommentsDataSource: UITableViewDelegate {
             let wasExpanded = model.isExpanded
             defer { model.isExpanded = wasExpanded }
             model.isExpanded = false
-            return configureHeight(for: model, width: width)
+            return configureHeight(for: model, at: indexPath, width: width)
         }()
         return bodyHeight + topHeight
     }

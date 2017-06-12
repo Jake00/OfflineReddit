@@ -8,20 +8,23 @@
 
 import UIKit
 
-class CommentsCell: UITableViewCell, ReusableNibCell {
+class CommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
     
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var bodyLabel: UILabel!
     @IBOutlet weak var bodyLabelLeading: NSLayoutConstraint!
     @IBOutlet var bodyLabelBottom: NSLayoutConstraint!
     
-    static let indentationWidth: CGFloat = 15
+    var drawingContext = CommentsCellDrawingContext(previousIndentation: 0, nextIndentation: 0)
+    
+    static let indentationWidth: CGFloat = 10
     
     override var indentationLevel: Int {
         didSet {
             bodyLabelLeading.constant = CommentsCell.indentationWidth * CGFloat(indentationLevel)
             layoutMargins.left = bodyLabelLeading.constant + contentView.layoutMargins.left
             separatorInset.left = layoutMargins.left
+            setNeedsDisplay()
         }
     }
     
@@ -34,18 +37,9 @@ class CommentsCell: UITableViewCell, ReusableNibCell {
     
     var isExpanding: Bool = false
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setup()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
-    }
-    
-    private func setup() {
-        selectedBackgroundView = UIView(backgroundColor: .selectedGray)
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        setNeedsDisplay()
     }
     
     override func layoutSubviews() {
@@ -55,6 +49,10 @@ class CommentsCell: UITableViewCell, ReusableNibCell {
                 self.contentView.layoutIfNeeded()
             }
         }
+    }
+    
+    override func draw(_ rect: CGRect) {
+        drawDecorations()
     }
 }
 

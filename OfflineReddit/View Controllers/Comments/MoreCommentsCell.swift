@@ -8,12 +8,14 @@
 
 import UIKit
 
-class MoreCommentsCell: UITableViewCell, ReusableNibCell {
+class MoreCommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
     
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var containerLeading: NSLayoutConstraint!
     @IBOutlet weak var container: UIView!
+    
+    var drawingContext = CommentsCellDrawingContext(previousIndentation: 0, nextIndentation: 0)
     
     override var indentationLevel: Int {
         didSet {
@@ -21,25 +23,16 @@ class MoreCommentsCell: UITableViewCell, ReusableNibCell {
             containerLeading.constant = indentation
             layoutMargins.left = indentation + contentView.layoutMargins.left
             separatorInset.left = layoutMargins.left
+            setNeedsDisplay()
         }
     }
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setup()
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        setNeedsDisplay()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
-    }
-    
-    private func setup() {
-        selectedBackgroundView = UIView(backgroundColor: .selectedGray)
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        container.backgroundColor = .selectedGray
+    override func draw(_ rect: CGRect) {
+        drawDecorations()
     }
 }

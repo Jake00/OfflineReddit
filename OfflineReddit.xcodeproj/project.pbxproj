@@ -96,6 +96,7 @@
 		23B332321ECF464100480122 /* PostsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B3322E1ECF464100480122 /* PostsViewControllerTests.swift */; };
 		23B332341ECF465300480122 /* TestableCoreDataControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B332331ECF465300480122 /* TestableCoreDataControllerTests.swift */; };
 		23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */; };
+		23F88C741EEF3C9E006A5272 /* CommentsCellDrawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F88C731EEF3C9E006A5272 /* CommentsCellDrawable.swift */; };
 		23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3441EC0592A005A0606 /* DataProvider.swift */; };
 		23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */; };
 /* End PBXBuildFile section */
@@ -205,6 +206,7 @@
 		23B3322E1ECF464100480122 /* PostsViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsViewControllerTests.swift; sourceTree = "<group>"; };
 		23B332331ECF465300480122 /* TestableCoreDataControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableCoreDataControllerTests.swift; sourceTree = "<group>"; };
 		23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorViewAnimating.swift; sourceTree = "<group>"; };
+		23F88C731EEF3C9E006A5272 /* CommentsCellDrawable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsCellDrawable.swift; sourceTree = "<group>"; };
 		23F9F3441EC0592A005A0606 /* DataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataProvider.swift; sourceTree = "<group>"; };
 		23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OfflineRemoteProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -256,6 +258,7 @@
 				2379B08C1ECF7E0A00925F9A /* MoreCommentsCell.swift */,
 				2379B08A1ECF7DFB00925F9A /* MoreCommentsCell.xib */,
 				2379B06C1ECF787900925F9A /* EitherMoreComments.swift */,
+				23F88C731EEF3C9E006A5272 /* CommentsCellDrawable.swift */,
 			);
 			path = Comments;
 			sourceTree = "<group>";
@@ -677,6 +680,7 @@
 				2379B0EA1ED9D8C900925F9A /* FilterPostsSortCell.swift in Sources */,
 				2379B09F1ED1CDFB00925F9A /* CommentsProvider.swift in Sources */,
 				235E08011E80D25100D83D16 /* SeparatorView.swift in Sources */,
+				23F88C741EEF3C9E006A5272 /* CommentsCellDrawable.swift in Sources */,
 				2379B0781ECF787900925F9A /* CommentsDownloader.swift in Sources */,
 				2379B0801ECF787900925F9A /* SubredditCell.swift in Sources */,
 				23A395F71E7DDF9800030DEF /* Mapper.swift in Sources */,

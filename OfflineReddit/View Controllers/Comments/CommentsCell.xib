@@ -11,11 +11,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="15" shouldIndentWhileEditing="NO" reuseIdentifier="CommentsCell" rowHeight="90" id="eIt-Ia-asb" customClass="CommentsCell" customModule="OfflineReddit" customModuleProvider="target">
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="15" shouldIndentWhileEditing="NO" reuseIdentifier="CommentsCell" rowHeight="90" id="eIt-Ia-asb" customClass="CommentsCell" customModule="OfflineReddit" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="375" height="90"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" layoutMarginsFollowReadableWidth="YES" tableViewCell="eIt-Ia-asb" id="mYL-tM-oV8">
-                <rect key="frame" x="0.0" y="0.0" width="375" height="90"/>
+                <rect key="frame" x="0.0" y="0.0" width="375" height="89.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="752" text="u/[user] • [x] points • [x time] ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pjm-ed-wYb">
@@ -24,7 +24,7 @@
                         <color key="textColor" white="0.59999999999999998" alpha="1" colorSpace="deviceWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <view clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="748" translatesAutoresizingMaskIntoConstraints="NO" id="kDd-cN-hOK" customClass="CommentBodyContainer" customModule="OfflineReddit" customModuleProvider="target">
+                    <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="748" translatesAutoresizingMaskIntoConstraints="NO" id="kDd-cN-hOK" customClass="CommentBodyContainer" customModule="OfflineReddit" customModuleProvider="target">
                         <rect key="frame" x="8" y="24" width="359" height="57.5"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" text="[Message]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95h-kA-5DO">
@@ -34,7 +34,6 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
                         <constraints>
                             <constraint firstItem="95h-kA-5DO" firstAttribute="leading" secondItem="kDd-cN-hOK" secondAttribute="leading" id="D4F-1i-Lh3"/>
                             <constraint firstAttribute="bottom" secondItem="95h-kA-5DO" secondAttribute="bottom" id="HZk-ri-czA"/>
