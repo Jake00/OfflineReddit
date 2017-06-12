@@ -15,7 +15,6 @@ class CommentsCell: UITableViewCell, ReusableNibCell {
     @IBOutlet weak var bodyLabelLeading: NSLayoutConstraint!
     @IBOutlet var bodyLabelBottom: NSLayoutConstraint!
     
-    static var bodyLabelFont: UIFont = .systemFont(ofSize: 14)
     static let indentationWidth: CGFloat = 15
     
     override var indentationLevel: Int {

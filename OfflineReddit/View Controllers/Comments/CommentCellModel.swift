@@ -36,7 +36,7 @@ final class CommentsCellModel {
     
     var expandedHeight: [Width: Height] = [:]
     static let moreCommentsHeight: Height = 36
-    static let condensedHeight: Height = 30.5
+    static var condensedHeight: Height?
     
     func height(for width: Width) -> Height? {
         return isMoreComments ? CommentsCellModel.moreCommentsHeight

@@ -58,6 +58,8 @@ class CommentsDataSource: NSObject {
     
     static let commentSizingCell = CommentsCell.instantiateFromNib()
     
+    var textAttributes = CMTextAttributes()
+    
     func indexPath(of more: MoreComments) -> IndexPath? {
         return comments.index(where: { $0.comment == more })
             .map { IndexPath(row: $0, section: 0) }
@@ -171,9 +173,8 @@ class CommentsDataSource: NSObject {
         cell.topLabel.font = .preferredFont(forTextStyle: .footnote)
         cell.bodyLabel.attributedText = model.attributedText ?? {
             let data = comment?.body?.data(using: .utf8)
-            let attributes = CMTextAttributes()
             let attributedText = CMDocument(data: data, options: [])
-                .attributedString(with: attributes)
+                .attributedString(with: textAttributes)
             model.attributedText = attributedText
             return attributedText
             }()
@@ -189,7 +190,7 @@ class CommentsDataSource: NSObject {
         return cell
     }
     
-    func configureExpandedHeight(for model: CommentsCellModel, width: CGFloat) -> CGFloat {
+    func configureHeight(for model: CommentsCellModel, width: CGFloat) -> CGFloat {
         let cell = configureCommentCell(CommentsDataSource.commentSizingCell, model: model)
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
@@ -197,7 +198,11 @@ class CommentsDataSource: NSObject {
             CGSize(width: width, height: UILayoutFittingCompressedSize.height),
             withHorizontalFittingPriority: UILayoutPriorityRequired,
             verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
-        model.expandedHeight[width] = height
+        if model.isExpanded {
+            model.expandedHeight[width] = height
+        } else {
+            CommentsCellModel.condensedHeight = height
+        }
         return height
     }
     
@@ -272,6 +277,8 @@ class CommentsDataSource: NSObject {
     // MARK: - Dynamic type 
     
     func preferredTextSizeChanged(_ notification: Notification) {
+        textAttributes = CMTextAttributes()
+        CommentsCellModel.condensedHeight = nil
         for model in allComments {
             model.attributedText = nil
             model.expandedHeight.removeAll()
@@ -308,22 +315,33 @@ extension CommentsDataSource: UITableViewDelegate {
         guard !comments.isEmpty else { return CommentsCellModel.moreCommentsHeight }
         guard let width = tableView.superview?.frame.width else { return 0 }
         let model = comments[indexPath.row]
-        return model.height(for: width) ?? configureExpandedHeight(for: model, width: width)
+        return model.height(for: width) ?? configureHeight(for: model, width: width)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         guard indexPath.row < comments.endIndex else { return 40 }
+        guard let width = tableView.superview?.frame.width else { return 0 }
         let model = comments[indexPath.row]
-        guard let comment = model.comment.first else { /* 'More comments' */ return CommentsCellModel.moreCommentsHeight }
-        guard model.isExpanded else { return CommentsCellModel.condensedHeight }
+        if let height = model.height(for: width) { return height }
+        guard let comment = model.comment.first else { return CommentsCellModel.moreCommentsHeight }
+        guard model.isExpanded else { return CommentsCellModel.condensedHeight ?? configureHeight(for: model, width: width) }
         guard let (margin, frameWidth) = delegate?.viewDimensionsForCommentsDataSource(self) else { return 0 }
         let textWidth = frameWidth - margin - CommentsCell.indentationWidth * CGFloat(comment.depth)
         let numberOfCharacters: Int = Int(comment.body?.characters.count ?? 0)
-        let averageCharacterWidth = 1.98026 / CommentsCell.bodyLabelFont.pointSize
+        let font = textAttributes?.textAttributes[NSFontAttributeName] as? UIFont
+            ?? UIFont.preferredFont(forTextStyle: .body)
+        let averageCharacterWidth = 1.98026 / font.pointSize
         let charactersPerLine = textWidth * averageCharacterWidth
         let numberOfNewlineCharacters = (comment.body?.components(separatedBy: .newlines).count ?? 1) - 1
         let numberOfLines = CGFloat(numberOfCharacters) / charactersPerLine
-        return (ceil(numberOfLines) + CGFloat(numberOfNewlineCharacters)) * CommentsCell.bodyLabelFont.lineHeight + CommentsCellModel.condensedHeight
+        let bodyHeight = (ceil(numberOfLines) + CGFloat(numberOfNewlineCharacters)) * font.lineHeight
+        let topHeight = CommentsCellModel.condensedHeight ?? {
+            let wasExpanded = model.isExpanded
+            defer { model.isExpanded = wasExpanded }
+            model.isExpanded = false
+            return configureHeight(for: model, width: width)
+        }()
+        return bodyHeight + topHeight
     }
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
