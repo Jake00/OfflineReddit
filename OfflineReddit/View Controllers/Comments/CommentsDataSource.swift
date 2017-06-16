@@ -145,9 +145,14 @@ class CommentsDataSource: NSObject {
         let cell = tableView?.cellForRow(at: indexPath) as? CommentsCell
         cell?.isExpanded = comment.isExpanded
         cell?.isExpanding = comment.isExpanded
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            cell?.isExpanding = false
+            cell?.setNeedsDisplay()
+        }
         updateExpanded(for: comment, at: indexPath)
-        cell?.isExpanding = false
         tableView?.scrollToRow(at: indexPath, at: .none, animated: true)
+        CATransaction.commit()
     }
     
     func updateExpanded(for comment: CommentsCellModel, at indexPath: IndexPath) {

@@ -59,7 +59,9 @@ class CommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
     override func draw(_ rect: CGRect) {
         drawDecorations()
         separator.isHidden = indentationLevel != 0 || drawingContext.nextIndentation != 0
-        guard !blockQuoteRanges.isEmpty, let context = UIGraphicsGetCurrentContext() else { return }
+        guard !blockQuoteRanges.isEmpty, isExpanded, !isExpanding,
+            let context = UIGraphicsGetCurrentContext()
+            else { return }
         context.setStrokeColor(UIColor.lightMidGray.cgColor)
         let lineWidth: CGFloat = 2.5
         context.setLineWidth(lineWidth)
@@ -67,7 +69,7 @@ class CommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
         origin.x += lineWidth / 2
         for range in blockQuoteRanges {
             let glyphRange = bodyTextView.layoutManager.glyphRange(forCharacterRange: range, actualCharacterRange: nil)
-            let rect = bodyTextView.layoutManager.boundingRect(forGlyphRange: glyphRange, in: bodyTextView.textContainer).insetBy(dx: 0, dy: 3)
+            let rect = bodyTextView.layoutManager.boundingRect(forGlyphRange: glyphRange, in: bodyTextView.textContainer).insetBy(dx: 0, dy: 3.5)
             let start = CGPoint(x: origin.x, y: rect.minY + origin.y)
             let end = CGPoint(x: origin.x, y: rect.maxY + origin.y)
             context.strokeLineSegments(between: [start, end])

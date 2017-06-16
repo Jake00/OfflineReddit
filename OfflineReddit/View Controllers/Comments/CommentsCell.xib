@@ -34,7 +34,7 @@
                     <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="748" translatesAutoresizingMaskIntoConstraints="NO" id="kDd-cN-hOK" customClass="CommentBodyContainer" customModule="OfflineReddit" customModuleProvider="target">
                         <rect key="frame" x="8" y="24" width="359" height="57.5"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" editable="NO" text="[Body text]" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GrZ-lA-c5w">
+                            <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="TopLeft" scrollEnabled="NO" editable="NO" text="[Body text]" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GrZ-lA-c5w">
                                 <rect key="frame" x="0.0" y="0.0" width="359" height="57.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
