@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CocoaMarkdown.CMAttributedStringRenderResult
 
 final class CommentsCellModel {
     
@@ -35,12 +36,10 @@ final class CommentsCellModel {
     typealias Height = CGFloat
     
     var expandedHeight: [Width: Height] = [:]
-    static let moreCommentsHeight: Height = 36
     static var condensedHeight: Height?
     
     func height(for width: Width) -> Height? {
-        return isMoreComments ? CommentsCellModel.moreCommentsHeight
-            : isExpanded ? expandedHeight[width] : CommentsCellModel.condensedHeight
+        return isExpanded ? expandedHeight[width] : CommentsCellModel.condensedHeight
     }
     
     var depth: Int64 {
@@ -50,7 +49,7 @@ final class CommentsCellModel {
         }
     }
     
-    var attributedText: NSAttributedString?
+    var render: CMAttributedStringRenderResult?
 }
 
 // MARK: - Equatable

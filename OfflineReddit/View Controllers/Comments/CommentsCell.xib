@@ -15,9 +15,16 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="90"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" layoutMarginsFollowReadableWidth="YES" tableViewCell="eIt-Ia-asb" id="mYL-tM-oV8">
-                <rect key="frame" x="0.0" y="0.0" width="375" height="89.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="375" height="90"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gZ4-fg-HR8" customClass="SeparatorView" customModule="OfflineReddit" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="88.5" width="375" height="1"/>
+                        <color key="backgroundColor" white="0.80000000000000004" alpha="1" colorSpace="deviceWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="pfw-gP-hZt"/>
+                        </constraints>
+                    </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="752" text="u/[user] • [x] points • [x time] ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pjm-ed-wYb">
                         <rect key="frame" x="8" y="8" width="359" height="16"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
@@ -27,19 +34,19 @@
                     <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="748" translatesAutoresizingMaskIntoConstraints="NO" id="kDd-cN-hOK" customClass="CommentBodyContainer" customModule="OfflineReddit" customModuleProvider="target">
                         <rect key="frame" x="8" y="24" width="359" height="57.5"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" text="[Message]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95h-kA-5DO">
-                                <rect key="frame" x="0.0" y="4" width="359" height="53.5"/>
-                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                <color key="textColor" white="0.14999999999999999" alpha="1" colorSpace="deviceWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="TopLeft" scrollEnabled="NO" editable="NO" text="[Body text]" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GrZ-lA-c5w">
+                                <rect key="frame" x="0.0" y="0.0" width="359" height="57.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="95h-kA-5DO" firstAttribute="leading" secondItem="kDd-cN-hOK" secondAttribute="leading" id="D4F-1i-Lh3"/>
-                            <constraint firstAttribute="bottom" secondItem="95h-kA-5DO" secondAttribute="bottom" id="HZk-ri-czA"/>
-                            <constraint firstItem="95h-kA-5DO" firstAttribute="top" secondItem="kDd-cN-hOK" secondAttribute="top" constant="4" id="f46-xr-57B"/>
+                            <constraint firstAttribute="trailing" secondItem="GrZ-lA-c5w" secondAttribute="trailing" id="0FL-N4-2Lr"/>
+                            <constraint firstItem="GrZ-lA-c5w" firstAttribute="leading" secondItem="kDd-cN-hOK" secondAttribute="leading" id="D44-Yn-Lys"/>
+                            <constraint firstAttribute="bottom" secondItem="GrZ-lA-c5w" secondAttribute="bottom" id="auD-cZ-XOI"/>
                             <constraint firstAttribute="height" priority="100" id="h8M-ls-syV"/>
-                            <constraint firstAttribute="trailing" secondItem="95h-kA-5DO" secondAttribute="trailing" id="raD-FE-Xlz"/>
+                            <constraint firstItem="GrZ-lA-c5w" firstAttribute="top" secondItem="kDd-cN-hOK" secondAttribute="top" id="pSQ-RY-SFq"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -47,9 +54,12 @@
                     <constraint firstItem="kDd-cN-hOK" firstAttribute="trailing" secondItem="mYL-tM-oV8" secondAttribute="trailingMargin" id="4HD-1X-7eZ"/>
                     <constraint firstItem="kDd-cN-hOK" firstAttribute="top" secondItem="pjm-ed-wYb" secondAttribute="bottom" id="4lA-pf-Bal"/>
                     <constraint firstAttribute="bottomMargin" secondItem="pjm-ed-wYb" secondAttribute="bottom" priority="200" id="88M-0c-auK"/>
+                    <constraint firstItem="gZ4-fg-HR8" firstAttribute="leading" secondItem="mYL-tM-oV8" secondAttribute="leading" id="CHh-WC-x5w"/>
                     <constraint firstAttribute="trailingMargin" secondItem="pjm-ed-wYb" secondAttribute="trailing" id="D3O-mb-lqZ"/>
+                    <constraint firstAttribute="bottom" secondItem="gZ4-fg-HR8" secondAttribute="bottom" id="ESM-aC-zbQ"/>
                     <constraint firstAttribute="bottomMargin" secondItem="kDd-cN-hOK" secondAttribute="bottom" id="moe-mD-7mJ"/>
                     <constraint firstItem="pjm-ed-wYb" firstAttribute="top" secondItem="mYL-tM-oV8" secondAttribute="topMargin" id="vWS-hh-c9D"/>
+                    <constraint firstAttribute="trailing" secondItem="gZ4-fg-HR8" secondAttribute="trailing" id="wPh-F3-TMe"/>
                     <constraint firstItem="pjm-ed-wYb" firstAttribute="leading" secondItem="kDd-cN-hOK" secondAttribute="leading" id="xeR-2r-3Mi"/>
                     <constraint firstItem="kDd-cN-hOK" firstAttribute="leading" secondItem="mYL-tM-oV8" secondAttribute="leadingMargin" id="zBE-Qx-JEW"/>
                 </constraints>
@@ -57,9 +67,10 @@
             <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
             <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
             <connections>
-                <outlet property="bodyLabel" destination="95h-kA-5DO" id="f64-YM-MgP"/>
-                <outlet property="bodyLabelBottom" destination="HZk-ri-czA" id="elf-Ws-L4c"/>
                 <outlet property="bodyLabelLeading" destination="zBE-Qx-JEW" id="OOj-Ir-eeg"/>
+                <outlet property="bodyTextView" destination="GrZ-lA-c5w" id="Zyw-rJ-9ks"/>
+                <outlet property="bodyTextViewBottom" destination="auD-cZ-XOI" id="E1E-iq-kh2"/>
+                <outlet property="separator" destination="gZ4-fg-HR8" id="g3t-yx-Ska"/>
                 <outlet property="topLabel" destination="pjm-ed-wYb" id="FTt-oS-Hj2"/>
             </connections>
         </tableViewCell>

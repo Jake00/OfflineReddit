@@ -35,7 +35,6 @@ class SeparatorView: UIView {
     }
     
     func updateSize() {
-        let pixel = 1 / UIScreen.main.scale
         guard translatesAutoresizingMaskIntoConstraints else {
             (constraint(.height) ?? constraint(.width))?.constant = pixel
             return

@@ -60,10 +60,9 @@ class CommentsViewController: UIViewController, Loadable {
         authorTimeLabel.text = dataSource.post.authorTimeText
         titleLabel.text = dataSource.post.title
         selfLabel.attributedText = {
-            let data = dataSource.post.selfText?.data(using: .utf8)
-            let attributes = CMTextAttributes()
+            guard let data = dataSource.post.selfText?.data(using: .utf8) else { return nil }
             return CMDocument(data: data, options: [])
-                .attributedString(with: attributes)
+                .attributedString(with: dataSource.textAttributes).result
             }()
         isLoading = false
         toolbarItems = [

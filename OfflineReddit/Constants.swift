@@ -28,6 +28,8 @@ var isTesting: Bool {
     return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
 }
 
+let pixel = 1 / UIScreen.main.scale
+
 struct Defaults {
     static let postsSortFilter = Post.SortFilter(sort: .top, period: .month, filter: [.notRead, .online, .offline])
     static let commentsSort: Comment.Sort = .top
@@ -141,6 +143,7 @@ struct SharedText {
 extension UIColor {
     static let offWhite = UIColor(white: 0.95, alpha: 1)
     static let selectedGray = UIColor(white: 0.93, alpha: 1)
+    static let lightMidGray = UIColor(white: 0.6, alpha: 1)
     static let offBlack = UIColor(white: 0.15, alpha: 1)
     static let separator = UIColor(red: 0.78, green: 0.78, blue: 0.8, alpha: 1)
 }
