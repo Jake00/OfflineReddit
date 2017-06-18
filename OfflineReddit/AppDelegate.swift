@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func enableDataProviding() -> DataProvider {
-        if isDebugBuild && ProcessInfo.processInfo.arguments.contains("EMULATE_ONLINE") {
+        if isDebugBuild, ProcessInfo.processInfo.arguments.contains("EMULATE_ONLINE") {
             print("Enabling offline development. Application will report being online with no reachability change callbacks.")
             return DataProvider(
                 remote: OfflineRemoteProvider(),
@@ -33,11 +33,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 reachability: SettableReachability())
         }
         
-        let reachability = NetworkReachability.forInternetConnection()
-        reachability.startNotifier()
         return DataProvider(
             remote: APIClient(),
             local: CoreDataController.shared.viewContext,
-            reachability: reachability)
+            reachability: {
+                let reachability = NetworkReachability.forInternetConnection()
+                reachability.startNotifier()
+                return reachability
+        }())
     }
 }
