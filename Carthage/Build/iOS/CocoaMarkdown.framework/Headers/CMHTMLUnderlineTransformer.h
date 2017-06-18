@@ -6,9 +6,11 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "CMHTMLElementTransformer.h"
 #import "CMPlatformDefines.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  Transforms HTML underline elements (<u>) into attributed strings.
@@ -32,6 +34,8 @@
  *
  *  @return An initialized instance of the receiver.
  */
-- (instancetype)initWithUnderlineStyle:(CMUnderlineStyle)style color:(CMColor *)color;
+- (instancetype)initWithUnderlineStyle:(CMUnderlineStyle)style color:(CMColor * _Nullable)color;
 
 @end
+
+NS_ASSUME_NONNULL_END

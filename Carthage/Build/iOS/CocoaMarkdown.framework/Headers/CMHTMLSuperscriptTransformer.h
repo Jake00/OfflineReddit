@@ -6,14 +6,16 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "CMHTMLScriptTransformer.h"
 
 #if TARGET_OS_IPHONE
-#import <UIKit/UIKit.h>
+@import UIKit;
 #else
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Transforms HTML superscript elements (<sup>) into attributed strings.
@@ -49,3 +51,5 @@
 - (instancetype)initWithFontSizeRatio:(CGFloat)ratio baselineOffset:(CGFloat)offset;
 
 @end
+
+NS_ASSUME_NONNULL_END

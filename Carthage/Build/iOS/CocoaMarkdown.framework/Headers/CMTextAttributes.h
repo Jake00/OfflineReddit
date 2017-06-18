@@ -6,7 +6,9 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Container for sets of text attributes used to style 
@@ -185,3 +187,5 @@
 @property (nonatomic) NSDictionary *unorderedListItemAttributes;
 
 @end
+
+NS_ASSUME_NONNULL_END

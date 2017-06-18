@@ -6,10 +6,13 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class CMDocument;
 @class CMTextAttributes;
+@class CMAttributedStringRenderResult;
 @protocol CMHTMLElementTransformer;
 /**
  *  Renders an attributed string from a Markdown document
@@ -42,6 +45,8 @@
  *  @return An attributed string containing the contents of the Markdown document,
  *  styled using the attributes set on the receiver.
  */
-- (NSAttributedString *)render;
+- (CMAttributedStringRenderResult *)render;
 
 @end
+
+NS_ASSUME_NONNULL_END

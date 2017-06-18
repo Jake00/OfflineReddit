@@ -6,8 +6,12 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "CMHTMLElementTransformer.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface CMHTMLScriptTransformer : NSObject <CMHTMLElementTransformer>
 @end
+
+NS_ASSUME_NONNULL_END

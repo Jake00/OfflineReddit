@@ -34,7 +34,7 @@
 		235E08031E80E4BF00D83D16 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E08021E80E4BF00D83D16 /* NavigationController.swift */; };
 		235E08061E81430C00D83D16 /* NetworkReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 235E08051E81430C00D83D16 /* NetworkReachability.m */; };
 		235E08081E81431D00D83D16 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 235E08071E81431D00D83D16 /* SystemConfiguration.framework */; };
-		236121E01EF3BC3000C291C6 /* CocoaMarkdown.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 236121D31EF3BC1500C291C6 /* CocoaMarkdown.framework */; };
+		235E98DF1EF738E2001AB0AC /* CocoaMarkdown.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 235E98DE1EF738E2001AB0AC /* CocoaMarkdown.framework */; };
 		2361220C1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2361220B1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift */; };
 		2379B0761ECF787900925F9A /* CommentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0681ECF787900925F9A /* CommentsCell.swift */; };
 		2379B0771ECF787900925F9A /* CommentsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0691ECF787900925F9A /* CommentsDataSource.swift */; };
@@ -110,55 +110,6 @@
 			remoteGlobalIDString = 23A395C41E7DDE8600030DEF;
 			remoteInfo = OfflineReddit;
 		};
-		236121D21EF3BC1500C291C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 729F53DA1A68641400CC7448;
-			remoteInfo = "CocoaMarkdown-iOS";
-		};
-		236121D41EF3BC1500C291C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 729F53E51A68641400CC7448;
-			remoteInfo = "CocoaMarkdownTests-iOS";
-		};
-		236121D61EF3BC1500C291C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 729F53FB1A68649200CC7448;
-			remoteInfo = "CocoaMarkdown-Mac";
-		};
-		236121D81EF3BC1500C291C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 729F54051A68649200CC7448;
-			remoteInfo = "CocoaMarkdownTests-Mac";
-		};
-		236121DA1EF3BC1500C291C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 72FE7EC91A68692400F23F46;
-			remoteInfo = "Example-iOS";
-		};
-		236121DC1EF3BC1500C291C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 72FE7EF41A68695100F23F46;
-			remoteInfo = "Example-Mac";
-		};
-		236121DE1EF3BC2300C291C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 729F53D91A68641400CC7448;
-			remoteInfo = "CocoaMarkdown-iOS";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -192,7 +143,7 @@
 		235E08041E81430C00D83D16 /* NetworkReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkReachability.h; sourceTree = "<group>"; };
 		235E08051E81430C00D83D16 /* NetworkReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkReachability.m; sourceTree = "<group>"; };
 		235E08071E81431D00D83D16 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CocoaMarkdown.xcodeproj; path = ../../Downloads/CocoaMarkdown/CocoaMarkdown.xcodeproj; sourceTree = "<group>"; };
+		235E98DE1EF738E2001AB0AC /* CocoaMarkdown.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaMarkdown.framework; path = Carthage/Build/iOS/CocoaMarkdown.framework; sourceTree = "<group>"; };
 		2361220B1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UILabel+SubtextFrame.swift"; sourceTree = "<group>"; };
 		2379B0681ECF787900925F9A /* CommentsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsCell.swift; sourceTree = "<group>"; };
 		2379B0691ECF787900925F9A /* CommentsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsDataSource.swift; sourceTree = "<group>"; };
@@ -275,10 +226,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				236121E01EF3BC3000C291C6 /* CocoaMarkdown.framework in Frameworks */,
 				235E08081E81431D00D83D16 /* SystemConfiguration.framework in Frameworks */,
 				2379B0A81ED22EE700925F9A /* Dwifft.framework in Frameworks */,
 				23A395FE1E7DE0A000030DEF /* BoltsSwift.framework in Frameworks */,
+				235E98DF1EF738E2001AB0AC /* CocoaMarkdown.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,19 +244,6 @@
 				2337563C1EC6794F0051ED2C /* Info.plist */,
 			);
 			path = RedditOfflineTests;
-			sourceTree = "<group>";
-		};
-		236121C81EF3BC1500C291C6 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				236121D31EF3BC1500C291C6 /* CocoaMarkdown.framework */,
-				236121D51EF3BC1500C291C6 /* CocoaMarkdownTests-iOS.xctest */,
-				236121D71EF3BC1500C291C6 /* CocoaMarkdown.framework */,
-				236121D91EF3BC1500C291C6 /* CocoaMarkdownTests-Mac.xctest */,
-				236121DB1EF3BC1500C291C6 /* Example-iOS.app */,
-				236121DD1EF3BC1500C291C6 /* Example-Mac.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		2379B0671ECF787900925F9A /* Comments */ = {
@@ -502,7 +440,7 @@
 		23A395FC1E7DE08A00030DEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */,
+				235E98DE1EF738E2001AB0AC /* CocoaMarkdown.framework */,
 				235E08071E81431D00D83D16 /* SystemConfiguration.framework */,
 				2379B0A71ED22EE700925F9A /* Dwifft.framework */,
 				23A395FD1E7DE0A000030DEF /* BoltsSwift.framework */,
@@ -564,7 +502,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				236121DF1EF3BC2300C291C6 /* PBXTargetDependency */,
 			);
 			name = OfflineReddit;
 			productName = OfflineReddit;
@@ -606,12 +543,6 @@
 			mainGroup = 23A395BC1E7DDE8600030DEF;
 			productRefGroup = 23A395C61E7DDE8600030DEF /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 236121C81EF3BC1500C291C6 /* Products */;
-					ProjectRef = 236121C71EF3BC1500C291C6 /* CocoaMarkdown.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				23A395C41E7DDE8600030DEF /* OfflineReddit */,
@@ -619,51 +550,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		236121D31EF3BC1500C291C6 /* CocoaMarkdown.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = CocoaMarkdown.framework;
-			remoteRef = 236121D21EF3BC1500C291C6 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		236121D51EF3BC1500C291C6 /* CocoaMarkdownTests-iOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "CocoaMarkdownTests-iOS.xctest";
-			remoteRef = 236121D41EF3BC1500C291C6 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		236121D71EF3BC1500C291C6 /* CocoaMarkdown.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = CocoaMarkdown.framework;
-			remoteRef = 236121D61EF3BC1500C291C6 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		236121D91EF3BC1500C291C6 /* CocoaMarkdownTests-Mac.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "CocoaMarkdownTests-Mac.xctest";
-			remoteRef = 236121D81EF3BC1500C291C6 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		236121DB1EF3BC1500C291C6 /* Example-iOS.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Example-iOS.app";
-			remoteRef = 236121DA1EF3BC1500C291C6 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		236121DD1EF3BC1500C291C6 /* Example-Mac.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Example-Mac.app";
-			remoteRef = 236121DC1EF3BC1500C291C6 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		233756361EC6794F0051ED2C /* Resources */ = {
@@ -721,6 +607,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/BoltsSwift.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Dwifft.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CocoaMarkdown.framework",
 			);
 			name = "Carthage Copy Frameworks";
 			outputPaths = (
@@ -826,11 +713,6 @@
 			isa = PBXTargetDependency;
 			target = 23A395C41E7DDE8600030DEF /* OfflineReddit */;
 			targetProxy = 2337563D1EC6794F0051ED2C /* PBXContainerItemProxy */;
-		};
-		236121DF1EF3BC2300C291C6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "CocoaMarkdown-iOS";
-			targetProxy = 236121DE1EF3BC2300C291C6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -6,7 +6,9 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class CMIterator;
 
@@ -71,27 +73,27 @@ typedef NS_ENUM(NSInteger, CMDelimeterType) {
 /**
  *  The next node in the sequence, or `nil` if there is none.
  */
-@property (readonly) CMNode *next;
+@property (readonly, nullable) CMNode *next;
 
 /**
  *  The previous node in the sequence, or `nil` if there is none.
  */
-@property (readonly) CMNode *previous;
+@property (readonly, nullable) CMNode *previous;
 
 /**
  *  The receiver's parent node, or `nil` if there is none.
  */
-@property (readonly) CMNode *parent;
+@property (readonly, nullable) CMNode *parent;
 
 /**
  *  The first child node of the receiver, or `nil` if there is none.
  */
-@property (readonly) CMNode *firstChild;
+@property (readonly, nullable) CMNode *firstChild;
 
 /**
  *  The last child node of the receiver, or `nil` if there is none.
  */
-@property (readonly) CMNode *lastChild;
+@property (readonly, nullable) CMNode *lastChild;
 
 /**
  *  The type of the node, or `CMNodeTypeNone` on error.
@@ -101,12 +103,12 @@ typedef NS_ENUM(NSInteger, CMDelimeterType) {
 /**
  *  String representation of `type`.
  */
-@property (readonly) NSString *humanReadableType;
+@property (readonly, nullable) NSString *humanReadableType;
 
 /**
  *  String contents of the receiver, or `nil` if there is none.
  */
-@property (readonly) NSString *stringValue;
+@property (readonly, nullable) NSString *stringValue;
 
 /**
  *  Header level of the receiver, or `0` if the receiver is not a header.
@@ -116,7 +118,7 @@ typedef NS_ENUM(NSInteger, CMDelimeterType) {
 /**
  *  Info string from a fenced code block, or `nil` if there is none.
  */
-@property (readonly) NSString *fencedCodeInfo;
+@property (readonly, nullable) NSString *fencedCodeInfo;
 
 /**
  *  The receiver's list type, or `CMListTypeNone` if the receiver
@@ -144,12 +146,12 @@ typedef NS_ENUM(NSInteger, CMDelimeterType) {
 /**
  *  Link or image URL, or `nil` if there is none.
  */
-@property (readonly) NSURL *URL;
+@property (readonly, nullable) NSURL *URL;
 
 /**
  *  Link or image title, or `nil` if there is none.
  */
-@property (readonly) NSString *title;
+@property (readonly, nullable) NSString *title;
 
 /**
  *  The line on which the receiver begins.
@@ -172,3 +174,5 @@ typedef NS_ENUM(NSInteger, CMDelimeterType) {
 @property (readonly) NSInteger endColumn;
 
 @end
+
+NS_ASSUME_NONNULL_END

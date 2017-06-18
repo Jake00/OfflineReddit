@@ -6,7 +6,9 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
+NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, CMEventType) {
     CMEventTypeNone,
@@ -61,3 +63,5 @@ typedef NS_ENUM(NSInteger, CMEventType) {
 - (void)resetToNode:(CMNode *)node withEventType:(CMEventType)eventType;
 
 @end
+
+NS_ASSUME_NONNULL_END

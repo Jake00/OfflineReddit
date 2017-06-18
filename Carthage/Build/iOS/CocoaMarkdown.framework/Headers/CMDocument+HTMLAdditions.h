@@ -9,6 +9,8 @@
 #import "CMDocument.h"
 #import "CMHTMLRenderer.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface CMDocument (HTMLAdditions)
 
 /**
@@ -19,3 +21,5 @@
 - (NSString *)HTMLString;
 
 @end
+
+NS_ASSUME_NONNULL_END

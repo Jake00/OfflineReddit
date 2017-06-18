@@ -6,7 +6,9 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class CMNode;
 
@@ -61,3 +63,5 @@ typedef NS_OPTIONS(NSInteger, CMDocumentOptions) {
 - (instancetype)initWithContentsOfFile:(NSString *)path options:(CMDocumentOptions)options;
 
 @end
+
+NS_ASSUME_NONNULL_END

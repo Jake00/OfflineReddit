@@ -6,7 +6,9 @@
 //  Copyright (c) 2015 Indragie Karunaratne. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class CMNode;
 
@@ -45,7 +47,7 @@
 /**
  *  Delegate to receive callbacks during parsing.
  */
-@property (nonatomic, weak, readonly) id<CMParserDelegate> delegate;
+@property (nonatomic, weak, readonly, nullable) id<CMParserDelegate> delegate;
 
 /**
  *  Returns the node currently being parsed, or `nil` if not parsing.
@@ -114,3 +116,4 @@
 
 @end
 
+NS_ASSUME_NONNULL_END
