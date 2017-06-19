@@ -27,7 +27,7 @@
  *
  *  @return An attributed string.
  */
-- (NSAttributedString *)attributedStringForElement:(ONOXMLElement *)element attributes:(NSDictionary *)attributes;
+- (NSAttributedString *)attributedStringForElement:(ONOXMLElement *)element attributes:(NSDictionary<NSString *, id> *)attributes;
 
 @end
 

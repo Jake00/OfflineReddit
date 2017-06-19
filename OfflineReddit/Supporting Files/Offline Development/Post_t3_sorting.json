@@ -12,7 +12,8 @@
             "name": "t3_sorting",
             "author_flair_text": null,
             "title": "Test sorting",
-            "created_utc": 1496712272
+            "created_utc": 1496712272,
+            "selftext": "More Markdown testing!\n\n> This is a block quote\n\nThis is *not* a **block quote**, ***alalalala***\n\n\nhttps://www.google.com\n\n...\n\n[test Google URL](https://www.google.com)\n\nok"
           }
         }
       ]
@@ -124,7 +125,7 @@
             "score": 300,
             "author": "Markdown",
             "parent_id": "t3_sorting",
-            "body": "Markdown testing!\n\n> This is a block quote\n\nThis is *not* a **block quote**, ***alalalala***",
+            "body": "Markdown testing!\n\n> This is a block quote\n\nThis is *not* a **block quote**, ***alalalala***\n\n\nhttps://www.google.com\n\n...\n\n[test Google URL](https://www.google.com)\n\nok",
             "name": "t1_diiggjz",
             "created_utc": 1496712439,
             "depth": 0

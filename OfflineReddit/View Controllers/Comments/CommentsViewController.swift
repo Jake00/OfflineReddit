@@ -18,7 +18,7 @@ class CommentsViewController: UIViewController, Loadable {
     @IBOutlet weak var authorTimeLabel: UILabel!
     @IBOutlet weak var commentsLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var selfLabel: UILabel!
+    @IBOutlet weak var selfTextView: URLTextView!
     @IBOutlet var loadingButton: UIBarButtonItem!
     @IBOutlet var expandCommentsButton: UIBarButtonItem!
     @IBOutlet var markAsReadButton: UIBarButtonItem!
@@ -56,14 +56,7 @@ class CommentsViewController: UIViewController, Loadable {
         tableView.tableFooterView = UIView()
         tableView.registerReusableNibCell(CommentsCell.self)
         tableView.registerReusableNibCell(MoreCommentsCell.self)
-        subredditLabel.text = dataSource.post.subredditNamePrefixed
-        authorTimeLabel.text = dataSource.post.authorTimeText
-        titleLabel.text = dataSource.post.title
-        selfLabel.attributedText = {
-            guard let data = dataSource.post.selfText?.data(using: .utf8) else { return nil }
-            return CMDocument(data: data, options: [])
-                .attributedString(with: dataSource.textAttributes).result
-            }()
+        updateHeaderLabels()
         isLoading = false
         toolbarItems = [
             markAsReadButton,
@@ -73,14 +66,12 @@ class CommentsViewController: UIViewController, Loadable {
         markAsReadButton.isEnabled = !dataSource.post.isRead
         updateSortButtonTitle()
         enableDynamicType()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateSelfText), name: .UIContentSizeCategoryDidChange, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if let selectedIndexPath = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: selectedIndexPath, animated: animated)
-        }
-        _ = dataSource.fetchCommentsIfNeeded().map(fetch)
+        dataSource.fetchCommentsIfNeeded()?.continueOnSuccessWith(.mainThread, continuation: updateHeaderLabels)
     }
     
     override func viewDidLayoutSubviews() {
@@ -161,6 +152,25 @@ class CommentsViewController: UIViewController, Loadable {
         sortButton.title = String.localizedStringWithFormat(SharedText.sortFormat, dataSource.sort.displayName)
     }
     
+    func updateHeaderLabels() {
+        subredditLabel.text = dataSource.post.subredditNamePrefixed
+        authorTimeLabel.text = dataSource.post.authorTimeText
+        titleLabel.text = dataSource.post.title
+        updateSelfText()
+    }
+    
+    func updateSelfText() {
+        let render: CMAttributedStringRenderResult? = {
+            guard let data = dataSource.post.selfText?.data(using: .utf8) else { return nil }
+            return CMDocument(data: data, options: [])
+                .attributedString(with: dataSource.textAttributes)
+        }()
+        selfTextView.attributedText = render?.result
+        selfTextView.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
+        selfTextView.linkTextAttributes = dataSource.textAttributes.linkAttributes
+        view.setNeedsLayout() // update headerView height via `viewDidLayoutSubviews`
+    }
+    
     func enableDynamicType() {
         subredditLabel.enableDynamicType(style: .footnote, weight: .semibold)
         authorTimeLabel.enableDynamicType(style: .footnote)
@@ -187,4 +197,11 @@ extension CommentsViewController: CommentsDataSourceDelegate {
     func viewDimensionsForCommentsDataSource(_ dataSource: CommentsDataSource) -> (horizontalMargins: CGFloat, frameWidth: CGFloat) {
         return (headerView.layoutMargins.left * 2, view.frame.width)
     }
+}
+
+// MARK: - Text view delegate
+
+extension CommentsViewController: UITextViewDelegate {
+    
+    
 }

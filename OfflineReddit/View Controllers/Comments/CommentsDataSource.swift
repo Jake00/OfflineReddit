@@ -61,7 +61,12 @@ class CommentsDataSource: NSObject {
         static let moreComments = MoreCommentsCell.instantiateFromNib()
     }
     
-    var textAttributes: CMTextAttributes = {
+    private var cachedTextAttributes: CMTextAttributes?
+    
+    var textAttributes: CMTextAttributes {
+        if let textAttributes = cachedTextAttributes {
+            return textAttributes
+        }
         let textAttributes = CMTextAttributes()
         textAttributes.blockQuoteAttributes = [
             NSFontAttributeName: UIFont.preferredFont(forTextStyle: .body),
@@ -78,8 +83,13 @@ class CommentsDataSource: NSObject {
             NSFontAttributeName: UIFont.preferredFont(forTextStyle: .body),
             NSForegroundColorAttributeName: UIColor.offBlack
         ]
+        textAttributes.linkAttributes = [
+            NSUnderlineStyleAttributeName: NSUnderlineStyle.styleSingle.rawValue,
+            NSForegroundColorAttributeName: tableView?.tintColor ?? UIColor.blue
+        ]
+        cachedTextAttributes = textAttributes
         return textAttributes
-    }()
+    }
     
     func indexPath(of more: MoreComments) -> IndexPath? {
         return comments.index(where: { $0.comment == more })
@@ -206,7 +216,8 @@ class CommentsDataSource: NSObject {
             return render
         }()
         cell.bodyTextView.attributedText = render?.result
-        cell.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
+        cell.bodyTextView.linkTextAttributes = textAttributes.linkAttributes
+        cell.bodyTextView.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
         cell.isExpanded = model.isExpanded
         updateDrawable(cell, at: indexPath, model: model)
         return cell
@@ -258,6 +269,11 @@ class CommentsDataSource: NSObject {
     
     fileprivate var hasFetchedOnceSuccessfully = false
     
+    func fetch<T>(_ task: Task<T>) -> Task<T> {
+        delegate?.commentsDataSource(self, isFetchingWith: task.asVoid())
+        return task
+    }
+    
     @discardableResult
     func fetchCommentsIfNeeded() -> Task<Void>? {
         if allComments.isEmpty {
@@ -270,19 +286,17 @@ class CommentsDataSource: NSObject {
     }
     
     func fetchComments() -> Task<Void> {
-        return provider.getComments(for: post, sortedBy: sort).continueOnSuccessWith(.mainThread) { _ in
+        return fetch(provider.getComments(for: post, sortedBy: sort).continueOnSuccessWith(.mainThread) { _ in
             self.animateCommentsUpdate(fromSuccessfulFetch: true)
             self.provider.local.trySave()
-        }
+        })
     }
     
     @discardableResult
     func fetchMoreComments(using more: MoreComments) -> Task<[Comment]> {
-        let task = provider.getMoreComments(using: [more], post: post, sortedBy: sort).continueWithTask(.mainThread) {
+        return fetch(provider.getMoreComments(using: [more], post: post, sortedBy: sort).continueWithTask(.mainThread) {
             self.didFetchMoreComments(more, task: $0)
-        }
-        delegate?.commentsDataSource(self, isFetchingWith: task.asVoid())
-        return task
+        })
     }
     
     private func didFetchMoreComments(_ more: MoreComments, task: Task<[Comment]>) -> Task<[Comment]> {
@@ -325,7 +339,7 @@ class CommentsDataSource: NSObject {
     // MARK: - Dynamic type 
     
     func preferredTextSizeChanged(_ notification: Notification) {
-        textAttributes = CMTextAttributes()
+        cachedTextAttributes = nil
         CommentsCellModel.condensedHeight = nil
         for model in allComments {
             model.render = nil

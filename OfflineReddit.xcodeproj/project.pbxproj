@@ -35,6 +35,7 @@
 		235E08061E81430C00D83D16 /* NetworkReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 235E08051E81430C00D83D16 /* NetworkReachability.m */; };
 		235E08081E81431D00D83D16 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 235E08071E81431D00D83D16 /* SystemConfiguration.framework */; };
 		235E98DF1EF738E2001AB0AC /* CocoaMarkdown.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 235E98DE1EF738E2001AB0AC /* CocoaMarkdown.framework */; };
+		235E98E11EF73F52001AB0AC /* URLTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235E98E01EF73F52001AB0AC /* URLTextView.swift */; };
 		2361220C1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2361220B1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift */; };
 		2379B0761ECF787900925F9A /* CommentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0681ECF787900925F9A /* CommentsCell.swift */; };
 		2379B0771ECF787900925F9A /* CommentsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0691ECF787900925F9A /* CommentsDataSource.swift */; };
@@ -144,6 +145,7 @@
 		235E08051E81430C00D83D16 /* NetworkReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkReachability.m; sourceTree = "<group>"; };
 		235E08071E81431D00D83D16 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		235E98DE1EF738E2001AB0AC /* CocoaMarkdown.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaMarkdown.framework; path = Carthage/Build/iOS/CocoaMarkdown.framework; sourceTree = "<group>"; };
+		235E98E01EF73F52001AB0AC /* URLTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLTextView.swift; sourceTree = "<group>"; };
 		2361220B1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UILabel+SubtextFrame.swift"; sourceTree = "<group>"; };
 		2379B0681ECF787900925F9A /* CommentsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsCell.swift; sourceTree = "<group>"; };
 		2379B0691ECF787900925F9A /* CommentsDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsDataSource.swift; sourceTree = "<group>"; };
@@ -433,6 +435,7 @@
 				234DEB961EE7008B001A79A1 /* UIView+Xib.swift */,
 				234DEB9C1EE8BEBF001A79A1 /* UIFont+Weight.swift */,
 				2361220B1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift */,
+				235E98E01EF73F52001AB0AC /* URLTextView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -675,6 +678,7 @@
 				2361220C1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift in Sources */,
 				234094D01EE012F000359C84 /* WebsiteCaching.swift in Sources */,
 				235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */,
+				235E98E11EF73F52001AB0AC /* URLTextView.swift in Sources */,
 				235E07C71E7E92E600D83D16 /* Constants.swift in Sources */,
 				2379B0791ECF787900925F9A /* CommentsViewController.swift in Sources */,
 				23A395F41E7DDF9800030DEF /* APIClient+URLSessionDelegate.swift in Sources */,
