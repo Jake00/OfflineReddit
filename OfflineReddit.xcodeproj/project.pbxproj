@@ -76,6 +76,8 @@
 		2379B0EC1ED9E0C000925F9A /* UISegmentedControl+Items.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2379B0EB1ED9E0C000925F9A /* UISegmentedControl+Items.swift */; };
 		2379B0EE1ED9EED400925F9A /* FilterPostsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2379B0ED1ED9EED400925F9A /* FilterPostsViewController.xib */; };
 		2383200B1EDB66DE009B8C24 /* LabelSliderControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2383200A1EDB66DE009B8C24 /* LabelSliderControl.swift */; };
+		239039F21EF76CCB00E6FE18 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239039F11EF76CCB00E6FE18 /* WebViewController.swift */; };
+		239039F61EF7750200E6FE18 /* PropertyObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 239039F51EF7750200E6FE18 /* PropertyObserver.swift */; };
 		23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395C81E7DDE8600030DEF /* AppDelegate.swift */; };
 		23A395F01E7DDF9800030DEF /* OfflineReddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 23A395DE1E7DDF9800030DEF /* OfflineReddit.xcdatamodeld */; };
 		23A395F11E7DDF9800030DEF /* APIClient+Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A395E21E7DDF9800030DEF /* APIClient+Endpoints.swift */; };
@@ -186,6 +188,8 @@
 		2379B0EB1ED9E0C000925F9A /* UISegmentedControl+Items.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UISegmentedControl+Items.swift"; sourceTree = "<group>"; };
 		2379B0ED1ED9EED400925F9A /* FilterPostsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FilterPostsViewController.xib; sourceTree = "<group>"; };
 		2383200A1EDB66DE009B8C24 /* LabelSliderControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelSliderControl.swift; sourceTree = "<group>"; };
+		239039F11EF76CCB00E6FE18 /* WebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		239039F51EF7750200E6FE18 /* PropertyObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PropertyObserver.swift; sourceTree = "<group>"; };
 		23A395C51E7DDE8600030DEF /* OfflineReddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineReddit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23A395C81E7DDE8600030DEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		23A395DF1E7DDF9800030DEF /* OfflineReddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OfflineReddit.xcdatamodel; sourceTree = "<group>"; };
@@ -308,6 +312,14 @@
 			path = Filter;
 			sourceTree = "<group>";
 		};
+		239039F01EF76CC000E6FE18 /* Web */ = {
+			isa = PBXGroup;
+			children = (
+				239039F11EF76CCB00E6FE18 /* WebViewController.swift */,
+			);
+			path = Web;
+			sourceTree = "<group>";
+		};
 		23A395BC1E7DDE8600030DEF = {
 			isa = PBXGroup;
 			children = (
@@ -376,6 +388,7 @@
 				234094D11EE2D07700359C84 /* Task+Void.swift */,
 				234DEB9E1EE8C73C001A79A1 /* DynamicTypeResponder.swift */,
 				234DEBA01EE95F19001A79A1 /* WeakKeyDictionary.swift */,
+				239039F51EF7750200E6FE18 /* PropertyObserver.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -414,6 +427,7 @@
 				2379B06D1ECF787900925F9A /* Posts */,
 				2379B0671ECF787900925F9A /* Comments */,
 				2379B0731ECF787900925F9A /* Subreddits */,
+				239039F01EF76CC000E6FE18 /* Web */,
 				235E07CA1E7EA0B900D83D16 /* UIViewController+Fetching.swift */,
 				235E08021E80E4BF00D83D16 /* NavigationController.swift */,
 			);
@@ -667,6 +681,7 @@
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
 				2379B0951ED1B3E700925F9A /* ReusableCell.swift in Sources */,
+				239039F61EF7750200E6FE18 /* PropertyObserver.swift in Sources */,
 				2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */,
 				2379B0D71ED884C300925F9A /* InfoToolbar.swift in Sources */,
 				234DEB951EE6A4C9001A79A1 /* CommentCellModel.swift in Sources */,
@@ -676,6 +691,7 @@
 				23A395F51E7DDF9800030DEF /* APIClient.swift in Sources */,
 				23A395F61E7DDF9800030DEF /* CoreDataController.swift in Sources */,
 				2361220C1EF3E2EE00C291C6 /* UILabel+SubtextFrame.swift in Sources */,
+				239039F21EF76CCB00E6FE18 /* WebViewController.swift in Sources */,
 				234094D01EE012F000359C84 /* WebsiteCaching.swift in Sources */,
 				235E07CB1E7EA0B900D83D16 /* UIViewController+Fetching.swift in Sources */,
 				235E98E11EF73F52001AB0AC /* URLTextView.swift in Sources */,

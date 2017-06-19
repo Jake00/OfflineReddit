@@ -19,6 +19,7 @@ protocol CommentsDataSourceDelegate: class {
 class CommentsDataSource: NSObject {
     
     weak var tableView: UITableView?
+    weak var textViewDelegate: UITextViewDelegate?
     
     // MARK: - Init
     
@@ -218,6 +219,7 @@ class CommentsDataSource: NSObject {
         cell.bodyTextView.attributedText = render?.result
         cell.bodyTextView.linkTextAttributes = textAttributes.linkAttributes
         cell.bodyTextView.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
+        cell.bodyTextView.delegate = textViewDelegate
         cell.isExpanded = model.isExpanded
         updateDrawable(cell, at: indexPath, model: model)
         return cell

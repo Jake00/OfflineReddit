@@ -48,8 +48,10 @@ class CommentsViewController: UIViewController, Loadable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataSource.delegate = self
         dataSource.tableView = tableView
+        dataSource.delegate = self
+        dataSource.textViewDelegate = self
+        selfTextView.delegate = self
         tableView.dataSource = dataSource
         tableView.delegate = dataSource
         tableView.tableHeaderView = headerView
@@ -177,6 +179,12 @@ class CommentsViewController: UIViewController, Loadable {
         commentsLabel.enableDynamicType(style: .footnote)
         titleLabel.enableDynamicType(style: .headline)
     }
+    
+    // MARK: - Navigation
+    
+    func showWebViewController(loading URL: URL) {
+        navigationController?.pushViewController(WebViewController(initialURL: URL), animated: true)
+    }
 }
 
 // MARK: - Data source delegate
@@ -203,5 +211,8 @@ extension CommentsViewController: CommentsDataSourceDelegate {
 
 extension CommentsViewController: UITextViewDelegate {
     
-    
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
+        showWebViewController(loading: URL)
+        return false
+    }
 }
