@@ -91,19 +91,35 @@ class PostsDataSource: NSObject {
         rows = allRows.sortFiltered(using: sort)
     }
     
-    func processPostChanges(at indexPath: IndexPath) {
+    struct UndoPostProcessing {
+        let indexPath: IndexPath
+        let removed: PostCellModel?
+    }
+    
+    func processPostChanges(at indexPath: IndexPath) -> UndoPostProcessing {
         let post = self.post(at: indexPath)
         let shouldRemove = ( post.isRead && !sort.filter.contains(.read))
             ||             (!post.isRead && !sort.filter.contains(.notRead))
         if shouldRemove {
-            rows.remove(at: indexPath.row)
+            let removed = rows.remove(at: indexPath.row)
             tableView?.deleteRows(at: [indexPath], with: .fade)
+            return UndoPostProcessing(indexPath: indexPath, removed: removed)
         } else {
             update(
                 cell: tableView?.cellForRow(at: indexPath) as? PostCell,
                 isAvailableOffline: post.isAvailableOffline
             )
+            tableView?.deselectRow(at: indexPath, animated: true)
+            return UndoPostProcessing(indexPath: indexPath, removed: nil)
         }
+    }
+    
+    func undoProcessPostChanges(using undo: UndoPostProcessing) {
+        if let post = undo.removed {
+            rows.insert(post, at: undo.indexPath.row)
+            tableView?.insertRows(at: [undo.indexPath], with: .none)
+        }
+        tableView?.selectRow(at: undo.indexPath, animated: false, scrollPosition: .none)
     }
     
     // MARK: - Updating cells

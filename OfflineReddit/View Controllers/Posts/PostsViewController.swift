@@ -106,6 +106,11 @@ class PostsViewController: UIViewController, Loadable {
         }
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        reselectRowIfNeeded()
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.contentInset = UIEdgeInsets(
@@ -189,10 +194,19 @@ class PostsViewController: UIViewController, Loadable {
         chooseDownloadsButton.isEnabled = !dataSource.rows.isEmpty && !isSavingOffline && reachability.isOnline
     }
     
+    private var undoPostProcessing: PostsDataSource.UndoPostProcessing?
+    
     func updateSelectedRow() {
-        guard let selectedIndexPath = tableView.indexPathForSelectedRow else { return }
-        dataSource.processPostChanges(at: selectedIndexPath)
-        tableView.deselectRow(at: selectedIndexPath, animated: true)
+        undoPostProcessing = tableView.indexPathForSelectedRow.map(dataSource.processPostChanges(at:))
+    }
+    
+    func reselectRowIfNeeded() {
+        if navigationController?.topViewController is CommentsViewController,
+            tableView.indexPathForSelectedRow == nil,
+            let undo = undoPostProcessing {
+            dataSource.undoProcessPostChanges(using: undo)
+            undoPostProcessing = nil
+        }
     }
     
     func updateSelectedRowsToDownload(updateSlider: Bool) {
