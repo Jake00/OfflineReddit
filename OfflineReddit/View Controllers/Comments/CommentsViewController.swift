@@ -19,6 +19,8 @@ class CommentsViewController: UIViewController, Loadable {
     @IBOutlet weak var commentsLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var selfTextView: URLTextView!
+    @IBOutlet weak var postImageView: UIImageView!
+    @IBOutlet weak var postImageViewHeight: NSLayoutConstraint!
     @IBOutlet var loadingButton: UIBarButtonItem!
     @IBOutlet var expandCommentsButton: UIBarButtonItem!
     @IBOutlet var markAsReadButton: UIBarButtonItem!
@@ -76,10 +78,18 @@ class CommentsViewController: UIViewController, Loadable {
         dataSource.fetchCommentsIfNeeded()?.continueOnSuccessWith(.mainThread, continuation: updateHeaderLabels)
     }
     
+    private var previousHeaderViewHeight: CGFloat = 0
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let fittingSize = CGSize(width: tableView.frame.width, height: UILayoutFittingCompressedSize.height)
-        headerView.frame.size.height = headerView.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
+        headerView.layoutIfNeeded()
+        let height = headerView.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
+        if height != previousHeaderViewHeight {
+            previousHeaderViewHeight = height
+            headerView.frame.size.height = height
+            tableView.tableHeaderView = headerView
+        }
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -170,7 +180,31 @@ class CommentsViewController: UIViewController, Loadable {
         selfTextView.attributedText = render?.result
         selfTextView.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
         selfTextView.linkTextAttributes = dataSource.textAttributes.linkAttributes
-        view.setNeedsLayout() // update headerView height via `viewDidLayoutSubviews`
+        let hide = {
+            self.postImageView.isHidden = true
+            self.postImageViewHeight.constant = 0
+            self.view.setNeedsLayout() // update headerView height via `viewDidLayoutSubviews`
+        }
+        if render == nil, let url = dataSource.post.url {
+            updatePostImage(url: url, hide: hide)
+        } else {
+            hide()
+        }
+    }
+    
+    func updatePostImage(url: URL, hide: @escaping () -> Void) {
+        ImageDownloader.shared.validate(url: url).continueOnSuccessWith(.mainThread) { _ -> Void in
+            if self.postImageView.isHidden {
+                self.postImageView.isHidden = false
+                self.postImageViewHeight.constant = 40
+                self.view.setNeedsLayout() // update headerView height via `viewDidLayoutSubviews`
+            }
+            self.postImageView.setImage(url: url) { postImageView, image in
+                guard let size = image?.size, size.width > 0 else { hide(); return }
+                self.postImageViewHeight.constant = size.height * postImageView.bounds.width / size.width
+                self.view.setNeedsLayout() // update headerView height via `viewDidLayoutSubviews`
+            }
+        }.continueOnErrorWith(.mainThread) { _ in hide() }
     }
     
     func enableDynamicType() {

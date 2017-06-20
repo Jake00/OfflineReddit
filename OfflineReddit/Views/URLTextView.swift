@@ -22,7 +22,7 @@ class URLTextView: UITextView {
     
     // Disallow interaction unless `point` contains a link (allow superview to capture touches)
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        guard isUserInteractionEnabled, isSelectable,
+        guard isUserInteractionEnabled, isSelectable, textStorage.length > 0,
             self.point(inside: point, with: event)
             else { return nil }
         

@@ -77,6 +77,7 @@ class ImageDownloader {
         /* 3. Create new task to download the image. */
         let task = session.dataTask(with: url) { data, _, error in
             let image = data.flatMap(UIImage.init)?.inflated
+            image?.loadedFromURL = url
             if let image = image, self.isMemoryCachingEnabled {
                 self.cache.setObject(image, forKey: url.absoluteString as NSString, cost: Int(image.size.width * image.size.height))
             }
@@ -241,8 +242,14 @@ private extension UIImage {
         guard let decompressed = context.makeImage() else { return self }
         return UIImage(cgImage: decompressed, scale: scale, orientation: imageOrientation)
     }
+    
+    var loadedFromURL: URL? {
+        get { return objc_getAssociatedObject(self, &loadedFromURLKey) as? URL }
+        set { objc_setAssociatedObject(self, &loadedFromURLKey, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC) }
+    }
 }
 
+private var loadedFromURLKey = 666
 private var activeImageLoadURLKey = 777
 private var activityIndicatorViewKey = 888
 
@@ -259,7 +266,12 @@ extension UIImageView {
         static let load = SetImageOptions(rawValue: 1 << 1)
     }
     
-    func setImage(url: URL?, options: SetImageOptions = [.fade, .load], completion: ImageDownloader.LoadCallback? = nil) {
+    typealias SetImageCallback = (UIImageView, UIImage?) -> Void
+    
+    func setImage(url: URL?, options: SetImageOptions = [.fade, .load], completion: SetImageCallback? = nil) {
+        if url == image?.loadedFromURL {
+            return
+        }
         if let activeImageLoadURL = activeImageLoadURL {
             if url?.absoluteString == activeImageLoadURL.absoluteString {
                 return
@@ -276,15 +288,15 @@ extension UIImageView {
         ImageDownloader.shared.load(url: url) { [weak self] image in
             guard let s = self else { return }
             if options.contains(.fade) {
-                UIView.transition(with: s, duration: 0.1, options: [], animations: {
-                    s.image = image
-                }, completion: nil)
+                s.alpha = 0
+                s.image = image
+                UIView.animate(withDuration: 0.2) { s.alpha = 1 }
             } else {
                 s.image = image
             }
             s.activeImageLoadURL = nil
             s.activityIndicatorView?.stopAnimating()
-            completion?(image)
+            completion?(s, image)
         }
     }
     

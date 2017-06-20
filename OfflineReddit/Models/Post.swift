@@ -97,6 +97,7 @@ extension Post {
     func update(json: JSON) {
         author = json["author"] as? String
         selfText = json["selftext"] as? String
+        if selfText?.isEmpty == true { selfText = nil }
         subredditName = json["subreddit"] as? String
         subredditNamePrefixed = json["subreddit_name_prefixed"] as? String
         permalink = json["permalink"] as? String
