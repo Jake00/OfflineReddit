@@ -303,10 +303,15 @@ extension PostsDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: PostCell = tableView.dequeueReusableCell(for: indexPath)
-        updateAll(cell: cell, row: rows[indexPath.row])
+        let row = rows[indexPath.row]
+        updateAll(cell: cell, row: row)
         cell.titleLabel.font = .preferredFont(forTextStyle: .subheadline)
         cell.topLabel.font = .preferredFont(forTextStyle: .caption1)
         cell.bottomLabel.font = .preferredFont(forTextStyle: .caption1)
+        let image = row.post.preview?.imageURL(fitting: cell.previewImageView.bounds.size)
+        cell.previewImageView.setImage(url: image?.url)
+        cell.previewImageView.isHidden = image == nil
+        cell.labelsPreviewSpacing.isActive = image != nil
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
         return cell

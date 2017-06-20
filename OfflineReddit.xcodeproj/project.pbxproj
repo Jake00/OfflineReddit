@@ -100,6 +100,10 @@
 		23B332321ECF464100480122 /* PostsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B3322E1ECF464100480122 /* PostsViewControllerTests.swift */; };
 		23B332341ECF465300480122 /* TestableCoreDataControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B332331ECF465300480122 /* TestableCoreDataControllerTests.swift */; };
 		23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */; };
+		23D3DB461EF912F0006F4C01 /* PostImagePreviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D3DB451EF912F0006F4C01 /* PostImagePreviews.swift */; };
+		23D3DB481EF9447A006F4C01 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D3DB471EF9447A006F4C01 /* ImageDownloader.swift */; };
+		23D3DB4A1EF944EE006F4C01 /* URLResponse+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D3DB491EF944EE006F4C01 /* URLResponse+Image.swift */; };
+		23DFAFD01EF90FE900C39642 /* ImageURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23DFAFCF1EF90FE900C39642 /* ImageURL.swift */; };
 		23F88C741EEF3C9E006A5272 /* CommentsCellDrawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F88C731EEF3C9E006A5272 /* CommentsCellDrawable.swift */; };
 		23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3441EC0592A005A0606 /* DataProvider.swift */; };
 		23F9F3471EC0A8E2005A0606 /* OfflineRemoteProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */; };
@@ -214,6 +218,10 @@
 		23B3322E1ECF464100480122 /* PostsViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsViewControllerTests.swift; sourceTree = "<group>"; };
 		23B332331ECF465300480122 /* TestableCoreDataControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableCoreDataControllerTests.swift; sourceTree = "<group>"; };
 		23BED7201EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorViewAnimating.swift; sourceTree = "<group>"; };
+		23D3DB451EF912F0006F4C01 /* PostImagePreviews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostImagePreviews.swift; sourceTree = "<group>"; };
+		23D3DB471EF9447A006F4C01 /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
+		23D3DB491EF944EE006F4C01 /* URLResponse+Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLResponse+Image.swift"; sourceTree = "<group>"; };
+		23DFAFCF1EF90FE900C39642 /* ImageURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageURL.swift; sourceTree = "<group>"; };
 		23F88C731EEF3C9E006A5272 /* CommentsCellDrawable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsCellDrawable.swift; sourceTree = "<group>"; };
 		23F9F3441EC0592A005A0606 /* DataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataProvider.swift; sourceTree = "<group>"; };
 		23F9F3461EC0A8E2005A0606 /* OfflineRemoteProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OfflineRemoteProvider.swift; sourceTree = "<group>"; };
@@ -368,6 +376,8 @@
 				23A396041E7E021500030DEF /* Identifiable.swift */,
 				235E07D61E7F525100D83D16 /* NSManagedObject+Create.swift */,
 				235E07DC1E7F637000D83D16 /* Either.swift */,
+				23DFAFCF1EF90FE900C39642 /* ImageURL.swift */,
+				23D3DB451EF912F0006F4C01 /* PostImagePreviews.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -389,6 +399,8 @@
 				234DEB9E1EE8C73C001A79A1 /* DynamicTypeResponder.swift */,
 				234DEBA01EE95F19001A79A1 /* WeakKeyDictionary.swift */,
 				239039F51EF7750200E6FE18 /* PropertyObserver.swift */,
+				23D3DB471EF9447A006F4C01 /* ImageDownloader.swift */,
+				23D3DB491EF944EE006F4C01 /* URLResponse+Image.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -671,6 +683,7 @@
 				23F9F3451EC0592A005A0606 /* DataProvider.swift in Sources */,
 				23BED7211EBE24510072C2CE /* UIActivityIndicatorViewAnimating.swift in Sources */,
 				234094D61EE545D700359C84 /* MoreCommentsBatching.swift in Sources */,
+				23D3DB4A1EF944EE006F4C01 /* URLResponse+Image.swift in Sources */,
 				2379B0E81ED9D64B00925F9A /* FilterPostsSegmentedControlCell.swift in Sources */,
 				235E07D71E7F525100D83D16 /* NSManagedObject+Create.swift in Sources */,
 				235E08031E80E4BF00D83D16 /* NavigationController.swift in Sources */,
@@ -680,6 +693,7 @@
 				235E08061E81430C00D83D16 /* NetworkReachability.m in Sources */,
 				23A3960B1E7E22C300030DEF /* Comment.swift in Sources */,
 				23A396031E7E011D00030DEF /* Post.swift in Sources */,
+				23DFAFD01EF90FE900C39642 /* ImageURL.swift in Sources */,
 				2379B0951ED1B3E700925F9A /* ReusableCell.swift in Sources */,
 				239039F61EF7750200E6FE18 /* PropertyObserver.swift in Sources */,
 				2379B0A51ED20EB600925F9A /* SubredditsProvider.swift in Sources */,
@@ -709,6 +723,7 @@
 				2379B0801ECF787900925F9A /* SubredditCell.swift in Sources */,
 				23A395F71E7DDF9800030DEF /* Mapper.swift in Sources */,
 				2379B0DC1ED8CB0100925F9A /* FilterPostsViewController.swift in Sources */,
+				23D3DB461EF912F0006F4C01 /* PostImagePreviews.swift in Sources */,
 				2379B0E21ED9D49700925F9A /* FilterPostsDataSource.swift in Sources */,
 				2379B0A31ED20E6600925F9A /* SubredditsDataSource.swift in Sources */,
 				235E07DD1E7F637000D83D16 /* Either.swift in Sources */,
@@ -717,6 +732,7 @@
 				2379B0761ECF787900925F9A /* CommentsCell.swift in Sources */,
 				235E07FD1E80943D00D83D16 /* MarginTextField.swift in Sources */,
 				23A395F21E7DDF9800030DEF /* APIClient+Logging.swift in Sources */,
+				23D3DB481EF9447A006F4C01 /* ImageDownloader.swift in Sources */,
 				23A395C91E7DDE8600030DEF /* AppDelegate.swift in Sources */,
 				2379B0A11ED1D63100925F9A /* SettableReachability.swift in Sources */,
 				23A396011E7E00F400030DEF /* Subreddit.swift in Sources */,

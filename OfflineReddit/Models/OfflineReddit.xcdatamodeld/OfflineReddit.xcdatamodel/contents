@@ -37,6 +37,7 @@
         <attribute name="orderControversial" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="orderHot" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="permalink" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="previewJSON" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="selfText" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="subredditName" optional="YES" attributeType="String" syncable="YES"/>
@@ -57,7 +58,7 @@
     <elements>
         <element name="Comment" positionX="223" positionY="-27" width="128" height="285"/>
         <element name="MoreComments" positionX="216" positionY="306" width="128" height="148"/>
-        <element name="Post" positionX="45" positionY="-12" width="128" height="330"/>
+        <element name="Post" positionX="45" positionY="-12" width="128" height="345"/>
         <element name="Subreddit" positionX="-135" positionY="213" width="128" height="105"/>
     </elements>
 </model>

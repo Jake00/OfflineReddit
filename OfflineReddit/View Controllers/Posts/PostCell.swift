@@ -18,6 +18,8 @@ class PostCell: UITableViewCell, ReusableNibCell {
     @IBOutlet weak var container: UIView!
     @IBOutlet weak var containerLeading: NSLayoutConstraint!
     @IBOutlet weak var offlineImageView: UIImageView!
+    @IBOutlet weak var previewImageView: UIImageView!
+    @IBOutlet var labelsPreviewSpacing: NSLayoutConstraint!
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

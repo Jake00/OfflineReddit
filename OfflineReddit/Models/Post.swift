@@ -26,6 +26,7 @@ class Post: NSManagedObject {
     @NSManaged var orderControversial: Double
     @NSManaged var upvoteRatio: Double
     @NSManaged var commentsCount: Int64
+    @NSManaged var previewJSON: JSON?
     @NSManaged var subreddit: Subreddit?
     @NSManaged var comments: Set<Comment>
     @NSManaged var more: MoreComments?
@@ -38,6 +39,8 @@ class Post: NSManagedObject {
         primitiveIsAvailableOffline = false as NSNumber
         primitiveIsRead = false as NSNumber
     }
+    
+    lazy var preview: PostImagePreviews? = { PostImagePreviews(json: self.previewJSON) }()
 }
 
 extension Post {
@@ -103,6 +106,7 @@ extension Post {
         commentsCount = (json["num_comments"] as? Int).map(Int64.init) ?? 0
         score = (json["score"] as? Int).map(Int64.init) ?? 0
         upvoteRatio = json["upvote_ratio"] as? Double ?? 0
+        previewJSON = json["preview"] as? JSON
     }
 }
 
