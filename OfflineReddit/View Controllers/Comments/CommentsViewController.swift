@@ -78,6 +78,13 @@ class CommentsViewController: UIViewController, Loadable {
         dataSource.fetchCommentsIfNeeded()?.continueOnSuccessWith(.mainThread, continuation: updateHeaderLabels)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !isLoading {
+            dataSource.startCachingHeights()
+        }
+    }
+    
     private var previousHeaderViewHeight: CGFloat = 0
     
     override func viewDidLayoutSubviews() {
