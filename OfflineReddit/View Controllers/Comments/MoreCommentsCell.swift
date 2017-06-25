@@ -16,31 +16,28 @@ class MoreCommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
     @IBOutlet weak var containerBottom: NSLayoutConstraint!
     @IBOutlet weak var container: UIView!
     
-    static let standardHeight: CGFloat = 36
+    let cellBackgroundView = CommentsCellBackgroundView()
     
-    var drawingContext = CommentsCellDrawingContext(previousIndentation: 0, nextIndentation: 0)
+    static let standardHeight: CGFloat = 36
     
     override var indentationLevel: Int {
         didSet {
-            let indentation = drawingContext.indentationWidth * CGFloat(indentationLevel)
+            let indentation = cellBackgroundView.drawingContext.indentationWidth * CGFloat(indentationLevel)
             containerLeading.constant = indentation
             layoutMargins.left = indentation + contentView.layoutMargins.left
             separatorInset.left = layoutMargins.left
-            setNeedsDisplay()
         }
     }
     
-    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        super.setHighlighted(highlighted, animated: animated)
-        setNeedsDisplay()
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        backgroundView = cellBackgroundView
+        cellBackgroundView.contentMode = .redraw
+        cellBackgroundView.backgroundColor = .offWhite
     }
     
     override func layoutSubviews() {
-        containerBottom.constant = bottomIndentationMargin
+        containerBottom.constant = cellBackgroundView.drawingContext.bottomIndentationMargin
         super.layoutSubviews()
-    }
-    
-    override func draw(_ rect: CGRect) {
-        drawDecorations()
     }
 }

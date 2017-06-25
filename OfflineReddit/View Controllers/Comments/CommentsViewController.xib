@@ -19,7 +19,7 @@
                 <outlet property="markAsReadButton" destination="fsK-Rr-jbF" id="Bo5-dJ-6jm"/>
                 <outlet property="postImageView" destination="4vQ-ZT-Mb8" id="IYM-tf-Keh"/>
                 <outlet property="postImageViewHeight" destination="fNt-t4-WEI" id="Vft-NS-b7t"/>
-                <outlet property="selfTextView" destination="bXu-1b-Ox6" id="7ZL-o2-3Yj"/>
+                <outlet property="selfLabel" destination="GJK-pr-4yy" id="gd3-IY-95N"/>
                 <outlet property="sortButton" destination="R3b-d7-Hzy" id="DYj-AQ-fRX"/>
                 <outlet property="subredditLabel" destination="oXA-CI-Uca" id="7n7-Ub-UBB"/>
                 <outlet property="tableView" destination="mv9-Rk-VbH" id="z2x-SJ-Llg"/>
@@ -79,20 +79,19 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="[Title]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sCe-zb-bie">
-                    <rect key="frame" x="8" y="47.5" width="359" height="21.5"/>
+                    <rect key="frame" x="8" y="47.5" width="359" height="54.5"/>
                     <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                     <color key="textColor" white="0.14999999999999999" alpha="1" colorSpace="deviceWhite"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <textView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bXu-1b-Ox6" customClass="URLTextView" customModule="OfflineReddit" customModuleProvider="target">
-                    <rect key="frame" x="8" y="73" width="359" height="33"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                    <textInputTraits key="textInputTraits"/>
-                    <dataDetectorType key="dataDetectorTypes" link="YES"/>
-                </textView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GJK-pr-4yy" customClass="URLLabel" customModule="OfflineReddit" customModuleProvider="target">
+                    <rect key="frame" x="8" y="106" width="359" height="0.0"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <color key="textColor" white="0.14999999999999999" alpha="1" colorSpace="deviceWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="500" translatesAutoresizingMaskIntoConstraints="NO" id="4vQ-ZT-Mb8">
-                    <rect key="frame" x="8" y="73" width="359" height="33"/>
+                    <rect key="frame" x="8" y="106" width="359" height="0.0"/>
                     <constraints>
                         <constraint firstAttribute="height" priority="600" id="fNt-t4-WEI"/>
                     </constraints>
@@ -101,17 +100,17 @@
             <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="deviceWhite"/>
             <constraints>
                 <constraint firstItem="vcK-ph-YsK" firstAttribute="top" secondItem="RON-06-iIT" secondAttribute="topMargin" id="18j-sk-e0L"/>
-                <constraint firstItem="bXu-1b-Ox6" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="7HT-tV-8aT"/>
-                <constraint firstItem="bXu-1b-Ox6" firstAttribute="top" secondItem="sCe-zb-bie" secondAttribute="bottom" constant="4" id="8ED-qx-1pN"/>
+                <constraint firstItem="GJK-pr-4yy" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="4N3-fO-fmf"/>
+                <constraint firstItem="GJK-pr-4yy" firstAttribute="top" secondItem="sCe-zb-bie" secondAttribute="bottom" constant="4" id="4U8-2a-EQZ"/>
+                <constraint firstAttribute="bottomMargin" secondItem="GJK-pr-4yy" secondAttribute="bottom" id="5wq-c1-lcO"/>
+                <constraint firstAttribute="trailingMargin" secondItem="GJK-pr-4yy" secondAttribute="trailing" id="7AS-Lf-dlM"/>
                 <constraint firstItem="vcK-ph-YsK" firstAttribute="leading" secondItem="oXA-CI-Uca" secondAttribute="trailing" constant="8" id="B3k-4C-HFc"/>
                 <constraint firstItem="4vQ-ZT-Mb8" firstAttribute="top" secondItem="sCe-zb-bie" secondAttribute="bottom" constant="4" id="E3j-jr-20x"/>
                 <constraint firstItem="sCe-zb-bie" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="Eg3-f8-KOc"/>
                 <constraint firstAttribute="trailingMargin" secondItem="sCe-zb-bie" secondAttribute="trailing" id="JLS-l2-iUz"/>
                 <constraint firstAttribute="trailing" secondItem="O3W-9X-RpZ" secondAttribute="trailing" id="L8m-U3-Yfx"/>
                 <constraint firstItem="oXA-CI-Uca" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="N23-Ti-yOE"/>
-                <constraint firstAttribute="trailingMargin" secondItem="bXu-1b-Ox6" secondAttribute="trailing" id="Nsp-N7-6KR"/>
                 <constraint firstAttribute="trailingMargin" secondItem="4vQ-ZT-Mb8" secondAttribute="trailing" id="Q1h-ke-mrJ"/>
-                <constraint firstAttribute="bottomMargin" secondItem="bXu-1b-Ox6" secondAttribute="bottom" id="THe-5S-YhA"/>
                 <constraint firstItem="i30-o4-BUB" firstAttribute="top" secondItem="oXA-CI-Uca" secondAttribute="bottom" id="VRa-ql-ViH"/>
                 <constraint firstItem="oXA-CI-Uca" firstAttribute="top" secondItem="RON-06-iIT" secondAttribute="topMargin" id="YVQ-GR-flt"/>
                 <constraint firstItem="i30-o4-BUB" firstAttribute="leading" secondItem="RON-06-iIT" secondAttribute="leadingMargin" id="bc6-pk-reh"/>

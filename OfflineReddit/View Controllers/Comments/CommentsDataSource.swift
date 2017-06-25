@@ -19,7 +19,7 @@ protocol CommentsDataSourceDelegate: class {
 class CommentsDataSource: NSObject {
     
     weak var tableView: UITableView?
-    weak var textViewDelegate: UITextViewDelegate?
+    weak var urlLabelDelegate: URLLabelDelegate?
     
     // MARK: - Init
     
@@ -84,9 +84,11 @@ class CommentsDataSource: NSObject {
             NSFontAttributeName: UIFont.preferredFont(forTextStyle: .body),
             NSForegroundColorAttributeName: UIColor.offBlack
         ]
+        let linkColor = tableView?.tintColor ?? UIColor.blue
         textAttributes.linkAttributes = [
             NSUnderlineStyleAttributeName: NSUnderlineStyle.styleSingle.rawValue,
-            NSForegroundColorAttributeName: tableView?.tintColor ?? UIColor.blue
+            NSForegroundColorAttributeName: linkColor,
+            NSUnderlineColorAttributeName: linkColor
         ]
         cachedTextAttributes = textAttributes
         return textAttributes
@@ -216,10 +218,10 @@ class CommentsDataSource: NSObject {
             model.render = render
             return render
         }()
-        cell.bodyTextView.attributedText = render?.result
-        cell.bodyTextView.linkTextAttributes = textAttributes.linkAttributes
-        cell.bodyTextView.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
-        cell.bodyTextView.delegate = textViewDelegate
+        cell.bodyLabel.linkAttributes = textAttributes.linkAttributes
+        cell.bodyLabel.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
+        cell.bodyLabel.delegate = urlLabelDelegate
+        cell.bodyLabel.attributedText = render?.result
         cell.isExpanded = model.isExpanded
         updateDrawable(cell, at: indexPath, model: model)
         return cell
@@ -233,14 +235,16 @@ class CommentsDataSource: NSObject {
     }
     
     func updateDrawable(_ cell: CommentsCellDrawable?, at indexPath: IndexPath?, model: CommentsCellModel?) {
+        guard var context = cell?.cellBackgroundView.drawingContext else { return }
         let level = Int(model?.depth ?? 0)
-        cell?.indentationLevel = level
-        cell?.drawingContext.previousIndentation = indexPath.flatMap {
+        context.indentationLevel = level
+        context.previousIndentation = indexPath.flatMap {
             $0.row > comments.startIndex ? Int(comments[$0.row - 1].depth) : nil
             } ?? level
-        cell?.drawingContext.nextIndentation = indexPath.flatMap {
+        context.nextIndentation = indexPath.flatMap {
             $0.row + 1 < comments.endIndex ? Int(comments[$0.row + 1].depth) : nil
             } ?? level
+        cell?.cellBackgroundView.drawingContext = context
     }
     
     func configureHeight(for model: CommentsCellModel, at indexPath: IndexPath, width: CGFloat) -> CGFloat {
@@ -260,7 +264,7 @@ class CommentsDataSource: NSObject {
                 verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
         }
         if model.isExpanded {
-            model.expandedHeight[width] = height + cell.bottomIndentationMargin
+            model.expandedHeight[width] = height + cell.cellBackgroundView.drawingContext.bottomIndentationMargin
         } else {
             CommentsCellModel.condensedHeight = height
         }
@@ -414,7 +418,7 @@ extension CommentsDataSource: UITableViewDelegate {
         guard let comment = model.comment.first else { return MoreCommentsCell.standardHeight }
         guard model.isExpanded else { return CommentsCellModel.condensedHeight ?? configureHeight(for: model, at: indexPath, width: width) }
         guard let (margin, frameWidth) = delegate?.viewDimensionsForCommentsDataSource(self) else { return 0 }
-        let textWidth = frameWidth - margin - SizingCell.comment.drawingContext.indentationWidth * CGFloat(comment.depth)
+        let textWidth = frameWidth - margin - SizingCell.comment.cellBackgroundView.drawingContext.indentationWidth * CGFloat(comment.depth)
         let numberOfCharacters: Int = Int(comment.body?.characters.count ?? 0)
         let font = textAttributes.textAttributes[NSFontAttributeName] as? UIFont
             ?? UIFont.preferredFont(forTextStyle: .body)

@@ -11,47 +11,49 @@ import UIKit
 class CommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
     
     @IBOutlet weak var topLabel: UILabel!
-    @IBOutlet weak var bodyTextView: URLTextView!
+    @IBOutlet weak var bodyLabel: URLLabel!
     @IBOutlet weak var bodyLabelLeading: NSLayoutConstraint!
-    @IBOutlet var bodyTextViewBottom: NSLayoutConstraint!
+    @IBOutlet var bodyLabelBottom: NSLayoutConstraint!
     @IBOutlet weak var separator: SeparatorView!
     
-    var drawingContext = CommentsCellDrawingContext(previousIndentation: 0, nextIndentation: 0)
+    let cellBackgroundView = CommentsCellBackgroundView()
     
     override var indentationLevel: Int {
         didSet {
-            bodyLabelLeading.constant = drawingContext.indentationWidth * CGFloat(indentationLevel)
+            bodyLabelLeading.constant = cellBackgroundView.drawingContext.indentationWidth * CGFloat(indentationLevel)
             layoutMargins.left = bodyLabelLeading.constant + contentView.layoutMargins.left
             separatorInset.left = layoutMargins.left
-            setNeedsDisplay()
+            separator.isHidden = cellBackgroundView.drawingContext.indentationLevel != 0
+                || cellBackgroundView.drawingContext.nextIndentation != 0
         }
     }
     
     var isExpanded: Bool {
-        get { return bodyTextViewBottom.isActive }
-        set { bodyTextViewBottom.isActive = newValue }
+        get { return bodyLabelBottom.isActive }
+        set {
+            bodyLabelBottom.isActive = newValue
+            bodyLabel.linkControls.forEach { $0.isHidden = !newValue }
+        }
     }
     
     var isExpanding: Bool = false
     
-    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        super.setHighlighted(highlighted, animated: animated)
-        setNeedsDisplay()
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        backgroundView = cellBackgroundView
+        cellBackgroundView.contentMode = .redraw
+        cellBackgroundView.backgroundColor = .offWhite
+        bodyLabel.linkControlsSuperview = contentView
     }
     
     override func layoutSubviews() {
-        bodyTextViewBottom.constant = bottomIndentationMargin
+        bodyLabelBottom.constant = cellBackgroundView.drawingContext.bottomIndentationMargin
         super.layoutSubviews()
         if isExpanding {
             UIView.performWithoutAnimation {
-                self.contentView.layoutIfNeeded()
+                contentView.layoutIfNeeded()
             }
         }
-    }
-    
-    override func draw(_ rect: CGRect) {
-        drawDecorations()
-        separator.isHidden = indentationLevel != 0 || drawingContext.nextIndentation != 0
     }
 }
 

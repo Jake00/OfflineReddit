@@ -18,7 +18,7 @@ class CommentsViewController: UIViewController, Loadable {
     @IBOutlet weak var authorTimeLabel: UILabel!
     @IBOutlet weak var commentsLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var selfTextView: URLTextView!
+    @IBOutlet weak var selfLabel: URLLabel!
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var postImageViewHeight: NSLayoutConstraint!
     @IBOutlet var loadingButton: UIBarButtonItem!
@@ -52,8 +52,9 @@ class CommentsViewController: UIViewController, Loadable {
         super.viewDidLoad()
         dataSource.tableView = tableView
         dataSource.delegate = self
-        dataSource.textViewDelegate = self
-        selfTextView.delegate = self
+        dataSource.urlLabelDelegate = self
+        selfLabel.delegate = self
+        selfLabel.linkControlsSuperview = headerView
         tableView.dataSource = dataSource
         tableView.delegate = dataSource
         tableView.tableHeaderView = headerView
@@ -184,9 +185,9 @@ class CommentsViewController: UIViewController, Loadable {
             return CMDocument(data: data, options: [])
                 .attributedString(with: dataSource.textAttributes)
         }()
-        selfTextView.attributedText = render?.result
-        selfTextView.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
-        selfTextView.linkTextAttributes = dataSource.textAttributes.linkAttributes
+        selfLabel.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
+        selfLabel.linkAttributes = dataSource.textAttributes.linkAttributes
+        selfLabel.attributedText = render?.result
         let hide = {
             self.postImageView.isHidden = true
             self.postImageViewHeight.constant = 0
@@ -223,8 +224,8 @@ class CommentsViewController: UIViewController, Loadable {
     
     // MARK: - Navigation
     
-    func showWebViewController(loading URL: URL) {
-        navigationController?.pushViewController(WebViewController(initialURL: URL), animated: true)
+    func showWebViewController(loading url: URL) {
+        navigationController?.pushViewController(WebViewController(initialURL: url), animated: true)
     }
 }
 
@@ -248,12 +249,11 @@ extension CommentsViewController: CommentsDataSourceDelegate {
     }
 }
 
-// MARK: - Text view delegate
+// MARK: - Attributed label delegate
 
-extension CommentsViewController: UITextViewDelegate {
+extension CommentsViewController: URLLabelDelegate {
     
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
-        showWebViewController(loading: URL)
-        return false
+    func urlLabel(_ urlLabel: URLLabel, didSelectLinkWith url: URL) {
+        showWebViewController(loading: url)
     }
 }
