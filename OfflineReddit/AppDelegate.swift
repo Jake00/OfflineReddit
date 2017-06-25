@@ -24,6 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+        CommentsCellDrawingContext.cached.removeAll()
+    }
+    
     private func enableDataProviding() -> DataProvider {
         if isDebugBuild, ProcessInfo.processInfo.arguments.contains("EMULATE_ONLINE") {
             print("Enabling offline development. Application will report being online with no reachability change callbacks.")

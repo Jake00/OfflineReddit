@@ -32,12 +32,16 @@ class MoreCommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
     override func awakeFromNib() {
         super.awakeFromNib()
         backgroundView = cellBackgroundView
-        cellBackgroundView.contentMode = .redraw
         cellBackgroundView.backgroundColor = .offWhite
     }
     
     override func layoutSubviews() {
         containerBottom.constant = cellBackgroundView.drawingContext.bottomIndentationMargin
         super.layoutSubviews()
+    }
+    
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        cellBackgroundView.drawingContext.isHighlighted = highlighted
     }
 }
