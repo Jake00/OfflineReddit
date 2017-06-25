@@ -61,6 +61,9 @@ class CommentsViewController: UIViewController, Loadable {
         tableView.tableFooterView = UIView()
         tableView.registerReusableNibCell(CommentsCell.self)
         tableView.registerReusableNibCell(MoreCommentsCell.self)
+        if #available(iOS 10.0, *) {
+            tableView.prefetchDataSource = dataSource
+        }
         updateHeaderLabels()
         isLoading = false
         toolbarItems = [
@@ -77,13 +80,6 @@ class CommentsViewController: UIViewController, Loadable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dataSource.fetchCommentsIfNeeded()?.continueOnSuccessWith(.mainThread, continuation: updateHeaderLabels)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if !isLoading {
-            dataSource.startCachingHeights()
-        }
     }
     
     private var previousHeaderViewHeight: CGFloat = 0

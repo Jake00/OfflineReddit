@@ -271,29 +271,6 @@ class CommentsDataSource: NSObject {
         return height
     }
     
-    // MARK: - Caching cell heights
-    
-    fileprivate var continueCaching = false
-    
-    func startCachingHeights() {
-        continueCaching = true
-        if let width = tableView?.superview?.frame.width,
-            let row = comments.index(where: { $0.height(for: width) == nil }) {
-            cacheHeights(after: row, count: 10, width: width)
-        }
-    }
-    
-    func cacheHeights(after row: Int, count: Int, width: CGFloat) {
-        guard continueCaching else { return }
-        print("Caching cell heights \(row) ..< \(row + count)")
-        for row in row ..< row + count {
-            guard row < comments.endIndex else { return }
-            _ = configureHeight(for: comments[row], at: IndexPath(row: row, section: 0), width: width)
-        }
-        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05)) // Allow other UI interactions
-        self.cacheHeights(after: row + count, count: count, width: width)
-    }
-    
     // MARK: - Fetching
     
     fileprivate var hasFetchedOnceSuccessfully = false
@@ -310,7 +287,6 @@ class CommentsDataSource: NSObject {
         }
         if allComments.isEmpty {
             return fetchComments()
-                .continueOnSuccessWith(continuation: startCachingHeights)
         }
         return nil
     }
@@ -452,18 +428,17 @@ extension CommentsDataSource: UITableViewDelegate {
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
+}
+
+extension CommentsDataSource: UITableViewDataSourcePrefetching {
     
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        continueCaching = false
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate {
-            startCachingHeights()
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        guard let width = tableView.superview?.bounds.width else { return }
+        for indexPath in indexPaths {
+            let model = comments[indexPath.row]
+            if model.height(for: width) == nil {
+                _ = configureHeight(for: model, at: indexPath, width: width)
+            }
         }
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        startCachingHeights()
     }
 }
