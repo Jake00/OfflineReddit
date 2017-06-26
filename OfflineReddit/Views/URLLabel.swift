@@ -64,9 +64,8 @@ class URLLabel: UILabel {
     }
     
     private var _attributedText: NSAttributedString? {
-        get { return super.attributedText }
+        get { return textStorage }
         set {
-            super.attributedText = newValue
             textStorage.setAttributedString(newValue ?? NSAttributedString(string: ""))
         }
     }
@@ -80,7 +79,6 @@ class URLLabel: UILabel {
             }
             let text = addLinkAttributes(to: newValue)
             _attributedText = text
-            textStorage.setAttributedString(text)
             checkForLinks(in: text)
         }
     }
@@ -126,7 +124,7 @@ class URLLabel: UILabel {
             bounds.size.height = 0
             return bounds
         }
-        let textRect = TextRectCache.TextRect(text: text, bounds: bounds)
+        let textRect = TextRectCache.TextRect(text: text, bounds: bounds, numberOfLines: numberOfLines)
         if let rect = textRectCache?.stored[textRect] {
             return rect
         }
@@ -145,6 +143,7 @@ class URLLabel: UILabel {
         textBounds.origin = bounds.origin
         textBounds.size.width = textBounds.size.width.rounded(.up)
         textBounds.size.height = textBounds.size.height.rounded(.up)
+        textRectCache?.stored[textRect] = textBounds
         return textBounds
     }
     
@@ -305,13 +304,19 @@ final class TextRectCache {
     struct TextRect: Hashable {
         let text: String
         let bounds: CGRect
+        let numberOfLines: Int
         
         static func == (lhs: TextRect, rhs: TextRect) -> Bool {
-            return lhs.text == rhs.text && lhs.bounds == rhs.bounds
+            return lhs.text == rhs.text
+                && lhs.bounds == rhs.bounds
+                && lhs.numberOfLines == rhs.numberOfLines
         }
         
         var hashValue: Int {
-            return text.hashValue &+ bounds.width.hashValue &+ bounds.height.hashValue
+            return text.hashValue
+                &+ bounds.width.hashValue
+                &+ bounds.height.hashValue
+                &+ numberOfLines
         }
     }
     

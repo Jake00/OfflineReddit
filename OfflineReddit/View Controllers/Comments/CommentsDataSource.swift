@@ -220,6 +220,7 @@ class CommentsDataSource: NSObject {
             model.render = render
             return render
         }()
+        cell.bodyLabel.textRectCache = textRectCache
         cell.bodyLabel.linkAttributes = textAttributes.linkAttributes
         cell.bodyLabel.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
         cell.bodyLabel.delegate = urlLabelDelegate
