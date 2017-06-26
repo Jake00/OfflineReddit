@@ -57,11 +57,6 @@ class CommentsDataSource: NSObject {
     
     weak var delegate: CommentsDataSourceDelegate?
     
-    struct SizingCell {
-        static let comment = CommentsCell.instantiateFromNib()
-        static let moreComments = MoreCommentsCell.instantiateFromNib()
-    }
-    
     private var cachedTextAttributes: CMTextAttributes?
     
     var textAttributes: CMTextAttributes {
@@ -95,6 +90,8 @@ class CommentsDataSource: NSObject {
     }
     
     fileprivate let textRectCache = TextRectCache()
+    
+    fileprivate let heightCachingQueue = DispatchQueue(label: "CommentsDataSource.heightCachingQueue", qos: .userInitiated)
     
     func indexPath(of more: MoreComments) -> IndexPath? {
         return comments.index(where: { $0.comment == more })
@@ -209,23 +206,32 @@ class CommentsDataSource: NSObject {
     
     // MARK: - Cell configuration
     
-    func configureCommentCell(_ cell: CommentsCell, at indexPath: IndexPath, model: CommentsCellModel) -> CommentsCell {
+    func commentCellConfigurable(model: CommentsCellModel) -> (String?, UIFont, CMAttributedStringRenderResult?) {
         let comment = model.comment.first
-        cell.topLabel.text = comment?.authorScoreTimeText
-        cell.topLabel.font = .preferredFont(forTextStyle: .footnote)
+        let topLabelText = comment?.authorScoreTimeText
+        let topLabelFont = UIFont.preferredFont(forTextStyle: .footnote)
         let render: CMAttributedStringRenderResult? = model.render ?? {
             guard let data = comment?.body?.data(using: .utf8) else { return nil }
             let render = CMDocument(data: data, options: [])
                 .attributedString(with: textAttributes)
             model.render = render
             return render
-        }()
+            }()
+        return (topLabelText, topLabelFont, render)
+    }
+    
+    func configureCommentCell(_ cell: CommentsCell, at indexPath: IndexPath, model: CommentsCellModel) -> CommentsCell {
+        let (topLabelText, topLabelFont, render) = commentCellConfigurable(model: model)
+        cell.topLabel.text = topLabelText
+        cell.topLabel.font = topLabelFont
+        cell.bodyLabel.attributedText = render?.result
+        cell.bodyLabel.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
         cell.bodyLabel.textRectCache = textRectCache
         cell.bodyLabel.linkAttributes = textAttributes.linkAttributes
-        cell.bodyLabel.blockQuoteRanges = render?.blockQuoteRanges.map { $0.rangeValue } ?? []
         cell.bodyLabel.delegate = urlLabelDelegate
-        cell.bodyLabel.attributedText = render?.result
         cell.isExpanded = model.isExpanded
+        let width = tableView?.superview?.frame.width ?? 0
+        cell.bodyLabelHeight.constant = model.bodyLabelHeight[width] ?? 0
         updateDrawable(cell, at: indexPath, model: model)
         return cell
     }
@@ -238,36 +244,39 @@ class CommentsDataSource: NSObject {
     }
     
     func updateDrawable(_ cell: CommentsCellDrawable?, at indexPath: IndexPath?, model: CommentsCellModel?) {
-        guard var context = cell?.cellBackgroundView.drawingContext else { return }
+        cell?.cellBackgroundView.drawingContext = cellDrawingContext(at: indexPath, with: model)
+    }
+    
+    func cellDrawingContext(at indexPath: IndexPath?, with model: CommentsCellModel?) -> CommentsCellDrawingContext {
+        let row = indexPath?.row ?? 0
         let level = Int(model?.depth ?? 0)
-        context.indentationLevel = level
-        context.previousIndentation = indexPath.flatMap {
-            $0.row > comments.startIndex ? Int(comments[$0.row - 1].depth) : nil
-            } ?? level
-        context.nextIndentation = indexPath.flatMap {
-            $0.row + 1 < comments.endIndex ? Int(comments[$0.row + 1].depth) : nil
-            } ?? level
-        cell?.cellBackgroundView.drawingContext = context
+        return CommentsCellDrawingContext(
+            indentationLevel: level,
+            previousIndentation: row > comments.startIndex ? Int(comments[row - 1].depth) : level,
+            nextIndentation: row + 1 < comments.endIndex ? Int(comments[row + 1].depth) : level,
+            isHighlighted: false)
     }
     
     func configureHeight(for model: CommentsCellModel, at indexPath: IndexPath, width: CGFloat) -> CGFloat {
         let height: CGFloat
-        let cell: CommentsCellDrawable
+        let drawingContext = cellDrawingContext(at: indexPath, with: model)
         if model.isMoreComments {
-            cell = configureMoreCommentsCell(SizingCell.moreComments, at: indexPath, model: model)
-            height = MoreCommentsCell.standardHeight
+            height = MoreCommentsCell.standardHeight + drawingContext.bottomIndentationMargin
         } else {
-            let _cell = configureCommentCell(SizingCell.comment, at: indexPath, model: model)
-            _cell.setNeedsLayout()
-            _cell.layoutIfNeeded()
-            cell = _cell
-            height = _cell.systemLayoutSizeFitting(
-                CGSize(width: width, height: UILayoutFittingCompressedSize.height),
-                withHorizontalFittingPriority: UILayoutPriorityRequired,
-                verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
+            let (topLabelText, topLabelFont, render) = commentCellConfigurable(model: model)
+            let margin = delegate?.viewDimensionsForCommentsDataSource(self).horizontalMargins ?? 0
+            let cellHeight = CommentsCell.height(
+                width: width - margin,
+                topLabelText: topLabelText,
+                topLabelFont: topLabelFont,
+                bodyLabelText: render?.result,
+                drawingContext: drawingContext,
+                isExpanded: model.isExpanded)
+            height = cellHeight.total
+            model.bodyLabelHeight[width] = cellHeight.bodyLabel
         }
         if model.isExpanded {
-            model.expandedHeight[width] = height + cell.cellBackgroundView.drawingContext.bottomIndentationMargin
+            model.expandedHeight[width] = height
         } else {
             CommentsCellModel.condensedHeight = height
         }
@@ -397,7 +406,7 @@ extension CommentsDataSource: UITableViewDelegate {
         guard let comment = model.comment.first else { return MoreCommentsCell.standardHeight }
         guard model.isExpanded else { return CommentsCellModel.condensedHeight ?? configureHeight(for: model, at: indexPath, width: width) }
         guard let (margin, frameWidth) = delegate?.viewDimensionsForCommentsDataSource(self) else { return 0 }
-        let textWidth = frameWidth - margin - SizingCell.comment.cellBackgroundView.drawingContext.indentationWidth * CGFloat(comment.depth)
+        let textWidth = frameWidth - margin - 10 * CGFloat(comment.depth)
         let numberOfCharacters: Int = Int(comment.body?.characters.count ?? 0)
         let font = textAttributes.textAttributes[NSFontAttributeName] as? UIFont
             ?? UIFont.preferredFont(forTextStyle: .body)
@@ -436,11 +445,15 @@ extension CommentsDataSource: UITableViewDelegate {
 extension CommentsDataSource: UITableViewDataSourcePrefetching {
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        guard let width = tableView.superview?.bounds.width else { return }
-        for indexPath in indexPaths {
-            let model = comments[indexPath.row]
-            if model.height(for: width) == nil {
-                _ = configureHeight(for: model, at: indexPath, width: width)
+        guard let width = tableView.superview?.frame.width else { return }
+        let toCache: [(IndexPath, CommentsCellModel)] = indexPaths.flatMap {
+            let model = comments[$0.row]
+            return model.height(for: width) == nil ? ($0, model) : nil
+        }
+        guard !toCache.isEmpty else { return }
+        heightCachingQueue.async {
+            for (indexPath, model) in toCache {
+                _ = self.configureHeight(for: model, at: indexPath, width: width)
             }
         }
     }

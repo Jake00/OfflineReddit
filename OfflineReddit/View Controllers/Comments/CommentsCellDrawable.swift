@@ -127,11 +127,23 @@ private let lightest: CGFloat = {
 
 class CommentsCellBackgroundView: UIImageView {
     
+    private static var renderQueue = DispatchQueue(label: "CommentsCellBackgroundView.renderQueue", qos: .userInitiated)
+    
     var drawingContext = CommentsCellDrawingContext(indentationLevel: 0, previousIndentation: 0, nextIndentation: 0, isHighlighted: false) {
         didSet {
             if oldValue != drawingContext {
                 (superview as? UITableViewCell)?.indentationLevel = drawingContext.indentationLevel
-                image = drawingContext.backgroundImage()
+                if let image = CommentsCellDrawingContext.cached[drawingContext] {
+                    self.image = image
+                } else {
+                    self.image = nil
+                    CommentsCellBackgroundView.renderQueue.async {
+                        let image = self.drawingContext.backgroundImage()
+                        DispatchQueue.main.async {
+                            self.image = image
+                        }
+                    }
+                }
             }
         }
     }

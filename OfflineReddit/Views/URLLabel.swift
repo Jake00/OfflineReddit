@@ -118,6 +118,12 @@ class URLLabel: UILabel {
         }
     }
     
+    var isIntrinsicContentSizeEnabled = true
+    
+    override var intrinsicContentSize: CGSize {
+        return isIntrinsicContentSizeEnabled ? super.intrinsicContentSize : .zero
+    }
+    
     override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
         guard let text = attributedText?.string, !text.isEmpty else {
             var bounds = bounds

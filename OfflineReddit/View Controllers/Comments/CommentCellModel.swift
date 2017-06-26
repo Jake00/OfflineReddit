@@ -36,6 +36,7 @@ final class CommentsCellModel {
     typealias Height = CGFloat
     
     var expandedHeight: [Width: Height] = [:]
+    var bodyLabelHeight: [Width: Height] = [:]
     static var condensedHeight: Height?
     
     func height(for width: Width) -> Height? {
