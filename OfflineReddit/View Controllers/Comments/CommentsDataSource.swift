@@ -94,6 +94,8 @@ class CommentsDataSource: NSObject {
         return textAttributes
     }
     
+    fileprivate let textRectCache = TextRectCache()
+    
     func indexPath(of more: MoreComments) -> IndexPath? {
         return comments.index(where: { $0.comment == more })
             .map { IndexPath(row: $0, section: 0) }

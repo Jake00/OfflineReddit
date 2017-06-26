@@ -16,6 +16,8 @@ class URLLabel: UILabel {
     
     var blockQuoteRanges: [NSRange] = []
     
+    var textRectCache: TextRectCache?
+    
     weak var delegate: URLLabelDelegate?
     
     var linkControlsSuperview: UIView? {
@@ -48,7 +50,6 @@ class URLLabel: UILabel {
         textContainer.lineFragmentPadding = 0
         textContainer.maximumNumberOfLines = self.numberOfLines
         textContainer.lineBreakMode = self.lineBreakMode
-        textContainer.widthTracksTextView = true
         textContainer.size = self.bounds.size
         return textContainer
     }()
@@ -91,6 +92,7 @@ class URLLabel: UILabel {
         if textContainer.size != bounds.size {
             textContainer.size = bounds.size
         }
+        guard superview != nil else { return }
         
         while links.count > linkControls.count {
             let control = URLLabelLinkControl()
@@ -119,6 +121,15 @@ class URLLabel: UILabel {
     }
     
     override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        guard let text = attributedText?.string, !text.isEmpty else {
+            var bounds = bounds
+            bounds.size.height = 0
+            return bounds
+        }
+        let textRect = TextRectCache.TextRect(text: text, bounds: bounds)
+        if let rect = textRectCache?.stored[textRect] {
+            return rect
+        }
         let previousSize = textContainer.size
         let previousNumberOfLines = textContainer.maximumNumberOfLines
         
@@ -287,4 +298,22 @@ private extension UIView {
             insertSubview(subview, belowChildSubview: superview)
         }
     }
+}
+
+final class TextRectCache {
+    
+    struct TextRect: Hashable {
+        let text: String
+        let bounds: CGRect
+        
+        static func == (lhs: TextRect, rhs: TextRect) -> Bool {
+            return lhs.text == rhs.text && lhs.bounds == rhs.bounds
+        }
+        
+        var hashValue: Int {
+            return text.hashValue &+ bounds.width.hashValue &+ bounds.height.hashValue
+        }
+    }
+    
+    var stored: [TextRect: CGRect] = [:]
 }
