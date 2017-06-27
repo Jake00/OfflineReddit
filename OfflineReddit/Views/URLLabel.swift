@@ -67,6 +67,7 @@ class URLLabel: UILabel {
         get { return textStorage }
         set {
             textStorage.setAttributedString(newValue ?? NSAttributedString(string: ""))
+            setNeedsDisplay()
         }
     }
     
@@ -90,14 +91,17 @@ class URLLabel: UILabel {
         if textContainer.size != bounds.size {
             textContainer.size = bounds.size
         }
-        guard superview != nil else { return }
-        
+        if superview != nil {
+            updateLinkControls()
+        }
+    }
+    
+    func updateLinkControls() {
         while links.count > linkControls.count {
             let control = URLLabelLinkControl()
             control.addTarget(self, action: #selector(linkSelected(_:)), for: .touchUpInside)
             linkControls.append(control)
             if let linkControlsSuperview = linkControlsSuperview {
-                
                 linkControlsSuperview.insertSubview(control, belowChildSubview: self)
             }
         }
@@ -105,10 +109,13 @@ class URLLabel: UILabel {
             linkControls.removeLast().removeFromSuperview()
         }
         for (linkControl, link) in zip(linkControls, links) {
-            linkControl.url = link.url
+            linkControl.link = link
             linkControl.frame = linkControlsSuperview?
                 .convert(subtextRect(range: link.range), from: self)
                 .insetBy(dx: -4, dy: -2) ?? .zero
+            linkControl.lineRects = subtextRects(range: link.range).map {
+                linkControl.convert($0, from: self).insetBy(dx: -4, dy: -2)
+            }
         }
     }
     
@@ -157,6 +164,18 @@ class URLLabel: UILabel {
         var glyphRange = NSRange()
         layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
         return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
+    }
+    
+    func subtextRects(range: NSRange) -> [CGRect] {
+        var glyphRange = NSRange()
+        layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
+        var rects: [CGRect] = []
+        layoutManager.enumerateLineFragments(forGlyphRange: glyphRange) { _, usedRect, _, range, _ in
+            self.layoutManager.enumerateEnclosingRects(forGlyphRange: glyphRange, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: self.textContainer) { rect, _ in
+                rects.append(usedRect.intersection(rect))
+            }
+        }
+        return rects
     }
     
     override func drawText(in rect: CGRect) {
@@ -213,6 +232,7 @@ class URLLabel: UILabel {
         }
         links += results
         _attributedText = text
+        updateLinkControls()
     }
     
     func addLinkAttributes(to text: NSAttributedString) -> NSAttributedString {
@@ -230,19 +250,37 @@ class URLLabel: UILabel {
     // MARK: - Link selection
     
     func linkSelected(_ sender: URLLabelLinkControl) {
-        guard let url = sender.url else { return }
+        guard let url = sender.link?.url else { return }
         delegate?.urlLabel(self, didSelectLinkWith: url)
     }
 }
 
 class URLLabelLinkControl: UIControl {
     
-    var url: URL?
+    var link: NSTextCheckingResult?
+    
+    var lineRects: [CGRect] = [] {
+        didSet {
+            if lineRects.count < 2 {
+                backgroundImageView.image = URLLabelLinkControl.singleRoundedRectImage
+            } else {
+                let rects = lineRects
+                let bounds = self.bounds
+                DispatchQueue.global().async {
+                    let image = self.renderBackgroundImage(rects: rects, enclosingRect: bounds)
+                    DispatchQueue.main.async {
+                        self.backgroundImageView.image = image
+                    }
+                }
+            }
+        }
+    }
     
     lazy var backgroundImageView: UIImageView = {
-        let backgroundImageView = UIImageView(image: URLLabelLinkControl.backgroundImage)
+        let backgroundImageView = UIImageView(image: URLLabelLinkControl.singleRoundedRectImage)
         backgroundImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         backgroundImageView.frame = self.bounds
+        backgroundImageView.isHidden = !self.isHighlighted
         self.addSubview(backgroundImageView)
         return backgroundImageView
     }()
@@ -253,20 +291,40 @@ class URLLabelLinkControl: UIControl {
         }
     }
     
-    private static let backgroundImage: UIImage? = {
+    private static var backgroundColor: UIColor {
+        return UIColor(white: 0, alpha: 0.2)
+    }
+    
+    private static let singleRoundedRectImage: UIImage? = {
         let cornerRadius: CGFloat = 4
         let size = CGSize(width: cornerRadius * 2 + 1, height: cornerRadius * 2 + 1)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0)
-        defer { UIGraphicsEndImageContext() }
-        guard let context = UIGraphicsGetCurrentContext() else { return nil }
         let path = CGPath(roundedRect: CGRect(origin: .zero, size: size), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
-        context.addPath(path)
-        context.setFillColor(UIColor(white: 0, alpha: 0.2).cgColor)
-        context.fillPath()
-        return UIGraphicsGetImageFromCurrentImageContext()?.resizableImage(
+        return render(size: size) { context in
+            context.addPath(path)
+            context.setFillColor(backgroundColor.cgColor)
+            context.fillPath()
+        }?.resizableImage(
             withCapInsets: UIEdgeInsets(top: cornerRadius, left: cornerRadius, bottom: cornerRadius, right: cornerRadius),
             resizingMode: .stretch)
     }()
+    
+    private func renderBackgroundImage(rects: [CGRect], enclosingRect: CGRect) -> UIImage? {
+        let cornerRadius: CGFloat = 4
+        let paths = rects.map { UIBezierPath(roundedRect: $0, cornerRadius: cornerRadius).cgPath }
+        return render(size: enclosingRect.size) { context in
+            paths.forEach(context.addPath)
+            context.setFillColor(URLLabelLinkControl.backgroundColor.cgColor)
+            context.fillPath(using: .winding)
+        }
+    }
+}
+
+private func render(size: CGSize, draw: (CGContext) -> Void) -> UIImage? {
+    UIGraphicsBeginImageContextWithOptions(size, false, 0)
+    defer { UIGraphicsEndImageContext() }
+    guard let context = UIGraphicsGetCurrentContext() else { return nil }
+    draw(context)
+    return UIGraphicsGetImageFromCurrentImageContext()
 }
 
 class URLLabelLayoutManager: NSLayoutManager {
