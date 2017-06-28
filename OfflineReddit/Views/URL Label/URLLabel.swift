@@ -170,9 +170,16 @@ class URLLabel: UILabel {
         var glyphRange = NSRange()
         layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
         var rects: [CGRect] = []
-        layoutManager.enumerateLineFragments(forGlyphRange: glyphRange) { _, usedRect, _, range, _ in
-            self.layoutManager.enumerateEnclosingRects(forGlyphRange: glyphRange, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: self.textContainer) { rect, _ in
-                rects.append(usedRect.intersection(rect))
+        let nullRange = NSRange(location: NSNotFound, length: 0)
+        
+        layoutManager.enumerateLineFragments(forGlyphRange: glyphRange) {
+            _, usedRect, _, range, _ in
+            
+            self.layoutManager.enumerateEnclosingRects(
+                forGlyphRange: glyphRange,
+                withinSelectedGlyphRange: nullRange,
+                in: self.textContainer) { rect, _ in
+                    rects.append(usedRect.intersection(rect))
             }
         }
         return rects
@@ -223,6 +230,7 @@ class URLLabel: UILabel {
     
     func addLinks(from results: [NSTextCheckingResult], in text: NSAttributedString) {
         guard !results.isEmpty else { return }
+        // swiftlint:disable:next force_cast
         let text = text.mutableCopy() as! NSMutableAttributedString
         var attributes = linkAttributes
         for result in results {
@@ -236,6 +244,7 @@ class URLLabel: UILabel {
     }
     
     func addLinkAttributes(to text: NSAttributedString) -> NSAttributedString {
+        // swiftlint:disable:next force_cast
         let text = text.mutableCopy() as! NSMutableAttributedString
         let range = NSRange(location: 0, length: text.length)
         text.enumerateAttribute(NSLinkAttributeName, in: range, options: []) { value, range, _ in
@@ -253,136 +262,4 @@ class URLLabel: UILabel {
         guard let url = sender.link?.url else { return }
         delegate?.urlLabel(self, didSelectLinkWith: url)
     }
-}
-
-class URLLabelLinkControl: UIControl {
-    
-    var link: NSTextCheckingResult?
-    
-    var lineRects: [CGRect] = [] {
-        didSet {
-            if lineRects.count < 2 {
-                backgroundImageView.image = URLLabelLinkControl.singleRoundedRectImage
-            } else {
-                let rects = lineRects
-                let bounds = self.bounds
-                DispatchQueue.global().async {
-                    let image = self.renderBackgroundImage(rects: rects, enclosingRect: bounds)
-                    DispatchQueue.main.async {
-                        self.backgroundImageView.image = image
-                    }
-                }
-            }
-        }
-    }
-    
-    lazy var backgroundImageView: UIImageView = {
-        let backgroundImageView = UIImageView(image: URLLabelLinkControl.singleRoundedRectImage)
-        backgroundImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        backgroundImageView.frame = self.bounds
-        backgroundImageView.isHidden = !self.isHighlighted
-        self.addSubview(backgroundImageView)
-        return backgroundImageView
-    }()
-    
-    override var isHighlighted: Bool {
-        didSet {
-            backgroundImageView.isHidden = !isHighlighted
-        }
-    }
-    
-    private static var backgroundColor: UIColor {
-        return UIColor(white: 0, alpha: 0.2)
-    }
-    
-    private static let singleRoundedRectImage: UIImage? = {
-        let cornerRadius: CGFloat = 4
-        let size = CGSize(width: cornerRadius * 2 + 1, height: cornerRadius * 2 + 1)
-        let path = CGPath(roundedRect: CGRect(origin: .zero, size: size), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
-        return render(size: size) { context in
-            context.addPath(path)
-            context.setFillColor(backgroundColor.cgColor)
-            context.fillPath()
-        }?.resizableImage(
-            withCapInsets: UIEdgeInsets(top: cornerRadius, left: cornerRadius, bottom: cornerRadius, right: cornerRadius),
-            resizingMode: .stretch)
-    }()
-    
-    private func renderBackgroundImage(rects: [CGRect], enclosingRect: CGRect) -> UIImage? {
-        let cornerRadius: CGFloat = 4
-        let paths = rects.map { UIBezierPath(roundedRect: $0, cornerRadius: cornerRadius).cgPath }
-        return render(size: enclosingRect.size) { context in
-            paths.forEach(context.addPath)
-            context.setFillColor(URLLabelLinkControl.backgroundColor.cgColor)
-            context.fillPath(using: .winding)
-        }
-    }
-}
-
-private func render(size: CGSize, draw: (CGContext) -> Void) -> UIImage? {
-    UIGraphicsBeginImageContextWithOptions(size, false, 0)
-    defer { UIGraphicsEndImageContext() }
-    guard let context = UIGraphicsGetCurrentContext() else { return nil }
-    draw(context)
-    return UIGraphicsGetImageFromCurrentImageContext()
-}
-
-class URLLabelLayoutManager: NSLayoutManager {
-    
-    override func showCGGlyphs(
-        _ glyphs: UnsafePointer<CGGlyph>,
-        positions: UnsafePointer<CGPoint>,
-        count glyphCount: Int,
-        font: UIFont,
-        matrix textMatrix: CGAffineTransform,
-        attributes: [String : Any] = [:],
-        in graphicsContext: CGContext) {
-        
-        if let color = attributes[NSForegroundColorAttributeName] as? UIColor {
-            graphicsContext.setFillColor(color.cgColor)
-        }
-        super.showCGGlyphs(
-            glyphs,
-            positions: positions,
-            count: glyphCount,
-            font: font,
-            matrix: textMatrix,
-            attributes: attributes,
-            in: graphicsContext)
-    }
-}
-
-private extension UIView {
-    
-    func insertSubview(_ subview: UIView, belowChildSubview siblingSubview: UIView) {
-        if siblingSubview.superview == self {
-            insertSubview(subview, belowSubview: siblingSubview)
-        } else if let superview = siblingSubview.superview {
-            insertSubview(subview, belowChildSubview: superview)
-        }
-    }
-}
-
-final class TextRectCache {
-    
-    struct TextRect: Hashable {
-        let text: String
-        let bounds: CGRect
-        let numberOfLines: Int
-        
-        static func == (lhs: TextRect, rhs: TextRect) -> Bool {
-            return lhs.text == rhs.text
-                && lhs.bounds == rhs.bounds
-                && lhs.numberOfLines == rhs.numberOfLines
-        }
-        
-        var hashValue: Int {
-            return text.hashValue
-                &+ bounds.width.hashValue
-                &+ bounds.height.hashValue
-                &+ numberOfLines
-        }
-    }
-    
-    var stored: [TextRect: CGRect] = [:]
 }

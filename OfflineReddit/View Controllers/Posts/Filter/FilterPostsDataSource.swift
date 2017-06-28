@@ -25,7 +25,12 @@ class FilterPostsDataSource: NSObject {
     init(reachability: Reachability) {
         self.reachability = reachability
         super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reachabilityChanged(_:)),
+            name: .ReachabilityChanged,
+            object: nil)
     }
     
     deinit {
@@ -110,7 +115,8 @@ extension FilterPostsDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let section = Section(rawValue: indexPath.section) else {
-            fatalError("FilterPostsDataSource is incorrectly configured: Attempted to create cell at indexPath (section \(indexPath.section), row \(indexPath.row))")
+            fatalError("FilterPostsDataSource is incorrectly configured: Attempted to create "
+                + "cell at indexPath (section \(indexPath.section), row \(indexPath.row))")
         }
         switch section {
         case .readStatus, .offlineStatus:
@@ -124,10 +130,16 @@ extension FilterPostsDataSource: UITableViewDataSource {
         }
     }
     
-    func configureFilterCell(_ cell: FilterPostsSegmentedControlCell, isReadStatus: Bool) -> FilterPostsSegmentedControlCell {
+    func configureFilterCell(
+        _ cell: FilterPostsSegmentedControlCell,
+        isReadStatus: Bool
+        ) -> FilterPostsSegmentedControlCell {
+        
         let filters = isReadStatus ? readStatusFilters : offlineStatusFilters
         cell.control.items = filters.map { $0.displayName }
-        cell.control.setTitleTextAttributes([NSFontAttributeName: UIFont.preferredFont(forTextStyle: .caption1)], for: .normal)
+        cell.control.setTitleTextAttributes([
+            NSFontAttributeName: UIFont.preferredFont(forTextStyle: .caption1)
+            ], for: .normal)
         cell.control.removeTarget(self, action: nil, for: .touchUpInside)
         cell.control.addTarget(self, action: isReadStatus
             ? #selector(readStatusSelectionChanged(_:))
@@ -140,7 +152,11 @@ extension FilterPostsDataSource: UITableViewDataSource {
         return cell
     }
     
-    func configureSortCell(_ cell: FilterPostsSortCell, sort: Post.Sort) -> FilterPostsSortCell {
+    func configureSortCell(
+        _ cell: FilterPostsSortCell,
+        sort: Post.Sort
+        ) -> FilterPostsSortCell {
+        
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
         cell.titleLabel.text = sort.displayName
         cell.canExpand = sort.includesTimePeriods
@@ -190,7 +206,8 @@ extension FilterPostsDataSource: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return section != Section.offlineStatus.rawValue || reachability.isOnline ? nil : SharedText.onlineFilterDisabledReason
+        return section != Section.offlineStatus.rawValue
+            || reachability.isOnline ? nil : SharedText.onlineFilterDisabledReason
     }
 }
 

@@ -79,7 +79,10 @@ class ImageDownloader {
             let image = data.flatMap(UIImage.init)?.inflated
             image?.loadedFromURL = url
             if let image = image, self.isMemoryCachingEnabled {
-                self.cache.setObject(image, forKey: url.absoluteString as NSString, cost: Int(image.size.width * image.size.height))
+                self.cache.setObject(
+                    image,
+                    forKey: url.absoluteString as NSString,
+                    cost: Int(image.size.width * image.size.height))
             }
             self.queue.sync {
                 let request = self.remove(url: url)
@@ -143,7 +146,10 @@ class ImageDownloader {
             let error = error ?? response.validateIsImage()
             let image = data.flatMap(UIImage.init)?.inflated
             if let image = image, self.isMemoryCachingEnabled {
-                self.cache.setObject(image, forKey: url.absoluteString as NSString, cost: Int(image.size.width * image.size.height))
+                self.cache.setObject(
+                    image,
+                    forKey: url.absoluteString as NSString,
+                    cost: Int(image.size.width * image.size.height))
             }
             self.queue.sync {
                 let request = self.remove(url: url)

@@ -36,7 +36,10 @@ class WebsiteCache: URLCache {
         guard !fileManager.fileExists(atPath: WebsiteCache.directory.path)
             else { return }
         do {
-            try fileManager.createDirectory(at: WebsiteCache.directory, withIntermediateDirectories: true, attributes: nil)
+            try fileManager.createDirectory(
+                at: WebsiteCache.directory,
+                withIntermediateDirectories: true,
+                attributes: nil)
         } catch {
             print("Failed creating the website cache directory at \(WebsiteCache.directory.path): \(error)")
         }
@@ -70,7 +73,8 @@ class WebsiteCache: URLCache {
         
         if let storageURL = self.storageURL(for: request) {
             if !NSKeyedArchiver.archiveRootObject(cachedResponse, toFile: storageURL.path) {
-                print("Failed storing cached response for request to \(request.url?.absoluteString ?? "") stored at \(storageURL.path)")
+                print("Failed storing cached response for request to "
+                    + "\(request.url?.absoluteString ?? "") stored at \(storageURL.path)")
             }
         }
     }
@@ -80,7 +84,8 @@ class WebsiteCache: URLCache {
             do {
                 try fileManager.removeItem(at: storageURL)
             } catch {
-                print("Failed removing cached response for request to \(request.url?.absoluteString ?? "") stored at \(storageURL.path): \(error)")
+                print("Failed removing cached response for request to "
+                    + "\(request.url?.absoluteString ?? "") stored at \(storageURL.path): \(error)")
             }
         }
     }

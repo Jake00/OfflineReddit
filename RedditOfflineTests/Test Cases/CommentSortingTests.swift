@@ -46,11 +46,14 @@ class CommentSortingTests: BaseTestCase {
                 .sorted(by: sort)
                 .flatMap { $0.first }
             
-            XCTAssertEqual(onlyCommentsSort, moreCommentsExcluded, "\nSort \(sort) must match -- \(firstMismatchDiscription(between: onlyCommentsSort, moreCommentsExcluded))")
+            XCTAssertEqual(onlyCommentsSort, moreCommentsExcluded, "\nSort \(sort) must match -- "
+                + "\(firstMismatchDiscription(between: onlyCommentsSort, moreCommentsExcluded))")
             
-            XCTAssertEqual(onlyCommentsSort, moreCommentsIncluded, "\nSort \(sort) must match -- \(firstMismatchDiscription(between: onlyCommentsSort, moreCommentsIncluded))")
+            XCTAssertEqual(onlyCommentsSort, moreCommentsIncluded, "\nSort \(sort) must match -- "
+                + "\(firstMismatchDiscription(between: onlyCommentsSort, moreCommentsIncluded))")
             
-            XCTAssertEqual(moreCommentsExcluded, moreCommentsIncluded, "\nSort \(sort) must match -- \(firstMismatchDiscription(between: moreCommentsExcluded, moreCommentsIncluded))")
+            XCTAssertEqual(moreCommentsExcluded, moreCommentsIncluded, "\nSort \(sort) must match -- "
+                + "\(firstMismatchDiscription(between: moreCommentsExcluded, moreCommentsIncluded))")
         }
     }
 }

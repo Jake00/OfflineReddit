@@ -23,7 +23,11 @@ struct Sorts {
          Using the same variable names as the algorthm-
          p is the number of positive ratings,
          n is the total number of ratings,
-         confidence refers to the statistical confidence level: pick 0.95 to have a 95% chance that your lower bound is correct, 0.975 to have a 97.5% chance, etc. The z-score in this function never changes, so if you don't have a statistics package handy or if performance is an issue you can always hard-code a value here for z. (Use 1.96 for a confidence level of 0.95.)
+         confidence refers to the statistical confidence level: pick 0.95 to have 
+         a 95% chance that your lower bound is correct, 0.975 to have a 97.5%
+         chance, etc. The z-score in this function never changes, so if you don't
+         have a statistics package handy or if performance is an issue you can always
+         hard-code a value here for z. (Use 1.96 for a confidence level of 0.95.)
          */
         let n = Double(ups + downs)
         if n == 0 {
@@ -51,7 +55,9 @@ struct Sorts {
         /*
          https://www.quora.com/Where-do-the-constants-1134028003-and-45000-come-from-in-reddits-hotness-algorithm
          1134028003 is the Unix timestamp for the oldest submission [to Reddit],
-         45000 is the number of seconds in 12.5 hours.  The way the algo works is that something needs to have 10 times as many points to be "hot" as something 12.5. hours younger.
+         45000 is the number of seconds in 12.5 hours.  
+         The way the algo works is that something needs to have 10 times as many 
+         points to be "hot" as something 12.5. hours younger.
          */
         let score = Double(ups - downs)
         let order: Double = log10(max(abs(score), 1))

@@ -44,8 +44,10 @@ final class PostsDownloader: NSObject, ProgressReporting {
     func start() -> Task<[Post]> {
         /* 
          Breadth first strategy:
-         1. Download each posts top level comments, marking the 'more comments' ids for step 2. The top level `progress.totalUnitCount` is updated during this step.
-         2. For each post downloaded, fetch 'more comments'. Once all comments have been fetched then that post is considered completed.
+         1. Download each posts top level comments, marking the 'more comments' ids for step 2. 
+            The top level `progress.totalUnitCount` is updated during this step.
+         2. For each post downloaded, fetch 'more comments'. Once all comments have been fetched 
+            then that post is considered completed.
          */
         remainingPosts = posts
         progress.totalUnitCount = Int64((1 + numberOfCommentBatches) * posts.count)

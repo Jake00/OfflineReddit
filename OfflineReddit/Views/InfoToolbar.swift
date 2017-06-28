@@ -137,7 +137,7 @@ class InfoToolbar: UIToolbar {
             layoutMarginsGuide.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             layoutMarginsGuide.topAnchor.constraint(equalTo: titleLabel.topAnchor),
             layoutMarginsGuide.bottomAnchor.constraint(equalTo: titleLabel.bottomAnchor),
-            { () -> NSLayoutConstraint in
+            { () -> NSLayoutConstraint in // swiftlint:disable:previous opening_brace
                 let constraint = layoutMarginsGuide.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor)
                 constraint.priority = 500
                 return constraint
@@ -155,13 +155,25 @@ extension UIViewController {
             .first { $0.hidingConstraint?.isActive == false }
     }
     
-    func showInfoToolbar(title: String, image: UIImage? = nil, style: InfoToolbar.Style = .success, duration: TimeInterval = 3, undo: (() -> Void)? = nil) {
+    func showInfoToolbar(
+        title: String,
+        image: UIImage? = nil,
+        style: InfoToolbar.Style = .success,
+        duration: TimeInterval = 3,
+        undo: (() -> Void)? = nil
+        ) {
+        
         let infoToolbar = self.infoToolbar ?? InfoToolbar(style: style)
         infoToolbar.translatesAutoresizingMaskIntoConstraints = false
         infoToolbar.titleLabel.text = title
         infoToolbar.undo = undo.map { undo in { undo(); self.hideInfoToolbar() }}
         infoToolbar.showingTimer?.invalidate()
-        infoToolbar.showingTimer = Timer.scheduledTimer(timeInterval: duration, target: self, selector: #selector(hideInfoToolbar), userInfo: nil, repeats: false)
+        infoToolbar.showingTimer = Timer.scheduledTimer(
+            timeInterval: duration,
+            target: self,
+            selector: #selector(hideInfoToolbar),
+            userInfo: nil,
+            repeats: false)
         
         guard self.infoToolbar == nil else { return }
         

@@ -34,12 +34,12 @@ final class OfflineRemoteProvider {
         return Task<Void>.withDelay(delays ? 1 : 0)
     }
     
-    fileprivate func log(_ s: String, newline: Bool = true) {
+    fileprivate func log(_ value: String, newline: Bool = true) {
         guard logs else { return }
         if newline {
-            print(s)
+            print(value)
         } else {
-            print(s, terminator: "")
+            print(value, terminator: "")
         }
     }
     
@@ -49,9 +49,13 @@ final class OfflineRemoteProvider {
             log("success from cache")
             return Task<Any>(cached)
         }
-        guard let url = Bundle.main.url(forResource: filename, withExtension: "json", subdirectory: OfflineRemoteProvider.subdirectory) else {
-            log("no file exists")
-            return Task(error: Error.noFileExists)
+        guard let url = Bundle.main.url(
+            forResource: filename,
+            withExtension: "json",
+            subdirectory: OfflineRemoteProvider.subdirectory)
+            else {
+                log("no file exists")
+                return Task(error: Error.noFileExists)
         }
         let source = TaskCompletionSource<Any>()
         queue.async {
@@ -83,7 +87,10 @@ final class OfflineRemoteProvider {
     static func moreCommentsFilename(post: Post, mores: [MoreComments]) -> String? {
         // More comments files are named Children_`postId`_`firstChildId`.json
         let filenameFor: (String) -> String = { "Children_\(post.id)_\($0)" }
-        let stored = Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: subdirectory)?.map { $0.lastPathComponent } ?? []
+        let stored = Bundle.main.urls(
+            forResourcesWithExtension: "json",
+            subdirectory: subdirectory)?
+            .map { $0.lastPathComponent } ?? []
         return mores.flatMap { $0.children }.map(filenameFor).first { child in
             stored.contains { child + ".json" == $0 }
         }
@@ -94,7 +101,12 @@ final class OfflineRemoteProvider {
 
 extension OfflineRemoteProvider: RemoteDataProviding {
 
-    func getPosts(for subreddits: [Subreddit], after post: Post?, sortedBy sort: Post.Sort, period: Post.SortPeriod?) -> Task<[Post]> {
+    func getPosts(
+        for subreddits: [Subreddit],
+        after post: Post?,
+        sortedBy sort: Post.Sort,
+        period: Post.SortPeriod?
+        ) -> Task<[Post]> {
         let filename = OfflineRemoteProvider.postsFilename()
         return delay().continueWithTask { _ in self.readFile(named: filename) }
             .continueOnSuccessWith(.immediate, continuation: mapper.mapPosts)

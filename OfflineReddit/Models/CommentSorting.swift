@@ -84,8 +84,10 @@ enum MoreCommentsSide {
     case none, left, right, both
 }
 
-/// Compares two comments which may have different parent comments ie. they may not be in the same tree.
-/// This allows sorting an arbitrary list of comments where ordering will be preserved from parents to children.
+/// Compares two comments which may have different parent comments
+/// ie. they may not be in the same tree.
+/// This allows sorting an arbitrary list of comments where ordering 
+/// will be preserved from parents to children.
 private func compare(
     _ lhs: Comment,
     _ rhs: Comment,
@@ -128,9 +130,13 @@ fileprivate extension Comment {
     }
 }
 
-/// We can't get the total upvotes and downvotes (Reddit only exposes a single 'score', with upvotes=score and downvotes=0)
+// swiftlint:disable line_length
+
+/// We can't get the total upvotes and downvotes (Reddit only
+/// exposes a single 'score', with upvotes=score and downvotes=0)
 /// https://github.com/reddit/reddit/blob/dbcf37afe2c5f5dd19f99b8a3484fc69eb27fcd5/r2/r2/lib/jsontemplates.py#L817
-/// So this estimates by putting the score closest to 0 at the top (equal number of upvotes and downvotes).
+/// So this estimates by putting the score closest to 0 at the top 
+/// (equal number of upvotes and downvotes).
 private func controversyEstimate(_ lhs: Comment, _ rhs: Comment) -> Bool? {
     switch (lhs.isControversial, rhs.isControversial) {
     case (false, false):

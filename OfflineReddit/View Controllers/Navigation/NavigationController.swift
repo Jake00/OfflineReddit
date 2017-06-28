@@ -27,15 +27,18 @@ class NavigationController: UINavigationController {
         return progressView
     }()
     
-    func setNavigationBarHidden(_ hidden: Bool, transitioningWith view: UIView, additionalAnimations: @escaping () -> Void, completion: @escaping () -> Void) {
+    func setNavigationBarHidden(
+        _ hidden: Bool,
+        transitioningWith view: UIView,
+        additionalAnimations: @escaping () -> Void,
+        completion: @escaping () -> Void
+        ) {
+        
         let navigationBarSubviews: [UIView] = navigationBar.subviews.filter {
             $0 != navigationBar.subviews.first && !$0.isHidden && $0.alpha > 0
         }
-        let snapshot = view.snapshotView(afterScreenUpdates: false)
-        snapshot?.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-        snapshot?.alpha = hidden ? 0 : 1
-        snapshot.map(self.view.addSubview)
         
+        let snapshot = makeSnapshot(of: view, isHidden: hidden)
         let bar = self.navigationBar as? NavigationBar
         let duration: TimeInterval = 0.3
         let thirdDuration = duration / 3
@@ -83,6 +86,14 @@ class NavigationController: UINavigationController {
             navigationBarSubviews.forEach { $0.alpha = 1 }
             completion()
         })
+    }
+    
+    private func makeSnapshot(of view: UIView, isHidden: Bool) -> UIView? {
+        let snapshot = view.snapshotView(afterScreenUpdates: false)
+        snapshot?.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        snapshot?.alpha = isHidden ? 0 : 1
+        snapshot.map(self.view.addSubview)
+        return snapshot
     }
     
     // MARK: - Init

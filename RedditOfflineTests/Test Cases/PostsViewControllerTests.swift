@@ -135,7 +135,8 @@ class PostsViewControllerTests: BaseTestCase {
     func testThatItReceivesReachabilityNotifications() {
         XCTAssertFalse(postsViewController.didCallReachabilityChanged, "No notifications have been sent yet")
         NotificationCenter.default.post(name: .ReachabilityChanged, object: nil)
-        XCTAssertTrue(postsViewController.didCallReachabilityChanged, "Controller should have received the notification")
+        XCTAssertTrue(postsViewController.didCallReachabilityChanged,
+                      "Controller should have received the notification")
     }
     
     func testThatItReactsToReachabilityChanges() {
@@ -147,7 +148,8 @@ class PostsViewControllerTests: BaseTestCase {
         NotificationCenter.default.post(name: .ReachabilityChanged, object: nil)
         
         XCTAssertTrue(postsViewController.loadMoreButton.isEnabled, "Can load more when online")
-        XCTAssertTrue(dataSource.didCallFetchNextPageOrReloadIfOffline, "New posts are automatically fetched when going online")
+        XCTAssertTrue(dataSource.didCallFetchNextPageOrReloadIfOffline,
+                      "New posts are automatically fetched when going online")
         
         dataSource.didCallFetchNextPageOrReloadIfOffline = false
         postsViewController.setEditing(true, animated: false)
@@ -158,7 +160,8 @@ class PostsViewControllerTests: BaseTestCase {
         XCTAssertFalse(postsViewController.isEditing, "Editing disabled when going offline")
         XCTAssertFalse(postsViewController.loadMoreButton.isEnabled, "Cannot load more when offline")
         XCTAssertTrue(postsViewController.dataSource.rows.isEmpty, "Rows were emptied when going offline")
-        XCTAssertTrue(dataSource.didCallFetchNextPageOrReloadIfOffline, "Offline posts are automatically fetched when going online")
+        XCTAssertTrue(dataSource.didCallFetchNextPageOrReloadIfOffline,
+                      "Offline posts are automatically fetched when going online")
     }
     
     func testThatItDownloadsPosts() {

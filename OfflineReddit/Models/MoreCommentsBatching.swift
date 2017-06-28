@@ -68,7 +68,11 @@ fileprivate extension Comment.Sort {
 /// Sort strategy for picking the top comments to expand:
 /// 1. Take the top level comments first (`parentPost != nil`), then
 /// 2. Sort using the provided comparitor.
-private func compare(_ lhs: MoreComments, _ rhs: MoreComments, _ comparison: (MoreComments, MoreComments) -> Bool) -> Bool {
+private func compare(
+    _ lhs: MoreComments,
+    _ rhs: MoreComments,
+    _ comparison: (MoreComments, MoreComments) -> Bool
+    ) -> Bool {
     let bothHaveParentsOrNone = (lhs.parentPost == nil) == (rhs.parentPost == nil)
     return bothHaveParentsOrNone ? comparison(lhs, rhs) : lhs.parentPost != nil
 }

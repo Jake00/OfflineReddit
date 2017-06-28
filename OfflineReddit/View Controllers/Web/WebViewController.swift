@@ -16,6 +16,7 @@ class WebViewController: UIViewController {
     private var observer: PropertyObserver?
     
     var webView: WKWebView {
+        // swiftlint:disable:next force_cast
         return view as! WKWebView
     }
     
@@ -87,7 +88,13 @@ class WebViewController: UIViewController {
 
 extension WebViewController: WKUIDelegate {
     
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+    func webView(
+        _ webView: WKWebView,
+        createWebViewWith configuration: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures: WKWindowFeatures
+        ) -> WKWebView? {
+        
         return webView
     }
 }

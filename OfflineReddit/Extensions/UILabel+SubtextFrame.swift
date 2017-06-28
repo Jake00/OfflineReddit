@@ -11,7 +11,8 @@ import UIKit
 extension UILabel {
     
     func frame(forSubtextRange range: NSRange) -> CGRect {
-        let attributedText = self.attributedText ?? NSAttributedString(string: text ?? "", attributes: [NSFontAttributeName: font])
+        let attributedText = self.attributedText
+            ?? NSAttributedString(string: text ?? "", attributes: [NSFontAttributeName: font])
         
         let container = NSTextContainer(size: bounds.size)
         let manager = NSLayoutManager()

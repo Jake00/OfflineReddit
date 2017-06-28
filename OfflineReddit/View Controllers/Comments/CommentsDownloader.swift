@@ -18,7 +18,13 @@ final class CommentsDownloader: NSObject, ProgressReporting {
     let sort: Comment.Sort
     private(set) var remaining: [[MoreComments]]
     
-    init(post: Post, comments: [MoreComments], remote: RemoteDataProviding, sort: Comment.Sort, numberOfCommentBatches: Int = 5) {
+    init(
+        post: Post,
+        comments: [MoreComments],
+        remote: RemoteDataProviding,
+        sort: Comment.Sort,
+        numberOfCommentBatches: Int = 5
+        ) {
         self.post = post
         self.remote = remote
         self.sort = sort

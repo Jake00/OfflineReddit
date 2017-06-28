@@ -34,7 +34,11 @@ final class DynamicTypeResponder: NSObject {
     
     private override init() {
         super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(preferredTextSizeChanged(_:)), name: .UIContentSizeCategoryDidChange, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(preferredTextSizeChanged(_:)),
+            name: .UIContentSizeCategoryDidChange,
+            object: nil)
     }
     
     deinit {

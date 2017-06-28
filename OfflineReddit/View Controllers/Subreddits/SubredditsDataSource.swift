@@ -106,7 +106,11 @@ extension SubredditsDataSource: UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCellEditingStyle,
+        forRowAt indexPath: IndexPath
+        ) {
         guard editingStyle == .delete else { return }
         provider.local.delete(sections[indexPath.section].subreddits.remove(at: indexPath.row))
         if sections[indexPath.section].subreddits.isEmpty {

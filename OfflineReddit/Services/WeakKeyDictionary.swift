@@ -51,8 +51,8 @@ final class WeakKeyDictionary<Key: AnyObject, Value>: Collection, ExpressibleByD
         return buffer.isEmpty
     }
     
-    func index(after i: Index) -> Index {
-        return buffer.index(after: i)
+    func index(after index: Index) -> Index {
+        return buffer.index(after: index)
     }
     
     func index(forKey key: Key) -> Index? {

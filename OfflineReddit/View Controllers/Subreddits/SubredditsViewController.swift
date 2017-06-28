@@ -49,10 +49,7 @@ class SubredditsViewController: UIViewController {
         newTextField.inputAccessoryView = inputToolbar
         newTextField.enableDynamicType(style: .subheadline)
         navigationItem.rightBarButtonItem = editButtonItem
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear(_:)), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear(_:)), name: .UIKeyboardWillHide, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(textFieldTextChanged(_:)), name: .UITextFieldTextDidChange, object: newTextField)
-        
+        addObservers()
         dataSource.fillSubreddits()
     }
     
@@ -71,14 +68,37 @@ class SubredditsViewController: UIViewController {
     
     // MARK: - Notifications
     
+    private func addObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillAppear(_:)),
+            name: .UIKeyboardWillShow,
+            object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillDisappear(_:)),
+            name: .UIKeyboardWillHide,
+            object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textFieldTextChanged(_:)),
+            name: .UITextFieldTextDidChange,
+            object: newTextField)
+    }
+    
     func keyboardWillAppear(_ notification: Notification) {
         guard let height = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? CGRect)?.height else { return }
         tableView.contentInset.bottom = height
         tableView.scrollIndicatorInsets.bottom = height
         let duration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? TimeInterval ?? 0
         let rawCurve = notification.userInfo?[UIKeyboardAnimationCurveUserInfoKey] as? Int ?? 0
-        UIView.animate(withDuration: duration, delay: 0, options: UIViewAnimationOptions(rawValue: UInt(rawCurve << 16)), animations: { 
-            self.tableView.contentOffset.y = self.tableView.contentSize.height - self.tableView.frame.height + height
+        let options = UIViewAnimationOptions(rawValue: UInt(rawCurve << 16))
+        UIView.animate(withDuration: duration, delay: 0, options: options, animations: {
+            self.tableView.contentOffset.y = self.tableView.contentSize.height
+                - self.tableView.frame.height
+                + height
         }, completion: nil)
     }
     

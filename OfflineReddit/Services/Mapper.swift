@@ -39,7 +39,8 @@ final class Mapper {
             let existingSubreddits: [Subreddit] = try context.fetch(subredditsRequest)
             
             let subreddits = subredditNames.flatMap { name -> Subreddit in
-                let subreddit = existingSubreddits.first(where: { $0.name.caseInsensitiveCompare(name) == .orderedSame })
+                let subreddit = existingSubreddits
+                    .first(where: { $0.name.caseInsensitiveCompare(name) == .orderedSame })
                     ?? Subreddit.create(in: context, name: name)
                 subreddit.name = name
                 return subreddit
@@ -77,7 +78,12 @@ final class Mapper {
                 } ?? []
             
             let comments = commentsJSON.flatMap { json -> [Comment] in
-                guard let (parent, replies) = self.mapComment(json: json, parent: nil, topLevelPost: post, existing: existingComments) else { return [] }
+                guard let (parent, replies) = self.mapComment(
+                    json: json,
+                    parent: nil,
+                    topLevelPost: post,
+                    existing: existingComments)
+                    else { return [] }
                 return [parent] + replies
             }
             try context.save()
@@ -85,7 +91,13 @@ final class Mapper {
         }
     }
     
-    private func mapComment(json: JSON, parent: Comment?, topLevelPost: Post?, existing: [Comment]) -> (Comment, [Comment])? {
+    private func mapComment(
+        json: JSON,
+        parent: Comment?,
+        topLevelPost: Post?,
+        existing: [Comment]
+        ) -> (Comment, [Comment])? {
+        
         let isMoreComments = (json["kind"] as? String) == "more"
         guard !isMoreComments else {
             mapMoreComments(json: json, parentComment: parent, parentPost: topLevelPost)
@@ -100,13 +112,23 @@ final class Mapper {
         
         let replyJSON = ((json["replies"] as? JSON)?["data"] as? JSON)?["children"] as? [JSON] ?? []
         return (comment, replyJSON.flatMap { json -> [Comment] in
-            guard let (parent, replies) = mapComment(json: json, parent: comment, topLevelPost: nil, existing: existing) else { return [] }
+            guard let (parent, replies) = mapComment(
+                json: json,
+                parent: comment,
+                topLevelPost: nil,
+                existing: existing)
+                else { return [] }
             return [parent] + replies
         })
     }
     
     @discardableResult
-    private func mapMoreComments(json: JSON, parentComment: Comment?, parentPost: Post?) -> MoreComments? {
+    private func mapMoreComments(
+        json: JSON,
+        parentComment: Comment?,
+        parentPost: Post?
+        ) -> MoreComments? {
+        
         guard let (id, json) = MoreComments.id(from: json) else { return nil }
         guard (json["count"] as? Int).map({ $0 > 0 }) ?? false else { return nil }
         (parentComment?.more ?? parentPost?.more).map(context.delete)
@@ -117,7 +139,12 @@ final class Mapper {
         return moreComments
     }
     
-    func mapMoreComments(json: Any, mores: [MoreComments], post: Post) throws -> [Comment] {
+    func mapMoreComments(
+        json: Any,
+        mores: [MoreComments],
+        post: Post
+        ) throws -> [Comment] {
+        
         guard let json = ((json as? JSON)?["json"] as? JSON)?["data"] as? JSON,
             let commentsJSON = json["things"] as? [JSON]
             else { throw APIClient.Errors.invalidResponse }

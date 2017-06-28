@@ -19,7 +19,12 @@ final class SubredditsProvider {
     
     func getAllSubreddits() -> Task<[Subreddit]> {
         let request: NSFetchRequest<Subreddit> = Subreddit.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))]
+        request.sortDescriptors = [
+            NSSortDescriptor(
+                key: "name",
+                ascending: true,
+                selector: #selector(NSString.caseInsensitiveCompare(_:)))
+        ]
         return local.fetch(request)
     }
     

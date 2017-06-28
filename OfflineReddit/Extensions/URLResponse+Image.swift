@@ -5,6 +5,7 @@
 //  Created by Jake Bellamy on 20/06/17.
 //  Copyright © 2017 Jake Bellamy. All rights reserved.
 //
+// swiftlint:disable line_length
 
 import Foundation
 

@@ -24,6 +24,7 @@ class TestableCoreDataControllerTests: BaseTestCase {
         _ = try? controller.context.save()
         controller.reset()
         
+        // swiftlint:disable:next force_cast
         let newPost = controller.context.object(with: post.objectID) as! Post
         let after = newPost.isAvailableOffline
         

@@ -74,21 +74,37 @@ class CommentsViewController: UIViewController, Loadable {
         markAsReadButton.isEnabled = !dataSource.post.isRead
         updateSortButtonTitle()
         enableDynamicType()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateSelfText), name: .UIContentSizeCategoryDidChange, object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateSelfText),
+            name: .UIContentSizeCategoryDidChange,
+            object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        dataSource.fetchCommentsIfNeeded()?.continueOnSuccessWith(.mainThread, continuation: updateHeaderLabels)
+        dataSource.fetchCommentsIfNeeded()?
+            .continueOnSuccessWith(.mainThread, continuation: updateHeaderLabels)
     }
     
     private var previousHeaderViewHeight: CGFloat = 0
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let fittingSize = CGSize(width: tableView.frame.width, height: UILayoutFittingCompressedSize.height)
+        
+        let fittingSize = CGSize(
+            width: tableView.frame.width,
+            height: UILayoutFittingCompressedSize.height)
+        
         headerView.layoutIfNeeded()
-        let height = headerView.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityFittingSizeLevel).height
+        
+        let height = headerView.systemLayoutSizeFitting(
+            fittingSize,
+            withHorizontalFittingPriority: UILayoutPriorityRequired,
+            verticalFittingPriority: UILayoutPriorityFittingSizeLevel
+            ).height
+        
         if height != previousHeaderViewHeight {
             previousHeaderViewHeight = height
             headerView.frame.size.height = height
@@ -96,7 +112,10 @@ class CommentsViewController: UIViewController, Loadable {
         }
     }
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(
+        to size: CGSize,
+        with coordinator: UIViewControllerTransitionCoordinator
+        ) {
         super.viewWillTransition(to: size, with: coordinator)
         coordinator.animate(alongsideTransition: { _ in
             self.tableView.beginUpdates()
@@ -108,7 +127,9 @@ class CommentsViewController: UIViewController, Loadable {
     
     var isLoading = false {
         didSet {
-            navigationItem.setRightBarButtonItems([isLoading ? loadingButton : expandCommentsButton], animated: true)
+            navigationItem.setRightBarButtonItems(
+                [isLoading ? loadingButton : expandCommentsButton],
+                animated: true)
         }
     }
     
@@ -151,7 +172,11 @@ class CommentsViewController: UIViewController, Loadable {
     }
     
     func showSortSelectionSheet() {
-        let sheet = UIAlertController(title: SharedText.sortCommentsTitle, message: nil, preferredStyle: .actionSheet)
+        let sheet = UIAlertController(
+            title: SharedText.sortCommentsTitle,
+            message: nil,
+            preferredStyle: .actionSheet)
+        
         for sort in Comment.Sort.all {
             sheet.addAction(UIAlertAction(title: sort.displayName, style: .default) { _ in
                 self.dataSource.sort = sort
@@ -165,7 +190,9 @@ class CommentsViewController: UIViewController, Loadable {
     // MARK: - UI Updates
     
     func updateSortButtonTitle() {
-        sortButton.title = String.localizedStringWithFormat(SharedText.sortFormat, dataSource.sort.displayName)
+        sortButton.title = String.localizedStringWithFormat(
+            SharedText.sortFormat,
+            dataSource.sort.displayName)
     }
     
     func updateHeaderLabels() {
@@ -229,18 +256,28 @@ class CommentsViewController: UIViewController, Loadable {
 
 extension CommentsViewController: CommentsDataSourceDelegate {
     
-    func commentsDataSource(_ dataSource: CommentsDataSource, isFetchingWith task: Task<Void>) {
+    func commentsDataSource(
+        _ dataSource: CommentsDataSource,
+        isFetchingWith task: Task<Void>
+        ) {
         fetch(task)
     }
     
-    func commentsDataSource(_ dataSource: CommentsDataSource, didUpdateAllCommentsWith saved: Int64, _ toExpand: Int64) {
+    func commentsDataSource(
+        _ dataSource: CommentsDataSource,
+        didUpdateAllCommentsWith saved: Int64,
+        _ toExpand: Int64
+        ) {
         expandCommentsButton.isEnabled = toExpand > 0 && reachability.isOnline
-        commentsLabel.text = String.localizedStringWithFormat(
+        commentsLabel.text = String.localizedStringWithFormat( // swiftlint:disable:next line_length
             NSLocalizedString("comments_saved_format", value: "%ld comments\n%ld / %ld saved", comment: "Format for number of comments and amount saved. eg. '50 comments\n30 / 40 saved'"),
             dataSource.post.commentsCount, saved, saved + toExpand)
     }
     
-    func viewDimensionsForCommentsDataSource(_ dataSource: CommentsDataSource) -> (horizontalMargins: CGFloat, frameWidth: CGFloat) {
+    func viewDimensionsForCommentsDataSource(
+        _ dataSource: CommentsDataSource
+        ) -> (horizontalMargins: CGFloat, frameWidth: CGFloat) {
+        
         return (headerView.layoutMargins.left * 2, view.frame.width)
     }
 }

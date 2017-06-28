@@ -30,8 +30,15 @@ class URLTextView: UITextView {
         location.x -= textContainerInset.left
         location.y -= textContainerInset.top
         
-        let characterIndex = layoutManager.characterIndex(for: location, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
-        let isLink = textStorage.attribute(NSLinkAttributeName, at: characterIndex, effectiveRange: nil) != nil
+        let characterIndex = layoutManager.characterIndex(
+            for: location,
+            in: textContainer,
+            fractionOfDistanceBetweenInsertionPoints: nil)
+        
+        let isLink = textStorage.attribute(
+            NSLinkAttributeName,
+            at: characterIndex, effectiveRange: nil
+            ) != nil
         
         return isLink ? self : nil
     }

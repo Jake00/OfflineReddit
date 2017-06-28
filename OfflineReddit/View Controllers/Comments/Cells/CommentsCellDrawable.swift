@@ -38,7 +38,11 @@ struct CommentsCellDrawingContext: Hashable {
     
     func backgroundRect(forLevel level: Int, size: CGSize) -> CGRect {
         let indentation = indentationWidth * CGFloat(level)
-        return CGRect(x: indentation, y: 0, width: size.width, height: size.height - bottomIndentationMargin(forLevel: level))
+        return CGRect(
+            x: indentation,
+            y: 0,
+            width: size.width,
+            height: size.height - bottomIndentationMargin(forLevel: level))
     }
     
     static func == (lhs: CommentsCellDrawingContext, rhs: CommentsCellDrawingContext) -> Bool {
@@ -127,22 +131,30 @@ private let lightest: CGFloat = {
 
 class CommentsCellBackgroundView: UIImageView {
     
-    private static var renderQueue = DispatchQueue(label: "CommentsCellBackgroundView.renderQueue", qos: .userInitiated)
+    private static let renderQueue = DispatchQueue(
+        label: "CommentsCellBackgroundView.renderQueue",
+        qos: .userInitiated)
     
-    var drawingContext = CommentsCellDrawingContext(indentationLevel: 0, previousIndentation: 0, nextIndentation: 0, isHighlighted: false) {
+    var drawingContext = CommentsCellDrawingContext(
+        indentationLevel: 0,
+        previousIndentation: 0,
+        nextIndentation: 0,
+        isHighlighted: false) {
         didSet {
-            if oldValue != drawingContext {
-                (superview as? UITableViewCell)?.indentationLevel = drawingContext.indentationLevel
-                if let image = CommentsCellDrawingContext.cached[drawingContext] {
+            guard oldValue != drawingContext else { return }
+            
+            (superview as? UITableViewCell)?.indentationLevel = drawingContext.indentationLevel
+            
+            if let image = CommentsCellDrawingContext.cached[drawingContext] {
+                self.image = image
+                return
+            }
+            
+            self.image = nil
+            CommentsCellBackgroundView.renderQueue.async {
+                let image = self.drawingContext.backgroundImage()
+                DispatchQueue.main.async {
                     self.image = image
-                } else {
-                    self.image = nil
-                    CommentsCellBackgroundView.renderQueue.async {
-                        let image = self.drawingContext.backgroundImage()
-                        DispatchQueue.main.async {
-                            self.image = image
-                        }
-                    }
                 }
             }
         }

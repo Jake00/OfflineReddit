@@ -34,31 +34,48 @@ final class CoreDataController {
     let jsonContext: NSManagedObjectContext
     
     init() {
-        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: CoreDataController.managedObjectModel)
+        let model = CoreDataController.managedObjectModel
+        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         
         do {
-            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: CoreDataController.backingStoreURL, options: nil)
+            try coordinator.addPersistentStore(
+                ofType: NSSQLiteStoreType,
+                configurationName: nil,
+                at: CoreDataController.backingStoreURL,
+                options: nil)
         } catch {
             fatalError("Error migrating store: \(error)")
         }
         
         viewContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        viewContext.persistentStoreCoordinator = persistentStoreCoordinator
+        viewContext.persistentStoreCoordinator = coordinator
         
         jsonContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         jsonContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        jsonContext.persistentStoreCoordinator = persistentStoreCoordinator
+        jsonContext.persistentStoreCoordinator = coordinator
         
-        NotificationCenter.default.addObserver(self, selector: #selector(contextDidSave(_:)), name: .NSManagedObjectContextDidSave, object: jsonContext)
-        NotificationCenter.default.addObserver(self, selector: #selector(contextDidSave(_:)), name: .NSManagedObjectContextDidSave, object: viewContext)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(contextDidSave(_:)),
+            name: .NSManagedObjectContextDidSave,
+            object: jsonContext)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(contextDidSave(_:)),
+            name: .NSManagedObjectContextDidSave,
+            object: viewContext)
     }
     
     private var saving: NSManagedObjectContext?
     
     private dynamic func contextDidSave(_ notification: Notification) {
-        guard let object = notification.object as? NSManagedObjectContext, object == viewContext || object == jsonContext, saving == nil
+        guard let object = notification.object as? NSManagedObjectContext,
+            object == viewContext || object == jsonContext,
+            saving == nil
             else { return }
+        
         let context = object == jsonContext ? viewContext : jsonContext
         context.performAndWait {
             self.saving = context

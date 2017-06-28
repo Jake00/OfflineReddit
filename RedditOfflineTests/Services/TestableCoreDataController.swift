@@ -37,7 +37,11 @@ class TestableCoreDataController {
     func newEmptyManagedObjectContext() -> NSManagedObjectContext {
         let store = NSPersistentStoreCoordinator(managedObjectModel: CoreDataController.managedObjectModel)
         do {
-            try store.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: nil, options: nil)
+            try store.addPersistentStore(
+                ofType: NSInMemoryStoreType,
+                configurationName: nil,
+                at: nil,
+                options: nil)
         } catch {
             fatalError("Error adding store: \(error)")
         }
@@ -55,7 +59,11 @@ class TestableCoreDataController {
     static let persistentStoreCoordinator: NSPersistentStoreCoordinator = {
         let store = NSPersistentStoreCoordinator(managedObjectModel: CoreDataController.managedObjectModel)
         do {
-            try store.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: nil, options: nil)
+            try store.addPersistentStore(
+                ofType: NSInMemoryStoreType,
+                configurationName: nil,
+                at: nil,
+                options: nil)
         } catch {
             fatalError("Error adding store: \(error)")
         }
@@ -64,7 +72,11 @@ class TestableCoreDataController {
     
     static let fileJSON: [String: Any] = {
         var fileJSON: [String: Any] = [:]
-        let stored = Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: OfflineRemoteProvider.subdirectory) ?? []
+        let stored = Bundle.main.urls(
+            forResourcesWithExtension: "json",
+            subdirectory: OfflineRemoteProvider.subdirectory
+            ) ?? []
+        
         for url in stored {
             if let data = try? Data(contentsOf: url),
                 let json = try? JSONSerialization.jsonObject(with: data, options: []) {
@@ -82,7 +94,11 @@ class TestableCoreDataController {
         static let moreComments = ImportOptions(rawValue: 1 << 1)
     }
     
-    func importPosts(to context: NSManagedObjectContext, including `import`: ImportOptions = [.comments, .moreComments]) {
+    func importPosts(
+        to context: NSManagedObjectContext,
+        including `import`: ImportOptions = [.comments, .moreComments]
+        ) {
+        
         mapper.context = context
         
         print("TestableCoreDataController: Starting import of test models")
@@ -98,7 +114,9 @@ class TestableCoreDataController {
             
             /* Speed up fetching existing objects without using the slower NSFetchRequest */
             mapper.fetchExistingPosts = { _, _ in posts }
-            mapper.fetchExistingComments = { postId, _ in Array(posts.first { $0.id == postId }?.comments ?? [])}
+            mapper.fetchExistingComments = {
+                postId, _ in Array(posts.first { $0.id == postId }?.comments ?? [])
+            }
             mapper.fetchPost = { postId, _ in posts.first { $0.id == postId }}
             
             if `import`.contains(.comments) {

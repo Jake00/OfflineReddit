@@ -40,7 +40,8 @@ extension Comment {
         author = json["author"] as? String
         body = json["body"] as? String
         parentId = json["parent_id"] as? String
-        created = (json["created_utc"] as? TimeInterval).map(Date.init(timeIntervalSince1970:)) ?? Date()
+        created = (json["created_utc"] as? TimeInterval)
+            .map(Date.init(timeIntervalSince1970:)) ?? Date()
         gildedCount = (json["gilded"] as? Int).map(Int64.init) ?? 0
         score = (json["score"] as? Int).map(Int64.init) ?? 0
         isScoreHidden = json["score_hidden"] as? Bool ?? false
@@ -106,6 +107,7 @@ extension Comment {
             body = body.substring(to: index) + "..."
         }
         body = body.replacingOccurrences(of: "\n", with: "\\n", options: .literal)
-        return "\nComment \(id) depth \(depth) score \(score) by \(author ?? "") with \(children.count) replies: \(body)"
+        return "\nComment \(id) depth \(depth) score \(score) "
+        + "by \(author ?? "") with \(children.count) replies: \(body)"
     }
 }

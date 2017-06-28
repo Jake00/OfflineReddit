@@ -38,7 +38,12 @@ class PostsDataSource: NSObject {
         self.subredditsProvider = SubredditsProvider(provider: provider)
         self.reachability = provider.reachability
         super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(_:)), name: .ReachabilityChanged, object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reachabilityChanged(_:)),
+            name: .ReachabilityChanged,
+            object: nil)
     }
     
     deinit {
@@ -50,7 +55,8 @@ class PostsDataSource: NSObject {
     /// Master list of all posts available to display, before filtering.
     var allRows: Set<PostCellModel> = []
     
-    /// List of posts which drives the table view. Is a subset of `rows` when `sort.shouldFilter == true`, otherwise equals `allRows`.
+    /// List of posts which drives the table view. Is a subset of `rows` when 
+    /// `sort.shouldFilter == true`, otherwise equals `allRows`.
     private(set) var rows: [PostCellModel] = []
     
     var sort = Defaults.postsSortFilter {
@@ -215,8 +221,12 @@ class PostsDataSource: NSObject {
     @discardableResult
     func fetchNextPage(addingModelsWithState state: PostCellModel.State = .normal) -> Task<[Post]> {
         guard !subreddits.isEmpty else { return Task<[Post]>([]) }
-        return fetch(postsProvider.getPosts(for: subreddits, after: rows.last?.post, sortedBy: sort.sort, period: sort.period)
-            .continueOnSuccessWith(.mainThread) { posts -> [Post] in
+        return fetch(postsProvider.getPosts(
+            for: subreddits,
+            after: rows.last?.post,
+            sortedBy: sort.sort,
+            period: sort.period
+            ).continueOnSuccessWith(.mainThread) { posts -> [Post] in
                 if !posts.isEmpty {
                     self.allRows.formUnion(posts.map { PostCellModel(post: $0, state: state) })
                     self.animateRowsUpdate()

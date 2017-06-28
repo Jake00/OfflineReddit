@@ -72,13 +72,15 @@ final class APIClient: NSObject {
         case missingFields
         
         var alertTitle: String? { return nil }
+        
+        // swiftlint:disable line_length
         var alertMessage: String? {
             switch self {
             case .emptyResponse: return NSLocalizedString("api_error.empty_response", value: "There was no data returned.", comment: "Unexpected empty response error message.")
             case .invalidResponse: return NSLocalizedString("api_error.invalid_response", value: "Received an invalid response.", comment: "Invalid response error message.")
             case .missingFields: return NSLocalizedString("api_error.missing_fields", value: "We are missing data for making this request.", comment: "Unexpected empty response error message.")
             }
-        }
+        } // swiftlint:enable line_length
     }
     
     struct Request {
@@ -91,6 +93,7 @@ final class APIClient: NSObject {
             self.method = method; self.path = path; self.parameters = parameters; self.encoding = encoding
         }
         
+        // swiftlint:disable:next nesting
         enum BodyEncoding {
             case json, formData
         }
@@ -102,7 +105,8 @@ final class APIClient: NSObject {
     @discardableResult
     func sendRequest(_ request: Request, completionHandler: @escaping CompletionHandler) -> URLSessionDataTask {
         guard let url = URL(string: request.path, relativeTo: base.url)
-            ?? request.path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed).flatMap({ URL(string: $0, relativeTo: base.url) }) else {
+            ?? request.path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+                .flatMap({ URL(string: $0, relativeTo: base.url) }) else {
                 fatalError("Invalid URL provided to \(self): \(request.path)")
         }
         
@@ -124,9 +128,11 @@ final class APIClient: NSObject {
     
     func encode(_ urlRequest: inout URLRequest, with request: Request, _ url: URL) {
         if request.method.encodesParametersInURL {
-            if var components = URLComponents(url: url, resolvingAgainstBaseURL: true), request.parameters?.isEmpty == false {
+            if var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+                request.parameters?.isEmpty == false {
                 guard let parameters = request.parameters as? [String: String] else {
-                    fatalError("Only string types are supported in query parameters. No arrays, dictionaries or other types.")
+                    fatalError("Only string types are supported in query parameters. "
+                        + "No arrays, dictionaries or other types.")
                 }
                 components.queryItems = parameters.map(URLQueryItem.init)
                 urlRequest.url = components.url

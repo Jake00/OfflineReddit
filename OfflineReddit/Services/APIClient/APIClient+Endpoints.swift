@@ -12,7 +12,13 @@ import BoltsSwift
 
 extension APIClient: RemoteDataProviding {
     
-    func getPosts(for subreddits: [Subreddit], after post: Post?, sortedBy sort: Post.Sort, period: Post.SortPeriod?) -> Task<[Post]> {
+    func getPosts(
+        for subreddits: [Subreddit],
+        after post: Post?,
+        sortedBy sort: Post.Sort,
+        period: Post.SortPeriod?
+        ) -> Task<[Post]> {
+        
         let path: String = "r/\(subreddits.map { $0.name }.joined(separator: "+"))/\(sort.apiKey).json"
         var parameters: Parameters = ["raw_json": "1"]
         if let post = post {

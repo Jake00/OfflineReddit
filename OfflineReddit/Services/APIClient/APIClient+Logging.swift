@@ -52,7 +52,9 @@ extension APIClient {
         
         guard let response = response else {
             if let error = error {
-                print("XXX \(url.absoluteString): \"\((error as? LocalizedError)?.errorDescription ?? (error as NSError).localizedDescription)\"")
+                let description = (error as? LocalizedError)?.errorDescription
+                    ?? (error as NSError).localizedDescription
+                print("XXX \(url.absoluteString): \"\(description)\"")
             }
             return
         }

@@ -15,7 +15,9 @@ extension NSManagedObject {
         let entityName = String(describing: T.self)
         let anyModel = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context)
         return anyModel as? T ?? {
-            fatalError("Managed object \(entityName) did not create as type \(T.self), instead it was created as \(type(of: anyModel))")
+            fatalError(
+                "Managed object \(entityName) did not create as type \(T.self), "
+                + "instead it was created as \(type(of: anyModel))")
             }()
     }
     
@@ -28,6 +30,7 @@ extension NSManagedObject {
     func inContext(_ context: NSManagedObjectContext, inContextsQueue: Bool = true) -> Self {
         func selfInContext<T>() -> T {
             let map = { (context: NSManagedObjectContext) in
+                // swiftlint:disable:next force_cast
                 context.object(with: self.objectID) as! T
             }
             return inContextsQueue ? context.performAndWait(map) : map(context)
@@ -38,9 +41,18 @@ extension NSManagedObject {
 
 extension Collection where Iterator.Element: NSManagedObject {
     
-    func inContext(_ context: NSManagedObjectContext, inContextsQueue: Bool = true) -> [Iterator.Element] {
+    func inContext(
+        _ context: NSManagedObjectContext,
+        inContextsQueue: Bool = true
+        ) -> [Iterator.Element] {
+        
         let map = { (context: NSManagedObjectContext) in
-            self.map { $0.managedObjectContext == context ? $0 : context.object(with: $0.objectID) } as! [Iterator.Element]
+            self.map {
+                $0.managedObjectContext == context
+                    ? $0
+                    : context.object(with: $0.objectID)
+                } as! [Iterator.Element]
+            // swiftlint:disable:previous force_cast
         }
         return inContextsQueue ? context.performAndWait(map) : map(context)
     }

@@ -9,25 +9,33 @@
 import Foundation
 
 /**
-A `PropertyObserver` object is a small wrapper around Apple's KVO API which allows objects to automatically call separate fuctions for observed properties (ie. not pipe everything through `observeValueForKeyPath:ofObject:`.)
+ A `PropertyObserver` object is a small wrapper around Apple's KVO API which allows objects
+ to automatically call separate fuctions for observed properties (ie. not pipe everything 
+ through `observeValueForKeyPath:ofObject:`.)
 
-Its main purpose allows you to use KVO from pure Swift objects that do not inherit from `NSObject`, but which wish to observe properties on objects that do.
+ Its main purpose allows you to use KVO from pure Swift objects that do not inherit from 
+ `NSObject`, but which wish to observe properties on objects that do.
 */
 public final class PropertyObserver: NSObject {
     
     /**
-     The type signature of functions or closures which are registered to receive change callbacks. This takes the form of (oldValue, newValue).
+     The type signature of functions or closures which are registered to receive change 
+     callbacks. This takes the form of (oldValue, newValue).
      */
     public typealias ChangeCallback = (Any?, Any?) -> Void
     
     // MARK: - Public properties
     
     /**
-    Dictionary of property keys that are being observed on the `observed` object, with callback functions.
+    Dictionary of property keys that are being observed on the `observed` object, with 
+     callback functions.
     
     **Key**: The property key that is being observed.
     
-    **Value**: The callback function that is invoked when a KVO notification is triggered. The objects that are passed through are the observed properties `oldValue` and `newValue` respectively, that is, the value before the attribute was changed, and the new value for the attribute.
+    **Value**: The callback function that is invoked when a KVO notification is triggered. 
+     The objects that are passed through are the observed properties `oldValue` and 
+     `newValue` respectively, that is, the value before the attribute was changed, 
+     and the new value for the attribute.
     */
     public var events: [String: ChangeCallback] {
         didSet {
@@ -90,7 +98,8 @@ public final class PropertyObserver: NSObject {
     // MARK: - Update
     
     /**
-    Updates the `events` dictionary by adding the keys and values provided, and starts observing the newly added properties.
+     Updates the `events` dictionary by adding the keys and values provided, and starts
+     observing the newly added properties.
     
     - parameter events: The keys and values to be appended to the `events` dictionary.
     */
@@ -103,7 +112,8 @@ public final class PropertyObserver: NSObject {
     }
     
     /**
-    Updates the `events` dictionary by removing the keys provided, and stops observing those properties automatically.
+     Updates the `events` dictionary by removing the keys provided, and stops observing 
+     those properties automatically.
     
     - parameter events: The keys to be removed from the `events` dictionary.
     */
@@ -129,7 +139,12 @@ public final class PropertyObserver: NSObject {
         }
     }
     
-    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    public override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey : Any]?,
+        context: UnsafeMutableRawPointer?) {
+        
         guard context == &PropertyObserver.context else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             return

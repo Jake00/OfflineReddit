@@ -74,16 +74,20 @@ class CommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
         let bodyLabel: CGFloat
     }
     
-    static func height(
-        width: CGFloat,
-        topLabelText: String?,
-        topLabelFont: UIFont,
-        bodyLabelText: NSAttributedString?,
-        drawingContext: CommentsCellDrawingContext,
-        isExpanded: Bool
-        ) -> CalculatedHeight {
-        
-        let textContainer = NSTextContainer(size: CGSize(width: width - drawingContext.leftIndentationMargin, height: 0))
+    struct HeightCalculationContext {
+        let width: CGFloat
+        let topLabelText: String?
+        let topLabelFont: UIFont
+        let bodyLabelText: NSAttributedString?
+        let drawingContext: CommentsCellDrawingContext
+        let isExpanded: Bool
+    }
+    
+    static func height(using context: HeightCalculationContext) -> CalculatedHeight {
+        let size = CGSize(
+            width: context.width - context.drawingContext.leftIndentationMargin,
+            height: 0)
+        let textContainer = NSTextContainer(size: size)
         textContainer.lineFragmentPadding = 0
         let layoutManager = NSLayoutManager()
         layoutManager.addTextContainer(textContainer)
@@ -98,16 +102,16 @@ class CommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
         
         let margin: CGFloat = 8
         
-        let topLabelHeight: CGFloat = topLabelText.map {
+        let topLabelHeight: CGFloat = context.topLabelText.map {
             textContainer.maximumNumberOfLines = 1
             textStorage.setAttributedString(NSAttributedString(
                 string: $0,
-                attributes: [NSFontAttributeName: topLabelFont]))
+                attributes: [NSFontAttributeName: context.topLabelFont]))
             return calculateHeight()
             } ?? 0
         
-        let bodyLabelHeight: CGFloat = !isExpanded ? 0 :
-            bodyLabelText.map {
+        let bodyLabelHeight: CGFloat = !context.isExpanded ? 0 :
+            context.bodyLabelText.map {
                 textContainer.maximumNumberOfLines = 0
                 textStorage.setAttributedString($0)
                 return calculateHeight()
@@ -116,7 +120,7 @@ class CommentsCell: UITableViewCell, ReusableNibCell, CommentsCellDrawable {
         let total = topLabelHeight
             + bodyLabelHeight
             + (margin * 2)
-            + drawingContext.bottomIndentationMargin
+            + context.drawingContext.bottomIndentationMargin
         
         return CalculatedHeight(
             total: total,

@@ -1,0 +1,10 @@
+excluded:
+  - Carthage
+
+disabled_rules:
+  - trailing_whitespace
+
+variable_name:
+  excluded: id
+
+line_length: 120

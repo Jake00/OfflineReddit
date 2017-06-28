@@ -76,8 +76,9 @@ class FilterPostsSortCell: UITableViewCell, ReusableCell {
             checkedImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             contentView.layoutMarginsGuide.trailingAnchor.constraint(equalTo: checkedImageView.trailingAnchor),
             contentView.layoutMarginsGuide.topAnchor.constraint(equalTo: titleLabel.topAnchor),
-            {
-                let constraint = contentView.layoutMarginsGuide.bottomAnchor.constraint(equalTo: titleLabel.bottomAnchor)
+            { () -> NSLayoutConstraint in // swiftlint:disable:previous opening_brace
+                let constraint = contentView.layoutMarginsGuide.bottomAnchor
+                    .constraint(equalTo: titleLabel.bottomAnchor)
                 constraint.priority = 200
                 return constraint
             }()])
